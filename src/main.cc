@@ -1,5 +1,7 @@
-#include "CPU8080.h"
-#include "Instructions8080.h"
-#include "Memory8080.h"
+#include "SDLApp.h"
 
-int main() { return 0; }
+int main(int argc, char* argv[]) {
+  SDLApplication app;
+  app.MainLoop();
+  return 0;
+}
