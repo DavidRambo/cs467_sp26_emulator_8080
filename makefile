@@ -9,10 +9,13 @@ TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
 OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o)
 
 emu8080: $(OBJS) $(SRCDIR)/main.cc
-	g++ -o emu8080 $^
+	g++ -o emu8080 $^ -lSDL3
 
 test: all_tests
 	./all_tests
+
+SDLApp.o: $(SRCDIR)/SDLApp.cc $(SRCDIR)/SDLApp.h
+	g++ -o $(BUILDDIR)/SDLApp.o -c $(SRCDIR)/SDLApp.cc
 
 all_tests: $(OBJS) $(TESTSRCFILES)
 	g++ -o all_tests $^ 
