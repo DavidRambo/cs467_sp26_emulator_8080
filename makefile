@@ -34,4 +34,4 @@ clean:
 	@if [ -f emu8080 ]; then\
 		rm emu8080;\
 	fi
-	@(rm -r $(BUILDDIR) && mkdir $(BUILDDIR)) || mkdir $(BUILDDIR) 
+	@(rm -r $(BUILDDIR) 2> /dev/null && mkdir $(BUILDDIR)) || mkdir $(BUILDDIR) 
