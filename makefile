@@ -8,7 +8,7 @@ OBJECTS = $(wildcard $(BUILDDIR)/*.o)
 TESTOBJS = $(wildcard $(TESTDIR)/test_*.cc)
 
 test: $(OBJECTS) $(TESTDIR)/test_declaration.h $(TESTDIR)/doctest.h
-	g++ -o all_tests $(TESTOBJS) $(OBJECTS) && ./all_tests
+	g++ -o all_tests $(TESTOBJS) && ./all_tests
 
 emu8080: CPU8080.o Memory8080.o Instructions8080.o SDLApp.o
 	g++ -o emu8080 $(SRCDIR)/main.cc $(OBJECTS) -lSDL3
