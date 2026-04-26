@@ -24,3 +24,6 @@ Memory8080.o: $(SRCDIR)/Memory8080.cc $(SRCDIR)/Memory8080.h
 
 Instructions8080.o: $(SRCDIR)/Instructions8080.cc $(SRCDIR)/Instructions8080.h
 	g++ -o $(BUILDDIR)/Instructions8080.o -c $(SRCDIR)/Instructions8080.cc
+
+clean:
+	(rm -r $(BUILDDIR) 2> /dev/null && mkdir $(BUILDDIR)) || mkdir $(BUILDDIR)
