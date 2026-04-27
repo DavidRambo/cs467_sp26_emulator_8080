@@ -19,8 +19,8 @@ struct CPU8080 {
     ~Port();
   };
 
-  Port port1;
-  Port port2;
+  Port port1_;
+  Port port2_;
 
   CPU8080();
 
