@@ -54,12 +54,12 @@ void handle_key_press(SDL_Scancode keycode, bool* running,
     case SDL_SCANCODE_LEFT:
     case SDL_SCANCODE_A:
       SDL_Log("Left or 'a' scancode received.");
-      cpu->port1.bit5 = 1;
+      cpu->port1_.bit5 = 1;
       break;
     case SDL_SCANCODE_RIGHT:
     case SDL_SCANCODE_D:
       SDL_Log("Right or 'd' scancode received.");
-      cpu->port1.bit6 = 1;
+      cpu->port1_.bit6 = 1;
       break;
     case SDL_SCANCODE_UP:
       SDL_Log("Up scancode received.");
@@ -69,7 +69,7 @@ void handle_key_press(SDL_Scancode keycode, bool* running,
       break;
     case SDL_SCANCODE_SPACE:
       SDL_Log("Space scancode received.");
-      cpu->port1.bit4 = 1;
+      cpu->port1_.bit4 = 1;
       break;
     default:
       SDL_Log("A key was pressed: scancode %d", keycode);
@@ -85,26 +85,26 @@ SDLApplication::SDLApplication() {
   }
 
   if (!SDL_CreateWindowAndRenderer("Test SDL3", 224, 256, SDL_WINDOW_RESIZABLE,
-                                   &window, &renderer)) {
+                                   &window_, &renderer_)) {
     SDL_Log("Failed to create window and renderer.");
     // return SDL_APP_FAILURE;
   }
   // SDL_SetRenderLogicalPresentation(renderer, SDL_WINDOW_WIDTH,
   //                                  SDL_WINDOW_HEIGHT,
   //                                  SDL_LOGICAL_PRESENTATION_LETTERBOX);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderPresent(renderer);
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderPresent(renderer_);
 
-  cpu_ptr = std::make_unique<CPU8080::CPU8080>();
+  cpu_ptr_ = std::make_unique<CPU8080::CPU8080>();
 }
 
 // Destructor
 SDLApplication::~SDLApplication() {
-  if (renderer) {
-    SDL_DestroyRenderer(renderer);
+  if (renderer_) {
+    SDL_DestroyRenderer(renderer_);
   }
-  if (window) {
-    SDL_DestroyWindow(window);
+  if (window_) {
+    SDL_DestroyWindow(window_);
   }
   SDL_Quit();
 }
@@ -116,13 +116,13 @@ void SDLApplication::PollForEvent() {
   (SDL_PollEvent(&event));
   switch (event.type) {
     case SDL_EVENT_QUIT:
-      running = false;
+      running_ = false;
       break;
     case SDL_EVENT_KEY_DOWN:  // This is how snake.c handles input.
-      handle_key_press(event.key.scancode, &running, cpu_ptr);
+      handle_key_press(event.key.scancode, &running_, cpu_ptr_);
       // Trigger IN instruction on cpu.
       // Then clear the input ports.
-      cpu_ptr->clear_input_ports();
+      cpu_ptr_->clear_input_ports();
       break;
   }
 
@@ -132,7 +132,7 @@ void SDLApplication::PollForEvent() {
 }
 
 void SDLApplication::MainLoop() {
-  while (running) {
+  while (running_) {
     // App logic
     PollForEvent();
   }
