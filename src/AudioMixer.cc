@@ -1,7 +1,4 @@
-#include <AudioMixer.h>
-
-#include <algorithm>
-#include <string>
+#include "AudioMixer.h"
 
 namespace Audio {
 void Mixer::Load() {
