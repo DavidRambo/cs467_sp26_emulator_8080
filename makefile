@@ -8,8 +8,8 @@ TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
 # Creates a list of object files
 OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o)
 
-emu8080: $(OBJS)
-	g++ -o emu8080 $(OBJECTS) $(SRCDIR)/main.cc
+emu8080: $(OBJS) $(SRCDIR)/main.cc
+	g++ -o emu8080 $^
 
 test: all_tests
 	./all_tests
