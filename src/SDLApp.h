@@ -6,7 +6,7 @@
 void handle_key_press(SDL_Scancode keycode, bool* running,
                       std::unique_ptr<CPU8080::CPU8080>& cpu);
 
-struct SDLApplication {
+class SDLApplication {
   static constexpr int SDL_WINDOW_WIDTH = 224;
   static constexpr int SDL_WINDOW_HEIGHT = 256;
 
@@ -15,6 +15,7 @@ struct SDLApplication {
   bool running_ = true;
   std::unique_ptr<CPU8080::CPU8080> cpu_ptr_;
 
+ public:
   SDLApplication();
   ~SDLApplication();
   void PollForEvent();
