@@ -39,3 +39,7 @@
 
 # debug information files
 *.dwo
+
+# binaries
+emu8080
+all_tests
