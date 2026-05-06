@@ -21,7 +21,7 @@ namespace GraphicsDisplay
             for (int col = 0; col < 256; col++)
             {
                 SDL_FPoint activePixel = { (float)col, (float)row };
-                points[row * col + col] = activePixel;
+                points[row * 256 + col] = activePixel;
                 //for (int pixel = 0; pixel < 8; pixel++)
                 //{
                 //    bool isPixActive = videoData[0x2400 + (row * 256) + col] & (0x01 << pixel);
@@ -41,6 +41,11 @@ namespace GraphicsDisplay
     void GameWindow::displayValue()
     {
         std::cout << "Value: " << value << std::endl;
+    }
+
+    int GameWindow::ReturnValue()
+    {
+        return value;
     }
 
     GameWindow::~GameWindow()

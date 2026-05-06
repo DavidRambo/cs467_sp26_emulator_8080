@@ -15,5 +15,6 @@ namespace GraphicsDisplay
         ~GameWindow();
         void UpdateDisplay(const char* videoData);
         void displayValue();
+        int ReturnValue();
     };
 }
