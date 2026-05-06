@@ -59,6 +59,24 @@ std::uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
 
 void CPU8080::reset() { program_counter_ = 0x0000; };
 
+// Sets parity flag if byte has even parity, otherwise resets it.
+void CPU8080::parity_check(uint8_t byte) {
+  if (__builtin_parity(byte)) {
+    flags_.parity = 0;
+  } else {
+    flags_.parity = 1;
+  }
+}
+
+// Sets parity flag if word has even parity, otherwise resets it.
+void CPU8080::parity_check(uint16_t word) {
+  if (__builtin_parity(word)) {
+    flags_.parity = 0;
+  } else {
+    flags_.parity = 1;
+  }
+}
+
 void CPU8080::execute(std::uint8_t opcode) {
   /*
    Will utilize an arrray with indicees 0 to 256 for all opcodes found in

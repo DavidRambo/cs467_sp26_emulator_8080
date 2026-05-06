@@ -61,6 +61,10 @@ class CPU8080 {
 
   void execute(std::uint8_t opcode);
 
+  void parity_check(uint8_t byte);
+
+  void parity_check(uint16_t word);
+
   Registers registers_;
   std::uint16_t stack_pointer_;
   std::uint16_t program_counter_;
