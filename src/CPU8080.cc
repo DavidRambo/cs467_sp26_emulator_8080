@@ -8,16 +8,14 @@ namespace intel_8080 {
 
 CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem)
     : mem_access_(std::move(new_mem)) {
-  // Registers: B=0, C=1, D=2, E=3, H=4, L=5 Memory=6, A=7
-  registers_.fill(0x00);
   stack_pointer_ = 0x0000;
   program_counter_ = 0x0000;
-  flags_ = Flags();  // 00000010
+  flags_ = Flags();
+  registers_ = Registers();
   INTE_ = false;
-  mem_access_ = new_mem;
 };
 
-std::uint8_t CPU8080::Flags::psw() {
+std::uint8_t CPU8080::Flags::to_byte() {
   std::uint8_t return_byte = 0x02;
 
   // Shift flags to proper location

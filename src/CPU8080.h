@@ -26,7 +26,21 @@ class CPU8080 {
     std::uint8_t parity : 1;
     std::uint8_t carry : 1;
 
-    std::uint8_t psw();
+    std::uint8_t to_byte();
+  };
+
+  struct Registers {
+    std::uint8_t reg_a = 0x00;
+    std::uint8_t reg_b = 0x00;
+    std::uint8_t reg_c = 0x00;
+    std::uint8_t reg_d = 0x00;
+    std::uint8_t reg_e = 0x00;
+    std::uint8_t reg_h = 0x00;
+    std::uint8_t reg_l = 0x00;
+
+    std::uint16_t hl() { return (std::uint16_t)reg_h << 8 | reg_l; };
+    std::uint16_t bc() { return (std::uint16_t)reg_b << 8 | reg_c; };
+    std::uint16_t de() { return (std::uint16_t)reg_d << 8 | reg_e; };
   };
 
  public:
@@ -47,7 +61,7 @@ class CPU8080 {
 
   void execute(std::uint8_t opcode);
 
-  std::array<std::uint8_t, 8> registers_;
+  Registers registers_;
   std::uint16_t stack_pointer_;
   std::uint16_t program_counter_;
   Flags flags_;
