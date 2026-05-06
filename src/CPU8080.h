@@ -65,6 +65,8 @@ class CPU8080 {
 
   void parity_check(uint16_t word);
 
+  void update_flags_szp(uint8_t byte);
+
   Registers registers_;
   std::uint16_t stack_pointer_;
   std::uint16_t program_counter_;
