@@ -54,7 +54,7 @@ void intel_8080::Memory8080::LoadROM(std::string file_path) {
 
   file.read(reinterpret_cast<char*>(mem_buffer_.data()), file_size);
 
-  if (file.gcount() != file_size) {
+  if (file.gcount() != (int)file_size) {
     std::cerr << "Warning: File size mismatch" << std::endl;
     std::exit(1);
   }
