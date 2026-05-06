@@ -77,6 +77,19 @@ void CPU8080::parity_check(uint16_t word) {
   }
 }
 
+// Updates condition codes for sign, zero, auxiliary carry, and parity.
+// Carry is handled separately for two reasons:
+// 1. Not all instructions that affect these flags also affect the carry bit
+// and vice versa.
+// 2. How to update the carry bit depends on the data type of the instruction.
+// NOTE: Does not update auxiliary carry bit because we are not implementing the
+// DAA instruction. This flag's sole purpose is to enable that instruction.
+void CPU8080::update_flags_szp(uint8_t byte) {
+  flags_.zero = 1 ? byte == 0 : 0;
+  flags_.sign = 1 ? ((byte & 0b1000'0000) == 0b1000'0000) : 0;
+  parity_check(byte);
+}
+
 void CPU8080::execute(std::uint8_t opcode) {
   /*
    Will utilize an arrray with indicees 0 to 256 for all opcodes found in
