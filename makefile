@@ -8,10 +8,10 @@ TESTDIR = tests
 LIBRARY = /usr/local/lib/
 
 $(BUILDDIR)/prog: $(BUILDDIR)/main.o $(BUILDDIR)/GraphicsDisplay.o
-	g++ $(BUILDDIR)/main.o $(BUILDDIR)/GraphicsDisplay.o -o prog -L$(LIBRARY) -lSDL3
+	g++ $(CXX_FLAGS) $(BUILDDIR)/main.o $(BUILDDIR)/GraphicsDisplay.o -o $(BUILDDIR)/prog -L$(LIBRARY) -lSDL3
 
 $(BUILDDIR)/main.o: $(SRCDIR)/main.cc
-	g++ -c $(SRCDIR)/main.cc -o $(BUILDDIR)/main.o
+	g++ $(CXX_FLAGS) -c $(SRCDIR)/main.cc -o $(BUILDDIR)/main.o
 
 $(BUILDDIR)/GraphicsDisplay.o: $(SRCDIR)/GraphicsDisplay.cc $(SRCDIR)/GraphicsDisplay.h
-	g++ -c $(SRCDIR)/GraphicsDisplay.cc -o $(BUILDDIR)/GraphicsDisplay.o
+	g++ $(CXX_FLAGS) -c $(SRCDIR)/GraphicsDisplay.cc -o $(BUILDDIR)/GraphicsDisplay.o
