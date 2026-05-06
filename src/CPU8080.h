@@ -61,9 +61,9 @@ class CPU8080 {
 
   void execute(std::uint8_t opcode);
 
-  void parity_check(uint8_t byte);
+  void update_parity(uint8_t byte);
 
-  void parity_check(uint16_t word);
+  void update_parity(uint16_t word);
 
   void update_flags_szp(uint8_t byte);
 
