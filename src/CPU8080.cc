@@ -112,7 +112,8 @@ void CPU8080::execute(std::uint8_t opcode) {
       break;
     case 0x06:
       break;
-    case 0x07:
+    case 0x07:  // RLC
+      rlc();
       break;
     case 0x08:
       break;

@@ -14,7 +14,7 @@ void CPU8080::mov(uint8_t* addr, uint8_t data) { *addr = data; }
 
 // RLC Rotate Accumulator Left
 void CPU8080::rlc() {
-  if ((registers_.reg_a & 0x08) == 0x08) {
+  if ((registers_.reg_a & 0x80) == 0x80) {
     flags_.carry = 1;
   }
   registers_.reg_a = registers_.reg_a << 1;
