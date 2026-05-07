@@ -90,8 +90,8 @@ void CPU8080::update_parity(uint16_t word) {
 // NOTE: Does not update auxiliary carry bit because we are not implementing the
 // DAA instruction. This flag's sole purpose is to enable that instruction.
 void CPU8080::update_flags_szp(uint8_t byte) {
-  flags_.zero = 1 ? byte == 0 : 0;
-  flags_.sign = 1 ? ((byte & 0b1000'0000) == 0b1000'0000) : 0;
+  flags_.zero = byte == 0;
+  flags_.sign = ((byte & 0b1000'0000) == 0b1000'0000);
   update_parity(byte);
 }
 
