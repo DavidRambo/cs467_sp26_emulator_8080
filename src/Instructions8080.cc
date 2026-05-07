@@ -13,12 +13,18 @@ void CPU8080::inr(uint8_t* byte) {
 void CPU8080::mov(uint8_t* addr, uint8_t data) { *addr = data; }
 
 // RLC Rotate Accumulator Left
+//
+// Left shifts accumulator and uses carry bit to "rotate" most-significant bit
+// to least-significant bit.
+//
+// Condition bits affected: carry.
 void CPU8080::rlc() {
-  if ((registers_.reg_a & 0x80) == 0x80) {
-    flags_.carry = 1;
-  }
+  // Set or clear carry bit.
+  flags_.carry = registers_.reg_a >> 7;
+
   registers_.reg_a = registers_.reg_a << 1;
-  if (flags_.carry == 1) {
+
+  if (flags_.carry) {
     registers_.reg_a++;
   }
 }
