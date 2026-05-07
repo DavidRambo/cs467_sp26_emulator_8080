@@ -79,6 +79,8 @@ class CPU8080 {
   // Instructions
   void inr(uint8_t* byte);
 
+  void rlc();
+
   Flags flags_;
   Registers registers_;
   std::uint16_t stack_pointer_;
