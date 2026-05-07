@@ -222,7 +222,8 @@ void CPU8080::execute(std::uint8_t opcode) {
       break;
     case 0x3D:
       break;
-    case 0x3E:
+    case 0x3E:  // MVI A, D8
+      mov(&registers_.reg_a, fetch_byte());
       break;
     case 0x3F:
       break;

@@ -78,7 +78,7 @@ class CPU8080 {
 
   // Instructions
   void inr(uint8_t* byte);
-
+  void mov(uint8_t* addr, uint8_t data);
   void rlc();
 
   Flags flags_;

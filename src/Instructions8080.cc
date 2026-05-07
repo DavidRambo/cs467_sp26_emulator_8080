@@ -9,6 +9,9 @@ void CPU8080::inr(uint8_t* byte) {
   update_flags_szp(*byte);
 }
 
+// MOV Move data byte into register or memory address
+void CPU8080::mov(uint8_t* addr, uint8_t data) { *addr = data; }
+
 // RLC Rotate Accumulator Left
 void CPU8080::rlc() {
   if ((registers_.reg_a & 0x08) == 0x08) {
