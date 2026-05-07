@@ -18,7 +18,7 @@ TEST_CASE("Testing RLC instruction") {
   emu.step();
   emu.step();
 
-  auto state = emu.get_state();
+  intel_8080::CPU8080::State state = emu.get_state();
   CHECK_EQ(state.registers.reg_b, 0);
   CHECK_EQ(state.registers.reg_c, 0);
   CHECK_EQ(state.registers.reg_a, 0xE5);
