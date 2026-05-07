@@ -68,7 +68,7 @@ class CPU8080 {
   void update_parity(uint16_t word);
 
   // Instructions
-  void inr(uint8_t* reg);
+  void inr(uint8_t* byte);
 
   Flags flags_;
   Registers registers_;
