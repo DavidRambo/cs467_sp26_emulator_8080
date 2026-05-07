@@ -33,13 +33,13 @@ void CPU8080::step() {
 };
 
 std::uint8_t CPU8080::fetch_byte() {
-  std::uint8_t byte = mem_access_->Read(program_counter_);
+  std::uint8_t byte = mem_access_->read(program_counter_);
   program_counter_++;
   return byte;
 };
 
 std::uint8_t CPU8080::fetch_byte(std::uint16_t mem_location) {
-  std::uint8_t byte = mem_access_->Read(mem_location);
+  std::uint8_t byte = mem_access_->read(mem_location);
   return byte;
 };
 
@@ -51,8 +51,8 @@ std::uint16_t CPU8080::fetch_word() {
 }
 
 std::uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
-  std::uint8_t low_byte = mem_access_->Read(mem_location);
-  std::uint8_t high_byte = mem_access_->Read(mem_location + 1);
+  std::uint8_t low_byte = mem_access_->read(mem_location);
+  std::uint8_t high_byte = mem_access_->read(mem_location + 1);
   std::uint16_t word = ((std::uint16_t)high_byte << 8) | low_byte;
   return word;
 };
