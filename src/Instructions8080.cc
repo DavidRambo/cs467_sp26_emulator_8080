@@ -5,7 +5,7 @@ namespace intel_8080 {
 //
 // Condition bits affected: Zero, Sign, Parity
 void CPU8080::inr(uint8_t* byte) {
-  byte += 1;
+  *byte += 1;
   update_flags_szp(*byte);
 }
 }  // namespace intel_8080

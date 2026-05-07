@@ -57,20 +57,9 @@ std::uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
   return word;
 };
 
+// Copies the state of the CPU and returns in a State struct.
 CPU8080::State CPU8080::get_state() {
-  // Registers regs_copy;
-  // regs_copy.reg_a = registers_.reg_a;
-  // regs_copy.reg_b = registers_.reg_b;
-  // regs_copy.reg_c = registers_.reg_c;
-  // regs_copy.reg_d = registers_.reg_d;
-  // regs_copy.reg_e = registers_.reg_e;
-  // regs_copy.reg_h = registers_.reg_h;
-  // regs_copy.reg_l = registers_.reg_l;
-
-  // Flags flags_copy = flags_;
-
-  return State{Registers(registers_), Flags(flags_), program_counter_,
-               stack_pointer_};
+  return State{registers_, flags_, stack_pointer_, program_counter_};
 }
 
 void CPU8080::reset() { program_counter_ = 0x0000; };
