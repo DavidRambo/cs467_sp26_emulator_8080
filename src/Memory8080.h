@@ -2,6 +2,7 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace intel_8080 {
 class Memory8080 {
@@ -19,6 +20,8 @@ class Memory8080 {
   void clear_rom();
 
   void load_rom(std::string file_path);
+
+  void load_data(std::vector<uint8_t> data, uint16_t start = 0);
 
  private:
   std::array<std::uint8_t, kSIZE> mem_buffer_;

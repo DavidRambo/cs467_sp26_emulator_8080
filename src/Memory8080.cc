@@ -9,6 +9,7 @@
 #include <iostream>
 #include <ostream>
 #include <string>
+#include <vector>
 
 intel_8080::Memory8080::Memory8080() : mem_buffer_{} {
   mem_buffer_.fill(0x00);
@@ -61,3 +62,16 @@ void intel_8080::Memory8080::load_rom(std::string file_path) {
 
   file.close();
 };
+
+void intel_8080::Memory8080::load_data(std::vector<uint8_t> data,
+                                       uint16_t start) {
+  if (data.size() > kSIZE + start) {
+    std::cerr << "Data is too large for memory" << std::endl;
+    std::exit(1);
+  }
+
+  for (uint8_t value : data) {
+    mem_buffer_[start] = value;
+    start++;
+  }
+}

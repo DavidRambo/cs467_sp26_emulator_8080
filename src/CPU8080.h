@@ -44,11 +44,20 @@ class CPU8080 {
   };
 
  public:
+  struct State {
+    Registers registers;
+    Flags flags;
+    uint16_t stack_pointer;
+    uint16_t program_counter;
+  };
+
   CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem);
 
   void step();
 
   void reset();
+
+  State get_state();
 
  private:
   std::uint8_t fetch_byte();
@@ -61,10 +70,21 @@ class CPU8080 {
 
   void execute(std::uint8_t opcode);
 
+  void update_flags_szp(uint8_t byte);
+
+  void update_parity(uint8_t byte);
+
+  void update_parity(uint16_t word);
+
+  // Instructions
+  void inr(uint8_t* byte);
+  void mov(uint8_t* addr, uint8_t data);
+  void rlc();
+
+  Flags flags_;
   Registers registers_;
   std::uint16_t stack_pointer_;
   std::uint16_t program_counter_;
-  Flags flags_;
   // false = 0 and true = 1
   bool INTE_;
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
