@@ -6,42 +6,42 @@
 #include <cstdint>
 #include <string>
 
-namespace Audio {
+namespace audio {
 
 class Mixer {
  public:
   Mixer() { Load(); }
 
   // Pass in Reg A (accumulator) bits for OUT port 3
-  void SetOut3(uint8_t accumulatorBits);
+  void SetOut3(uint8_t accumulator_bits);
 
   // Pass in Reg A (accumulator) bits for OUT port 5
-  void SetOut5(uint8_t accumulatorBits);
+  void SetOut5(uint8_t accumulator_bits);
 
  private:
   enum class SoundId : int {
-    Background,
-    Explosion,
-    InvaderHit,
-    Torpedo,
-    UfoHit,
-    Ufo
+    kBackground,
+    kExplosion,
+    kInvaderHit,
+    kTorpedo,
+    kUfoHit,
+    kUfo
   };
 
   struct Channel {
-    SDL_AudioStream* stream = nullptr;
-    SDL_AudioSpec spec{};
-    Uint8* wav_buf = nullptr;
-    Uint32 wav_len = 0;
-    bool looping = false;
-    bool playing = false;
+    SDL_AudioStream* stream_ = nullptr;
+    SDL_AudioSpec spec_{};
+    uint8_t* wav_buf_ = nullptr;
+    uint32_t wav_len_ = 0;
+    bool looping_ = false;
+    bool playing_ = false;
   };
 
-  SDL_AudioDeviceID device = 0;
-  SDL_AudioSpec deviceSpec;
-  std::array<Channel, 6> channels{};
-  uint8_t prevPort3 = 0;
-  uint8_t prevPort5 = 0;
+  SDL_AudioDeviceID device_ = 0;
+  SDL_AudioSpec device_spec_;
+  std::array<Channel, 6> channels_{};
+  uint8_t prev_port3_ = 0;
+  uint8_t prev_port5_ = 0;
 
   void Load();
 
@@ -50,4 +50,4 @@ class Mixer {
   void Stop(SoundId id);
 };
 
-}  // namespace Audio
+}  // namespace audio
