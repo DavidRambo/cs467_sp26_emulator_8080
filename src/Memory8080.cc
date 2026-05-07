@@ -13,7 +13,6 @@
 intel_8080::Memory8080::Memory8080() : mem_buffer_{} {
   mem_buffer_.fill(0x00);
   end_of_ROM_ = 0x0000;
-  std::cout << mem_buffer_.size() << std::endl;
 }
 std::uint8_t intel_8080::Memory8080::read(std::uint16_t mem_location) {
   return mem_buffer_[mem_location];
