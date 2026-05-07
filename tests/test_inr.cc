@@ -13,7 +13,7 @@ TEST_CASE("Testing INR B: B += 1") {
     std::vector<uint8_t> data = {0x04};
     mem->load_data(data);
     emu.step();
-    auto state = emu.get_state();
+    intel_8080::CPU8080::State state = emu.get_state();
     CHECK_EQ(state.registers.reg_b, 1);
     CHECK_EQ(state.registers.reg_c, 0);
     CHECK_EQ(state.registers.reg_a, 0);
@@ -37,7 +37,7 @@ TEST_CASE("Testing INR B: B += 1") {
       emu.step();
     }
 
-    auto state = emu.get_state();
+    intel_8080::CPU8080::State state = emu.get_state();
     CHECK_EQ(state.registers.reg_b, 0);
     CHECK_EQ(state.registers.reg_c, 0);
     CHECK_EQ(state.registers.reg_a, 0);

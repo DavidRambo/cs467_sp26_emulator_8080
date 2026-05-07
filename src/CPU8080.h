@@ -43,6 +43,7 @@ class CPU8080 {
     std::uint16_t de() { return (std::uint16_t)reg_d << 8 | reg_e; };
   };
 
+ public:
   struct State {
     Registers registers;
     Flags flags;
@@ -50,7 +51,6 @@ class CPU8080 {
     uint16_t program_counter;
   };
 
- public:
   CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem);
 
   void step();
