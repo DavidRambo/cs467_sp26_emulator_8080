@@ -57,6 +57,19 @@ std::uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
   return word;
 };
 
+CPU8080::Registers CPU8080::get_registers() {
+  Registers copy_regs;
+  copy_regs.reg_a = registers_.reg_a;
+  copy_regs.reg_b = registers_.reg_b;
+  copy_regs.reg_c = registers_.reg_c;
+  copy_regs.reg_d = registers_.reg_d;
+  copy_regs.reg_e = registers_.reg_e;
+  copy_regs.reg_h = registers_.reg_h;
+  copy_regs.reg_l = registers_.reg_l;
+
+  return copy_regs;
+}
+
 void CPU8080::reset() { program_counter_ = 0x0000; };
 
 // Sets parity flag if byte has even parity, otherwise resets it.

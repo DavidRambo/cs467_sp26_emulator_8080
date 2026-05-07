@@ -50,6 +50,8 @@ class CPU8080 {
 
   void reset();
 
+  Registers get_registers();
+
  private:
   std::uint8_t fetch_byte();
 
