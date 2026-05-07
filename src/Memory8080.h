@@ -6,21 +6,22 @@
 namespace intel_8080 {
 class Memory8080 {
  public:
-  static constexpr int SIZE = 0x10000;  // 0xFFFF + 1 for inclusive indices
+  static constexpr int kSIZE = 0x10000;  // 0xFFFF + 1 for inclusive indices
+
   Memory8080();
 
-  uint8_t Read(std::uint16_t mem_location);
+  uint8_t read(std::uint16_t mem_location);
 
-  void Write(uint16_t mem_loation, uint8_t data);
+  void write(uint16_t mem_loation, uint8_t data);
 
-  void ClearMem();
+  void clear_mem();
 
-  void ClearROM();
+  void clear_rom();
 
-  void LoadROM(std::string file_path);
+  void load_rom(std::string file_path);
 
  private:
-  std::array<std::uint8_t, SIZE> mem_buffer_;
+  std::array<std::uint8_t, kSIZE> mem_buffer_;
   std::uint16_t end_of_ROM_;
 };
 }  // namespace intel_8080
