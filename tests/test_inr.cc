@@ -11,14 +11,19 @@ TEST_CASE("Testing INR B: B += 1") {
 
   SUBCASE("Incrementing B from 0 to 1") {
     std::vector<uint8_t> data = {0x04};
-    mem->LoadData(data);
+    mem->load_data(data);
     emu.step();
-    auto curr_regs = emu.get_registers();
-    CHECK_EQ(curr_regs.reg_b, 1);
-    CHECK_EQ(curr_regs.reg_c, 0);
-    CHECK(curr_regs.reg_a == 0);
-    CHECK(curr_regs.reg_d == 0);
-    CHECK(curr_regs.reg_h == 0);
-    CHECK(curr_regs.reg_l == 0);
+    auto state = emu.get_state();
+    CHECK_EQ(state.registers.reg_b, 1);
+    CHECK_EQ(state.registers.reg_c, 0);
+    CHECK_EQ(state.registers.reg_a, 0);
+    CHECK_EQ(state.registers.reg_d, 0);
+    CHECK_EQ(state.registers.reg_h, 0);
+    CHECK_EQ(state.registers.reg_l, 0);
+    CHECK_EQ(state.program_counter, 1);
+    CHECK_EQ(state.flags.sign, 0);
+    CHECK_EQ(state.flags.zero, 0);
+    CHECK_EQ(state.flags.parity, 0);
+    CHECK_EQ(state.flags.carry, 0);
   }
 }

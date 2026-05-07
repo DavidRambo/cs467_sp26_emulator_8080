@@ -57,17 +57,20 @@ std::uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
   return word;
 };
 
-CPU8080::Registers CPU8080::get_registers() {
-  Registers copy_regs;
-  copy_regs.reg_a = registers_.reg_a;
-  copy_regs.reg_b = registers_.reg_b;
-  copy_regs.reg_c = registers_.reg_c;
-  copy_regs.reg_d = registers_.reg_d;
-  copy_regs.reg_e = registers_.reg_e;
-  copy_regs.reg_h = registers_.reg_h;
-  copy_regs.reg_l = registers_.reg_l;
+CPU8080::State CPU8080::get_state() {
+  // Registers regs_copy;
+  // regs_copy.reg_a = registers_.reg_a;
+  // regs_copy.reg_b = registers_.reg_b;
+  // regs_copy.reg_c = registers_.reg_c;
+  // regs_copy.reg_d = registers_.reg_d;
+  // regs_copy.reg_e = registers_.reg_e;
+  // regs_copy.reg_h = registers_.reg_h;
+  // regs_copy.reg_l = registers_.reg_l;
 
-  return copy_regs;
+  // Flags flags_copy = flags_;
+
+  return State{Registers(registers_), Flags(flags_), program_counter_,
+               stack_pointer_};
 }
 
 void CPU8080::reset() { program_counter_ = 0x0000; };

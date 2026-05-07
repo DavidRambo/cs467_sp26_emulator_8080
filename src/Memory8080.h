@@ -21,7 +21,7 @@ class Memory8080 {
 
   void load_rom(std::string file_path);
 
-  void LoadData(std::vector<uint8_t> data);
+  void load_data(std::vector<uint8_t> data);
 
  private:
   std::array<std::uint8_t, kSIZE> mem_buffer_;
