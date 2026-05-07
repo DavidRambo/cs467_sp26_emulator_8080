@@ -26,4 +26,28 @@ TEST_CASE("Testing INR B: B += 1") {
     CHECK_EQ(state.flags.parity, 0);
     CHECK_EQ(state.flags.carry, 0);
   }
+
+  SUBCASE("Incrementing B 256 times") {
+    std::vector<uint8_t> data;
+    for (int i = 0; i < 256; i++) {
+      data.emplace_back(0x04);
+    }
+    mem->load_data(data);
+    for (int i = 0; i < 256; i++) {
+      emu.step();
+    }
+
+    auto state = emu.get_state();
+    CHECK_EQ(state.registers.reg_b, 0);
+    CHECK_EQ(state.registers.reg_c, 0);
+    CHECK_EQ(state.registers.reg_a, 0);
+    CHECK_EQ(state.registers.reg_d, 0);
+    CHECK_EQ(state.registers.reg_h, 0);
+    CHECK_EQ(state.registers.reg_l, 0);
+    CHECK_EQ(state.program_counter, 256);
+    CHECK_EQ(state.flags.sign, 0);
+    CHECK_EQ(state.flags.zero, 1);
+    CHECK_EQ(state.flags.parity, 1);
+    CHECK_EQ(state.flags.carry, 0);
+  }
 }
