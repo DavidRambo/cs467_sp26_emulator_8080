@@ -65,7 +65,7 @@ void intel_8080::Memory8080::load_rom(std::string file_path) {
 
 void intel_8080::Memory8080::load_data(std::vector<uint8_t> data,
                                        uint16_t start) {
-  if (data.size() > kSIZE + start) {
+  if (data.size() + start > kSIZE) {
     std::cerr << "Data is too large for memory" << std::endl;
     std::exit(1);
   }
