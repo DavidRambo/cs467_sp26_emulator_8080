@@ -76,10 +76,45 @@ class CPU8080 {
 
   void update_parity(uint16_t word);
 
+  // Immediate instructions will utilize their register/mem
+  // counterpart except for lxi
   // Instructions
   void inr(uint8_t* byte);
   void mov(uint8_t* addr, uint8_t data);
+  void stax(uint16_t mem_location);
+  void ldax(uint16_t mem_location);
   void rlc();
+  void cmc();
+  void stc();
+  void dcr(uint8_t* byte);
+  void cma();
+  void daa();  // Are we ignoring this one?
+  void nop();
+  void add(uint8_t data);
+  void adc(uint8_t data);
+  void sub(uint8_t data);
+  void sbb(uint8_t data);
+  void ana(uint8_t data);
+  void xra(uint8_t data);
+  void ora(uint8_t data);
+  void cmp(uint8_t data);
+  void rrc();
+  void ral();
+  void rar();
+  void push(uint16_t reg_pair);
+  uint16_t pop();
+  void dad(uint16_t reg_pair);
+  void inx(uint16_t* data);
+  void dcx(uint16_t* data);
+  void xchg();
+  void sphl();
+  void lxi(uint16_t data);
+  void call(uint16_t mem_location);
+  void ret();
+  void rst();
+  void ei();
+  void di();
+  void hlt();
 
   Flags flags_;
   Registers registers_;
