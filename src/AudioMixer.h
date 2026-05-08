@@ -11,6 +11,7 @@ namespace audio {
 class Mixer {
  public:
   Mixer() { Load(); }
+  ~Mixer() { Quit(); }
 
   // Pass in Reg A (accumulator) bits for OUT port 3
   void SetOut3(uint8_t accumulator_bits);
@@ -35,6 +36,7 @@ class Mixer {
     uint32_t wav_len_ = 0;
     bool looping_ = false;
     bool playing_ = false;
+    uint32_t pos_ = 0;
   };
 
   SDL_AudioDeviceID device_ = 0;
@@ -45,9 +47,13 @@ class Mixer {
 
   void Load();
 
+  static void SDLCALL LoopCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount);
+
   void Play(SoundId id);
 
   void Stop(SoundId id);
+
+  void Quit();
 };
 
 }  // namespace audio
