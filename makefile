@@ -8,11 +8,19 @@ TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
 # Creates a list of object files
 OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o)
 
+# For passing doctest query flags when running tests.
+# Example use, which will run test cases with a name including "input":
+#   make test TESTFLAGS='--test-case=*input*'
+# This will run the tests in test_io.cc:
+#   make test TESTFLAGS='--source-file=tests/test_io.cc'
+# For more: https://github.com/doctest/doctest/blob/master/doc/markdown/commandline.md
+TESTFLAGS =
+
 emu8080: $(OBJS) $(SRCDIR)/main.cc
 	g++ -o emu8080 $^
 
 test: all_tests
-	./all_tests
+	./all_tests $(TESTFLAGS)
 
 all_tests: $(OBJS) $(TESTSRCFILES)
 	g++ -o all_tests $^ 
