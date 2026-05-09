@@ -13,6 +13,8 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem)
   flags_ = Flags();
   registers_ = Registers();
   INTE_ = false;
+  input_port_1_ = Port();
+  input_port_2_ = Port();
 };
 
 std::uint8_t CPU8080::Flags::to_byte() {
