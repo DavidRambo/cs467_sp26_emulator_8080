@@ -582,8 +582,15 @@ void CPU8080::execute(std::uint8_t opcode) {
       break;
     case 0xDA:
       break;
-    case 0xDB:
-      break;
+    case 0xDB: {
+      uint8_t port_no = fetch_byte();
+      if (port_no != 1 && port_no != 2) {
+        std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
+                  << std::endl;
+        break;
+      }
+      in(read_input_port(port_no), &registers_.reg_a);
+    } break;
     case 0xDC:
       break;
     case 0xDD:
