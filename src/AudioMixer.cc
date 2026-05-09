@@ -4,7 +4,6 @@
 
 #include <array>
 #include <cstdint>
-#include <map>
 
 namespace audio {
 void Mixer::Load() {
@@ -14,6 +13,7 @@ void Mixer::Load() {
     return;
   }
 
+  // Capture the hardware format so each stream can resample/convert as needed.
   SDL_GetAudioDeviceFormat(device_, &device_spec_, nullptr);
 
   struct SoundEffect {
@@ -23,7 +23,7 @@ void Mixer::Load() {
   };
 
   constexpr std::array kSounds{
-    // clang-format off
+      // clang-format off
     //          Sound ID              File                Looping
     SoundEffect{SoundId::kBackground, "background.wav",   true},
     SoundEffect{SoundId::kExplosion,  "explosion.wav",    false},
@@ -31,14 +31,14 @@ void Mixer::Load() {
     SoundEffect{SoundId::kTorpedo,    "torpedo.wav",      false},
     SoundEffect{SoundId::kUfoHit,     "ufo_hit.wav",      false},
     SoundEffect{SoundId::kUfo,        "ufo.wav",          true},
-    // clang-format on
+      // clang-format on
   };
 
   for (const auto& sound : kSounds) {
     Channel& chan = channels_[static_cast<std::size_t>(sound.id_)];
     SDL_LoadWAV(sound.file_, &chan.spec_, &chan.wav_buf_, &chan.wav_len_);
     chan.looping_ = sound.looping_;
-    chan.stream_ = SDL_CreateAudioStream(&chan.spec_, &device_spec_);
+        chan.stream_ = SDL_CreateAudioStream(&chan.spec_, &device_spec_);
     SDL_BindAudioStream(device_, chan.stream_);
   }
 }
@@ -46,6 +46,8 @@ void Mixer::Load() {
 void SDLCALL Mixer::LoopCallback(void* userdata, SDL_AudioStream* stream,
                                  int additional_amount, int /*total_amount*/) {
   auto* chan = static_cast<Channel*>(userdata);
+  // Feed chunks until SDL's request is satisfied, wrapping pos_ at the end of
+  // the buffer to achieve seamless looping without re-queuing the whole file.
   while (additional_amount > 0) {
     int remaining =
         static_cast<int>(chan->wav_len_) - static_cast<int>(chan->pos_);
@@ -65,10 +67,12 @@ void Mixer::Play(SoundId id) {
     return;
   }
 
+  // Discard queued audio so the sound restarts cleanly from the beginning.
   SDL_ClearAudioStream(chan.stream_);
   chan.pos_ = 0;
 
   if (chan.looping_) {
+    // Pass a callback function to continuosly loop sound effect.
     SDL_SetAudioStreamGetCallback(chan.stream_, LoopCallback, &chan);
   } else {
     SDL_SetAudioStreamGetCallback(chan.stream_, nullptr, nullptr);
@@ -85,78 +89,40 @@ void Mixer::Stop(SoundId id) {
     return;
   }
 
+  // Remove callback before flushing to prevent it from feeding data into a
+  // stream that is being cleared.
   SDL_SetAudioStreamGetCallback(chan.stream_, nullptr, nullptr);
   SDL_ClearAudioStream(chan.stream_);
   chan.pos_ = 0;
   chan.playing_ = false;
 }
 
-std::array<Mixer::AudioAction, 8> Mixer::DecodePort3(uint8_t accumulator_bits,
-                                                     uint8_t prev_port) {
-  std::map<int, SoundId> kSoundsPort3{
-    // clang-format off
-  // Bit    Sound
-    {1,     SoundId::kBackground},
-    {2,     SoundId::kExplosion},
-    {4,     SoundId::kInvaderHit},
-    {8,     SoundId::kBackground},
-    {16,    SoundId::kExplosion},
-    {32,    SoundId::kInvaderHit},
-    {64,    SoundId::kBackground},
-    {128,   SoundId::kExplosion},
-    // clang-format on
-  };
-
-  uint8_t changed = accumulator_bits ^ prev_port;
+std::array<Mixer::AudioAction, 8> Mixer::DecodePort(
+    uint8_t accumulator_bits, uint8_t prev_bits,
+    const std::array<SoundId, 8>& soundMap) {
+  // XOR isolates bits that changed between the previous and current port value.
+  uint8_t changed = accumulator_bits ^ prev_bits;
   std::array<AudioAction, 8> actions;
 
   for (int i = 0; i < 8; ++i) {
     uint8_t bit = 1 << i;
+    // Use bit as mask to determine which action to select for each accumulator bit.
     if (changed & bit) {
       (accumulator_bits & bit)
-          ? actions[i] = {AudioAction::Action::kPlay, kSoundsPort3[bit]}
-          : actions[i] = {AudioAction::Action::kStop, kSoundsPort3[bit]};
+          ? actions[i] = {AudioAction::Action::kPlay, soundMap[i]}
+          : actions[i] = {AudioAction::Action::kStop, soundMap[i]};
     } else {
-      actions[i] = {AudioAction::Action::kContinue, kSoundsPort3[bit]};
+      actions[i] = {AudioAction::Action::kContinue, soundMap[i]};
     }
   }
   return actions;
 }
 
-std::array<Mixer::AudioAction, 8> Mixer::DecodePort5(uint8_t accumulator_bits,
-                                                     uint8_t prev_port) {
-  std::map<int, SoundId> kSoundsPort5{
-    // clang-format off
-  // Bit    Sound
-    {1,     SoundId::kTorpedo},
-    {2,     SoundId::kUfoHit},
-    {4,     SoundId::kUfo},
-    {8,     SoundId::kTorpedo},
-    {16,    SoundId::kUfoHit},
-    {32,    SoundId::kUfo},
-    {64,    SoundId::kTorpedo},
-    {128,   SoundId::kUfoHit},
-    // clang-format on
-  };
-
-  uint8_t changed = accumulator_bits ^ prev_port;
-  std::array<AudioAction, 8> actions;
-
-  for (int i = 0; i < 8; ++i) {
-    uint8_t bit = 1 << i;
-    if (changed & bit) {
-      (accumulator_bits & bit)
-          ? actions[i] = {AudioAction::Action::kPlay, kSoundsPort5[bit]}
-          : actions[i] = {AudioAction::Action::kStop, kSoundsPort5[bit]};
-    } else {
-      actions[i] = {AudioAction::Action::kContinue, kSoundsPort5[bit]};
-    }
-  }
-  return actions;
-}
-
-void Mixer::SetOut3(uint8_t accumulator_bits) {
-  for (const auto& action : DecodePort3(accumulator_bits, prev_port3_)) {
+std::array<Mixer::AudioAction, 8> Mixer::ApplyPort(
+    uint8_t accumulator_bits, uint8_t prev_bits,
+    const std::array<SoundId, 8>& soundMap) {
+  auto actions = DecodePort(accumulator_bits, prev_bits, soundMap);
+  for (const auto& action : actions) {
     switch (action.action_) {
       case AudioAction::Action::kPlay:
         Play(action.id_);
@@ -170,25 +136,28 @@ void Mixer::SetOut3(uint8_t accumulator_bits) {
         break;
     }
   }
+  return actions;
+}
+
+std::array<Mixer::AudioAction, 8> Mixer::SetOut3(uint8_t accumulator_bits) {
+  static constexpr std::array<SoundId, 8> kSoundMap{
+      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
+      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
+      SoundId::kBackground, SoundId::kExplosion,
+  };
+  auto actions = ApplyPort(accumulator_bits, prev_port3_, kSoundMap);
   prev_port3_ = accumulator_bits;
+  return actions;
 }
 
-void Mixer::SetOut5(uint8_t accumulator_bits) {
-  for (const auto& action : DecodePort5(accumulator_bits, prev_port5_)) {
-    switch (action.action_) {
-      case AudioAction::Action::kPlay:
-        Play(action.id_);
-        break;
-      case AudioAction::Action::kStop:
-        Stop(action.id_);
-        break;
-      case AudioAction::Action::kContinue:
-        break;
-      default:
-        break;
-    }
-  }
+std::array<Mixer::AudioAction, 8> Mixer::SetOut5(uint8_t accumulator_bits) {
+  static constexpr std::array<SoundId, 8> kSoundMap{
+      SoundId::kTorpedo, SoundId::kUfoHit, SoundId::kUfo,     SoundId::kTorpedo,
+      SoundId::kUfoHit,  SoundId::kUfo,    SoundId::kTorpedo, SoundId::kUfoHit,
+  };
+  auto actions = ApplyPort(accumulator_bits, prev_port5_, kSoundMap);
   prev_port5_ = accumulator_bits;
+  return actions;
 }
 
 void Mixer::Quit() {
