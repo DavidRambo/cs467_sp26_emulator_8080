@@ -39,6 +39,12 @@ class Mixer {
     uint32_t pos_ = 0;
   };
 
+  struct AudioAction {
+    enum class Action : int { kStop, kPlay, kContinue };
+    Action action_;
+    SoundId id_;
+  };
+
   SDL_AudioDeviceID device_ = 0;
   SDL_AudioSpec device_spec_;
   std::array<Channel, 6> channels_{};
@@ -47,7 +53,14 @@ class Mixer {
 
   void Load();
 
-  static void SDLCALL LoopCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount);
+  static void SDLCALL LoopCallback(void* userdata, SDL_AudioStream* stream,
+                                   int additional_amount, int total_amount);
+
+  static std::array<AudioAction, 8> DecodePort3(uint8_t accumulator_bits,
+                                                uint8_t prev_port);
+
+  static std::array<AudioAction, 8> DecodePort5(uint8_t accumulator_bits,
+                                                uint8_t prev_port);
 
   void Play(SoundId id);
 

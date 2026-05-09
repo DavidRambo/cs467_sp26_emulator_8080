@@ -1,8 +1,10 @@
 #include "AudioMixer.h"
+
 #include <SDL3/SDL.h>
 
 #include <array>
 #include <cstdint>
+#include <map>
 
 namespace audio {
 void Mixer::Load() {
@@ -20,7 +22,7 @@ void Mixer::Load() {
     bool looping_;
   };
 
-  constexpr std::array kSounds {
+  constexpr std::array kSounds{
     // clang-format off
     //          Sound ID              File                Looping
     SoundEffect{SoundId::kBackground, "background.wav",   true},
@@ -41,11 +43,12 @@ void Mixer::Load() {
   }
 }
 
-void SDLCALL Mixer::LoopCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int /*total_amount*/)
-{
-  auto* chan    = static_cast<Channel*>(userdata);
+void SDLCALL Mixer::LoopCallback(void* userdata, SDL_AudioStream* stream,
+                                 int additional_amount, int /*total_amount*/) {
+  auto* chan = static_cast<Channel*>(userdata);
   while (additional_amount > 0) {
-    int remaining = static_cast<int>(chan->wav_len_) - static_cast<int>(chan->pos_);
+    int remaining =
+        static_cast<int>(chan->wav_len_) - static_cast<int>(chan->pos_);
     int chunk = std::min(additional_amount, remaining);
     SDL_PutAudioStreamData(stream, chan->wav_buf_ + chan->pos_, chunk);
     chan->pos_ += static_cast<uint32_t>(chunk);
@@ -58,13 +61,14 @@ void SDLCALL Mixer::LoopCallback(void *userdata, SDL_AudioStream *stream, int ad
 
 void Mixer::Play(SoundId id) {
   Channel& chan = channels_[static_cast<std::size_t>(id)];
-  if (!chan.stream_) { return; }
+  if (!chan.stream_) {
+    return;
+  }
 
   SDL_ClearAudioStream(chan.stream_);
   chan.pos_ = 0;
 
   if (chan.looping_) {
-    // TODO(BrandonAG): use a callback function as a parameter to loop Wav file
     SDL_SetAudioStreamGetCallback(chan.stream_, LoopCallback, &chan);
   } else {
     SDL_SetAudioStreamGetCallback(chan.stream_, nullptr, nullptr);
@@ -77,7 +81,9 @@ void Mixer::Play(SoundId id) {
 
 void Mixer::Stop(SoundId id) {
   Channel& chan = channels_[static_cast<std::size_t>(id)];
-  if (!chan.stream_ || !chan.playing_) { return; }
+  if (!chan.stream_ || !chan.playing_) {
+    return;
+  }
 
   SDL_SetAudioStreamGetCallback(chan.stream_, nullptr, nullptr);
   SDL_ClearAudioStream(chan.stream_);
@@ -85,72 +91,104 @@ void Mixer::Stop(SoundId id) {
   chan.playing_ = false;
 }
 
+std::array<Mixer::AudioAction, 8> Mixer::DecodePort3(uint8_t accumulator_bits,
+                                                     uint8_t prev_port) {
+  std::map<int, SoundId> kSoundsPort3{
+    // clang-format off
+  // Bit    Sound
+    {1,     SoundId::kBackground},
+    {2,     SoundId::kExplosion},
+    {4,     SoundId::kInvaderHit},
+    {8,     SoundId::kBackground},
+    {16,    SoundId::kExplosion},
+    {32,    SoundId::kInvaderHit},
+    {64,    SoundId::kBackground},
+    {128,   SoundId::kExplosion},
+    // clang-format on
+  };
+
+  uint8_t changed = accumulator_bits ^ prev_port;
+  std::array<AudioAction, 8> actions;
+
+  for (int i = 0; i < 8; ++i) {
+    uint8_t bit = 1 << i;
+    if (changed & bit) {
+      (accumulator_bits & bit)
+          ? actions[i] = {AudioAction::Action::kPlay, kSoundsPort3[bit]}
+          : actions[i] = {AudioAction::Action::kStop, kSoundsPort3[bit]};
+    } else {
+      actions[i] = {AudioAction::Action::kContinue, kSoundsPort3[bit]};
+    }
+  }
+  return actions;
+}
+
+std::array<Mixer::AudioAction, 8> Mixer::DecodePort5(uint8_t accumulator_bits,
+                                                     uint8_t prev_port) {
+  std::map<int, SoundId> kSoundsPort5{
+    // clang-format off
+  // Bit    Sound
+    {1,     SoundId::kTorpedo},
+    {2,     SoundId::kUfoHit},
+    {4,     SoundId::kUfo},
+    {8,     SoundId::kTorpedo},
+    {16,    SoundId::kUfoHit},
+    {32,    SoundId::kUfo},
+    {64,    SoundId::kTorpedo},
+    {128,   SoundId::kUfoHit},
+    // clang-format on
+  };
+
+  uint8_t changed = accumulator_bits ^ prev_port;
+  std::array<AudioAction, 8> actions;
+
+  for (int i = 0; i < 8; ++i) {
+    uint8_t bit = 1 << i;
+    if (changed & bit) {
+      (accumulator_bits & bit)
+          ? actions[i] = {AudioAction::Action::kPlay, kSoundsPort5[bit]}
+          : actions[i] = {AudioAction::Action::kStop, kSoundsPort5[bit]};
+    } else {
+      actions[i] = {AudioAction::Action::kContinue, kSoundsPort5[bit]};
+    }
+  }
+  return actions;
+}
+
 void Mixer::SetOut3(uint8_t accumulator_bits) {
-  uint8_t changed = accumulator_bits ^ prev_port3_;
+  for (const auto& action : DecodePort3(accumulator_bits, prev_port3_)) {
+    switch (action.action_) {
+      case AudioAction::Action::kPlay:
+        Play(action.id_);
+        break;
+      case AudioAction::Action::kStop:
+        Stop(action.id_);
+        break;
+      case AudioAction::Action::kContinue:
+        break;
+      default:
+        break;
+    }
+  }
   prev_port3_ = accumulator_bits;
-
-  // Bit 1
-  if (changed & 0x01) {
-    (accumulator_bits & 0x01) ? Play(SoundId::kBackground) : Stop(SoundId::kBackground);
-  }
-
-  // Bit 2
-  if ((changed & 0x02) && (accumulator_bits & 0x02)) { Play(SoundId::kExplosion); }
-
-  // Bit 3
-  if ((changed & 0x04) && (accumulator_bits & 0x04)) { Play(SoundId::kInvaderHit); }
-
-  // Bit 4
-  if (changed & 0x08) {
-    (accumulator_bits & 0x08) ? Play(SoundId::kBackground) : Stop(SoundId::kBackground);
-  }
-
-  // Bit 5
-  if ((changed & 0x10) && (accumulator_bits & 0x10)) { Play(SoundId::kExplosion); }
-
-  // Bit 6
-  if ((changed & 0x20) && (accumulator_bits & 0x20)) { Play(SoundId::kInvaderHit); }
-
-  // Bit 7
-  if (changed & 0x40) {
-    (accumulator_bits & 0x40) ? Play(SoundId::kBackground) : Stop(SoundId::kBackground);
-  }
-
-  // Bit 8
-  if ((changed & 0x80) && (accumulator_bits & 0x80)) { Play(SoundId::kExplosion); }
 }
 
 void Mixer::SetOut5(uint8_t accumulator_bits) {
-  uint8_t changed = accumulator_bits ^ prev_port5_;
+  for (const auto& action : DecodePort5(accumulator_bits, prev_port5_)) {
+    switch (action.action_) {
+      case AudioAction::Action::kPlay:
+        Play(action.id_);
+        break;
+      case AudioAction::Action::kStop:
+        Stop(action.id_);
+        break;
+      case AudioAction::Action::kContinue:
+        break;
+      default:
+        break;
+    }
+  }
   prev_port5_ = accumulator_bits;
-
-  // Bit 1
-  if ((changed & 0x01) && (accumulator_bits & 0x01)) { Play(SoundId::kTorpedo); }
-
-  // Bit 2
-  if ((changed & 0x02) && (accumulator_bits & 0x02)) { Play(SoundId::kUfoHit); }
-
-  // Bit 3
-  if (changed & 0x04) {
-    (accumulator_bits & 0x04) ? Play(SoundId::kUfo) : Stop(SoundId::kUfo);
-  }
-
-  // Bit 4
-  if ((changed & 0x08) && (accumulator_bits & 0x08)) { Play(SoundId::kTorpedo); }
-
-  // Bit 5
-  if ((changed & 0x10) && (accumulator_bits & 0x10)) { Play(SoundId::kUfoHit); }
-
-  // Bit 6
-  if (changed & 0x20) {
-    (accumulator_bits & 0x20) ? Play(SoundId::kUfo) : Stop(SoundId::kUfo);
-  }
-
-  // Bit 7
-  if ((changed & 0x40) && (accumulator_bits & 0x40)) { Play(SoundId::kTorpedo); }
-
-  // Bit 8
-  if ((changed & 0x80) && (accumulator_bits & 0x80)) { Play(SoundId::kUfoHit); }
 }
 
 void Mixer::Quit() {
