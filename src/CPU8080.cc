@@ -17,6 +17,12 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem)
   input_port_2_ = Port();
 };
 
+std::uint8_t CPU8080::Port::to_byte() {
+  std::uint8_t return_byte = bit0 | bit1 << 1 | bit2 << 2 | bit3 << 3 |
+                             bit4 << 4 | bit5 << 5 | bit6 << 6 | bit7 << 7;
+  return return_byte;
+}
+
 std::uint8_t CPU8080::Flags::to_byte() {
   std::uint8_t return_byte = 0x02;
 

@@ -17,6 +17,8 @@ class CPU8080 {
     std::uint8_t bit5 : 1;
     std::uint8_t bit6 : 1;
     std::uint8_t bit7 : 1;
+
+    std::uint8_t to_byte();
   };
 
   struct Flags {
