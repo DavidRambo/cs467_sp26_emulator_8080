@@ -28,4 +28,19 @@ void CPU8080::rlc() {
     registers_.reg_a++;
   }
 }
+
+// STAX: Store Accumulator
+// Contents of A are stoed in the memory location from either BC, or DE.
+// No flags affected
+void CPU8080::stax(uint16_t mem_location) {
+  mem_access_->write(mem_location, registers_.reg_a);
+}
+
+// LDAX: Load Accumulator
+// Contents of memory location from either BC, or DE are stored in Accumulator
+// No flags affected
+void CPU8080::ldax(uint16_t mem_location) {
+  registers_.reg_a = mem_access_->read(mem_location);
+}
+
 }  // namespace intel_8080
