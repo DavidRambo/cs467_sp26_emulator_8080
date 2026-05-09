@@ -68,4 +68,46 @@ void CPU8080::dcr(uint8_t* byte) {
 // Flags affected: N/A
 void CPU8080::cma() { registers_.reg_a = ~registers_.reg_a; }
 
+// ADD: Add Register or Memory to Accumulator
+// Adds the specified byte to A and the result is stored in A using two's
+// complement arithmetic Flags affected: Carry, Sign, Zero, Parity, Aux Carry
+void CPU8080::add(uint8_t data) {
+  uint16_t result = registers_.reg_a + data;
+  flags_.carry = (result > 0xFF) ? 1 : 0;
+  registers_.reg_a = (uint8_t)result;
+  update_flags_szp(registers_.reg_a);
+}
+
+// ADC: Add Register or Memory To Accumulator w/ Carry
+// Adds the specified byte + the carry flag to A and store in A.
+// Flags affected: Carry, Sign, Zero, Parity, Aux Carry
+void CPU8080::adc(uint8_t data) {
+  data += flags_.carry;
+  uint16_t result = registers_.reg_a + data + flags_.carry;
+  flags_.carry = (result > 0xFF) ? 1 : 0;
+  registers_.reg_a = (uint8_t)result;
+  update_flags_szp(registers_.reg_a);
+}
+
+// SUB: Subtract Register or Memory From Accumulator
+// The specified byte is subtracted from A, result is stored in A.
+// Flags affected: Carry, Sign, Zero, Parity, Aux Carry
+void CPU8080::sub(uint8_t data) {
+  uint16_t result = registers_.reg_a - data;
+  flags_.carry = (result > 0xFF) ? 0 : 1;
+  registers_.reg_a = (uint8_t)result;
+  update_flags_szp(registers_.reg_a);
+}
+
+// SBB: Subtract Register Or Memory From Accumulator
+// The specified byte plus the carry is subtracted from A.
+// The result is stored in A.
+// Flags affected: Carry, Sign, Zero, Parity, Aux Carry
+void CPU8080::sbb(uint8_t data) {
+  uint16_t result = registers_.reg_a - data;
+  flags_.carry = (result > 0xFF) ? 0 : 1;
+  registers_.reg_a = (uint8_t)result;
+  update_flags_szp(registers_.reg_a);
+}
+
 }  // namespace intel_8080
