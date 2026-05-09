@@ -61,6 +61,8 @@ class CPU8080 {
 
   State get_state();
 
+  void write_input_port(uint8_t port_no, uint8_t data);
+
  private:
   std::uint8_t fetch_byte();
 
@@ -71,6 +73,8 @@ class CPU8080 {
   std::uint16_t fetch_word(std::uint16_t mem_location);
 
   void execute(std::uint8_t opcode);
+
+  uint8_t read_input_port(uint8_t port_no);
 
   void update_flags_szp(uint8_t byte);
 
