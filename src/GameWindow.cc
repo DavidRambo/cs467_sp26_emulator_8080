@@ -39,6 +39,7 @@ namespace GraphicsDisplay
 
     GameWindow::~GameWindow()
     {
+        SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
     }
 }
