@@ -13,7 +13,7 @@ class Memory8080 {
 
   uint8_t read(std::uint16_t mem_location);
 
-  void write(uint16_t mem_loation, uint8_t data);
+  void write(uint16_t mem_location, uint8_t data);
 
   void clear_mem();
 
