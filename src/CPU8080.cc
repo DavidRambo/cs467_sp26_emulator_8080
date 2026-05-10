@@ -589,7 +589,7 @@ void CPU8080::execute(std::uint8_t opcode) {
                   << std::endl;
         break;
       }
-      in(read_input_port(port_no), &registers_.reg_a);
+      in(read_input_port(port_no));
     } break;
     case 0xDC:
       break;

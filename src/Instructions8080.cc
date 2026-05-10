@@ -6,7 +6,7 @@ namespace intel_8080 {
 // Prior to this function being called, a byte is read from memory after the
 // opcode to designate the port number. That data is written to the
 // accumulator.
-void CPU8080::in(uint8_t port_data, uint8_t* reg_a) { *reg_a = port_data; }
+void CPU8080::in(uint8_t port_data) { registers_.reg_a = port_data; }
 
 // INR Increment Register or Memory value
 //
