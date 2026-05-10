@@ -7,13 +7,16 @@ TESTDIR = tests
 
 LIBRARY = /usr/local/lib/
 
-$(BUILDDIR)/prog: $(BUILDDIR)/main.o $(BUILDDIR)/GraphicsDisplay.o
+$(BUILDDIR)/prog: $(BUILDDIR)/main.o $(BUILDDIR)/GameWindow.o $(BUILDDIR)/SpaceInvadersVRamDecoder.o
 	$(CXX) $(CXX_FLAGS) $^ -o $@ -L$(LIBRARY) -lSDL3
 
 $(BUILDDIR)/main.o: $(SRCDIR)/main.cc
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
-$(BUILDDIR)/GraphicsDisplay.o: $(SRCDIR)/GraphicsDisplay.cc $(SRCDIR)/GraphicsDisplay.h
+$(BUILDDIR)/GameWindow.o: $(SRCDIR)/GameWindow.cc $(SRCDIR)/GameWindow.h
+	$(CXX) $(CXX_FLAGS) -c $< -o $@
+
+$(BUILDDIR)/SpaceInvadersVRamDecoder.o: $(SRCDIR)/SpaceInvadersVRamDecoder.cc $(SRCDIR)/SpaceInvadersVRamDecoder.h
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 RunAllTests: $(TESTDIR)/test_prog
