@@ -104,7 +104,8 @@ class CPU8080 {
   void push(uint16_t reg_pair);
   uint16_t pop();
   void dad(uint16_t reg_pair);
-  void inx(uint16_t* data);
+  void lxi(uint8_t* first_reg, uint8_t* second_reg, uint8_t third_byte,
+           uint8_t second_byte);
   void dcx(uint16_t* data);
   void xchg();
   void sphl();
