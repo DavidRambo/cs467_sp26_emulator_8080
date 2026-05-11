@@ -79,7 +79,7 @@ class CPU8080 {
   // Immediate instructions will utilize their register/mem
   // counterpart except for lxi
   // Instructions
-  void inr(uint8_t* byte);
+  void inr(uint8_t* register);
   void mov(uint8_t* addr, uint8_t data);
   void stax(uint16_t mem_location);
   void ldax(uint16_t mem_location);
