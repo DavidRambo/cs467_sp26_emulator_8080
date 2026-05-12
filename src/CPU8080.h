@@ -79,16 +79,15 @@ class CPU8080 {
   // Immediate instructions will utilize their register/mem
   // counterpart except for lxi
   // Instructions
-  void inr(uint8_t* byte);
+  void inr(uint8_t* reg);
   void mov(uint8_t* addr, uint8_t data);
   void stax(uint16_t mem_location);
   void ldax(uint16_t mem_location);
   void rlc();
   void cmc();
   void stc();
-  void dcr(uint8_t* byte);
+  void dcr(uint8_t* reg);
   void cma();
-  void daa();  // Are we ignoring this one?
   void nop();
   void add(uint8_t data);
   void adc(uint8_t data);
@@ -101,14 +100,20 @@ class CPU8080 {
   void rrc();
   void ral();
   void rar();
-  void push(uint16_t reg_pair);
-  uint16_t pop();
-  void dad(uint16_t reg_pair);
-  void inx(uint16_t* data);
-  void dcx(uint16_t* data);
+  void push(uint8_t reg_1, uint8_t reg_2);
+  void pop(uint8_t* reg_1, uint8_t* reg_2);
+  void dad(uint8_t* reg_1, uint8_t* reg_2);
+  void lxi(uint16_t data);
+  void inx(uint8_t* reg_1, uint8_t* reg_2);
+  void dcx(uint8_t* reg_1, uint8_t* reg_2);
+  void xthl();
   void xchg();
   void sphl();
-  void lxi(uint16_t data);
+  void sta(uint16_t mem_location);
+  void lda(uint16_t mem_location);
+  void shld(uint16_t mem_location);
+  void lhld(uint16_t mem_location);
+  void jmp(uint16_t mem_location);
   void call(uint16_t mem_location);
   void ret();
   void rst();
