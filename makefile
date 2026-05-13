@@ -1,12 +1,14 @@
-SHELL = /bin/sh
+CXX = g++
+CXX_FLAGS = -std=c++17 -ggdb
 
 SRCDIR = src
 BUILDDIR = build
 TESTDIR = tests
 TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
+LIBRARY = /usr/local/lib/
 
 # Creates a list of object files
-OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o)
+OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o GameWindow.o SpaceInvadersVRamDecoder.o)
 
 # For passing doctest query flags when running tests.
 # Example use, which will run test cases with a name including "input":
@@ -17,7 +19,8 @@ OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o)
 TESTFLAGS =
 
 emu8080: $(OBJS) $(SRCDIR)/main.cc
-	g++ -o emu8080 $^
+	g++ -o emu8080 $^ -L$(LIBRARY) -lSDL3
+
 
 test: all_tests
 	./all_tests $(TESTFLAGS)
@@ -33,6 +36,13 @@ $(BUILDDIR)/Memory8080.o: $(SRCDIR)/Memory8080.cc $(SRCDIR)/Memory8080.h
 
 $(BUILDDIR)/Instructions8080.o: $(SRCDIR)/Instructions8080.cc $(SRCDIR)/Instructions8080.h
 	g++ -o $(BUILDDIR)/Instructions8080.o -c $(SRCDIR)/Instructions8080.cc
+
+$(BUILDDIR)/GameWindow.o: $(SRCDIR)/GameWindow.cc $(SRCDIR)/GameWindow.h
+	$(CXX) $(CXX_FLAGS) -c $< -o $@
+
+$(BUILDDIR)/SpaceInvadersVRamDecoder.o: $(SRCDIR)/SpaceInvadersVRamDecoder.cc $(SRCDIR)/SpaceInvadersVRamDecoder.h
+	$(CXX) $(CXX_FLAGS) -c $< -o $@
+
 
 # The @ sign indicates a shell command.
 clean:
