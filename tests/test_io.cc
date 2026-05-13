@@ -1,21 +1,29 @@
+#include <memory>
+
 #include "../src/CPU8080.h"
+#include "../src/Input.h"
 #include "../src/Memory8080.h"
 #include "doctest.h"
 
-TEST_CASE("Test IN input instruction") {
+TEST_CASE("Test IN input instruction with InputHandler") {
   std::shared_ptr<intel_8080::Memory8080> mem =
       std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
-  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem);
+  std::shared_ptr<input::InputHandler> input_handler =
+      std::make_shared<input::InputHandler>();
+  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem, input_handler);
+
   std::vector<uint8_t> data = {0xdb, 1};  // opcode, port number
   mem->load_data(data);
 
-  emu.write_input_port(1, 0b100);  // set port1.bit2
+  // Player 1 start = Port 1 bit 2
+  input_handler->handle_key_press(SDL_SCANCODE_KP_ENTER);
 
   emu.step();
   intel_8080::CPU8080::State state = emu.get_state();
   CHECK_EQ(state.registers.reg_b, 0);
   CHECK_EQ(state.registers.reg_c, 0);
-  CHECK_EQ(state.registers.reg_a, 0b100);
+  // Check that bit 2 is set. Port 1 bit 3 is always 1.
+  CHECK_EQ(state.registers.reg_a, 0b1100);
   CHECK_EQ(state.registers.reg_d, 0);
   CHECK_EQ(state.registers.reg_h, 0);
   CHECK_EQ(state.registers.reg_l, 0);
