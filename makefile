@@ -21,7 +21,7 @@ $(BUILDDIR)/SpaceInvadersVRamDecoder.o: $(SRCDIR)/SpaceInvadersVRamDecoder.cc $(
 
 RunAllTests: $(TESTDIR)/test_prog
 
-$(TESTDIR)/test_prog: $(TESTDIR)/test_sample.o $(SRCDIR)/GraphicsDisplay.o
+$(TESTDIR)/test_prog: $(TESTDIR)/test_sample.o $(SRCDIR)/SpaceInvadersVRamDecoder.o
 	g++ $^ -o $@ -L$(LIBRARY) -lSDL3
 
 $(TESTDIR)/test_sample.o: $(TESTDIR)/test_sample.cc 
