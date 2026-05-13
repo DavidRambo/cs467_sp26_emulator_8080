@@ -31,6 +31,7 @@ TEST_CASE("Testing INR B: B += 1") {
 
   SUBCASE("Incrementing B 256 times") {
     std::vector<uint8_t> data;
+    data.reserve(256);
     for (int i = 0; i < 256; i++) {
       data.emplace_back(0x04);
     }
