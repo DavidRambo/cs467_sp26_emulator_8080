@@ -86,7 +86,7 @@ class CPU8080 {
   void update_parity(uint16_t word);
 
   // Instructions
-  void in(uint8_t port_data);
+  void in(uint8_t port_no);
   void inr(uint8_t* byte);
   void mov(uint8_t* addr, uint8_t data);
   void rlc();
