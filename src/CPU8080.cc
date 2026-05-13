@@ -1,28 +1,21 @@
 #include "CPU8080.h"
 
-#include <iostream>
 #include <memory>
 
 #include "Memory8080.h"
 
 namespace intel_8080 {
 
-CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem)
-    : mem_access_(std::move(new_mem)) {
+CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
+                 std::shared_ptr<input::InputHandler> new_input_handler)
+    : mem_access_(std::move(new_mem)),
+      input_handler_(std::move(new_input_handler)) {
   stack_pointer_ = 0x0000;
   program_counter_ = 0x0000;
   flags_ = Flags();
   registers_ = Registers();
   INTE_ = false;
-  input_port_1_ = Port();
-  input_port_2_ = Port();
 };
-
-std::uint8_t CPU8080::Port::to_byte() {
-  std::uint8_t return_byte = bit0 | bit1 << 1 | bit2 << 2 | bit3 << 3 |
-                             bit4 << 4 | bit5 << 5 | bit6 << 6 | bit7 << 7;
-  return return_byte;
-}
 
 std::uint8_t CPU8080::Flags::to_byte() {
   std::uint8_t return_byte = 0x02;
@@ -71,19 +64,6 @@ CPU8080::State CPU8080::get_state() {
   return State{registers_, flags_, stack_pointer_, program_counter_};
 }
 
-// Returns the data in input port 1 or 2 as a byte.
-//
-// When calling, ensure that the port number is either 1 or 2.
-uint8_t CPU8080::read_input_port(uint8_t port_no) {
-  uint8_t data{0};
-  if (port_no == 1) {
-    data = input_port_1_.to_byte();
-  } else if (port_no == 2) {
-    data = input_port_2_.to_byte();
-  }
-  return data;
-}
-
 void CPU8080::reset() { program_counter_ = 0x0000; };
 
 // Sets parity flag if byte has even parity, otherwise resets it.
@@ -115,28 +95,6 @@ void CPU8080::update_flags_szp(uint8_t byte) {
   flags_.zero = byte == 0;
   flags_.sign = ((byte & 0b1000'0000) == 0b1000'0000);
   update_parity(byte);
-}
-
-void CPU8080::write_input_port(uint8_t port_no, uint8_t data) {
-  Port* port;
-  if (port_no == 1) {
-    port = &input_port_1_;
-  } else if (port_no == 2) {
-    port = &input_port_2_;
-  } else {
-    std::cerr << "<write_input_port> Invalid input port number: " << port_no
-              << std::endl;
-    return;
-  }
-
-  port->bit0 = (data & 0x1) == 0x1;
-  port->bit1 = (data & 0x2) == 0x2;
-  port->bit2 = (data & 0x4) == 0x4;
-  port->bit3 = (data & 0x8) == 0x8;
-  port->bit4 = (data & 0x10) == 0x10;
-  port->bit5 = (data & 0x20) == 0x20;
-  port->bit6 = (data & 0x40) == 0x40;
-  port->bit7 = (data & 0x80) == 0x80;
 }
 
 void CPU8080::execute(std::uint8_t opcode) {

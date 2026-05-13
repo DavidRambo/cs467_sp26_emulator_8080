@@ -4,8 +4,6 @@
 #include <array>
 #include <memory>
 
-#include "CPU8080.h"
-
 namespace input {
 struct InputDevice {
   uint8_t bit0 : 1;
@@ -35,15 +33,19 @@ class InputHandler {
  public:
   InputHandler();
 
+  // Made public for the sake of testing.
+  SDL_AppResult handle_key_press(SDL_Scancode keycode);
+
+  // Polls for input event, to be called by SDL3 game loop.
+  SDL_AppResult poll_for_event();
+
+  // Emulates the transfer of device data over bus, to be called by cpu.
   uint8_t read_input(uint8_t port_no);
 
  private:
-  void clear_ports();
+  void reset_devices();
 
-  SDL_AppResult handle_key_press(SDL_Scancode keycode);
-
-  SDL_AppResult poll_for_event();
-
+  // Corresponds to Input (Read) Devices 0–2. Only 1 and 2 are used by the game.
   std::array<InputDevice, 3> devices_;
 };
 

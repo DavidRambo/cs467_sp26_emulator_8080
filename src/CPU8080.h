@@ -3,24 +3,12 @@
 #include <cstdint>
 #include <memory>
 
+#include "Input.h"
 #include "Memory8080.h"
 
 namespace intel_8080 {
 
 class CPU8080 {
-  struct Port {
-    std::uint8_t bit0 : 1;
-    std::uint8_t bit1 : 1;
-    std::uint8_t bit2 : 1;
-    std::uint8_t bit3 : 1;
-    std::uint8_t bit4 : 1;
-    std::uint8_t bit5 : 1;
-    std::uint8_t bit6 : 1;
-    std::uint8_t bit7 : 1;
-
-    std::uint8_t to_byte();
-  };
-
   struct Flags {
     std::uint8_t sign : 1;
     std::uint8_t zero : 1;
@@ -53,18 +41,14 @@ class CPU8080 {
     uint16_t program_counter;
   };
 
-  Port input_port_1_;
-  Port input_port_2_;
-
-  CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem);
+  CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
+          std::shared_ptr<input::InputHandler> new_input_handler);
 
   void step();
 
   void reset();
 
   State get_state();
-
-  void write_input_port(uint8_t port_no, uint8_t data);
 
  private:
   std::uint8_t fetch_byte();
@@ -76,8 +60,6 @@ class CPU8080 {
   std::uint16_t fetch_word(std::uint16_t mem_location);
 
   void execute(std::uint8_t opcode);
-
-  uint8_t read_input_port(uint8_t port_no);
 
   void update_flags_szp(uint8_t byte);
 
@@ -98,5 +80,6 @@ class CPU8080 {
   // false = 0 and true = 1
   bool INTE_;
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
+  std::shared_ptr<input::InputHandler> input_handler_;
 };
 }  // namespace intel_8080

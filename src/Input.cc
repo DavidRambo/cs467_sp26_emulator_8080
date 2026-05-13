@@ -1,5 +1,7 @@
 #include "Input.h"
 
+#include <SDL3/SDL.h>
+
 // Anonymous namespace for global variable
 namespace {
 // true = player 1, false = player 2
@@ -33,7 +35,7 @@ uint8_t InputHandler::read_input(uint8_t port_no) {
 }
 
 // Returns the device ports to their base state.
-void InputHandler::clear_ports() {
+void InputHandler::reset_devices() {
   devices_[1].bit0 = 0;
   devices_[1].bit1 = 0;
   devices_[1].bit2 = 0;
@@ -120,7 +122,7 @@ SDL_AppResult InputHandler::poll_for_event() {
       // NOTE: This is here in case we have another SDL event to quit.
       break;
     case SDL_EVENT_KEY_DOWN:
-      clear_ports();
+      reset_devices();
       return handle_key_press(event.key.scancode);
     default:
       break;
