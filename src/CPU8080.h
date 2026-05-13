@@ -9,6 +9,8 @@
 namespace intel_8080 {
 
 class CPU8080 {
+  // Define private structs before public for sake of State struct.
+ private:
   struct Flags {
     std::uint8_t sign : 1;
     std::uint8_t zero : 1;
@@ -73,12 +75,15 @@ class CPU8080 {
   void mov(uint8_t* addr, uint8_t data);
   void rlc();
 
+  // State
   Flags flags_;
   Registers registers_;
   std::uint16_t stack_pointer_;
   std::uint16_t program_counter_;
   // false = 0 and true = 1
   bool INTE_;
+
+  // Address Spaces
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
   std::shared_ptr<input::InputHandler> input_handler_;
 };
