@@ -53,6 +53,9 @@ class CPU8080 {
     uint16_t program_counter;
   };
 
+  Port input_port_1_;
+  Port input_port_2_;
+
   CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem);
 
   void step();
@@ -92,8 +95,6 @@ class CPU8080 {
   Registers registers_;
   std::uint16_t stack_pointer_;
   std::uint16_t program_counter_;
-  Port input_port_1_;
-  Port input_port_2_;
   // false = 0 and true = 1
   bool INTE_;
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
