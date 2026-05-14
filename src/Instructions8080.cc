@@ -74,7 +74,7 @@ void CPU8080::cma() { registers_.reg_a = ~registers_.reg_a; }
 void CPU8080::add(uint8_t data) {
   uint16_t result = registers_.reg_a + data;
   flags_.carry = (result > 0xFF) ? 1 : 0;
-  registers_.reg_a = (uint8_t)result;
+  registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
 
@@ -85,7 +85,7 @@ void CPU8080::adc(uint8_t data) {
   data += flags_.carry;
   uint16_t result = registers_.reg_a + data + flags_.carry;
   flags_.carry = (result > 0xFF) ? 1 : 0;
-  registers_.reg_a = (uint8_t)result;
+  registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
 
@@ -95,7 +95,7 @@ void CPU8080::adc(uint8_t data) {
 void CPU8080::sub(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
   flags_.carry = (result > 0xFF) ? 0 : 1;
-  registers_.reg_a = (uint8_t)result;
+  registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
 
@@ -106,7 +106,7 @@ void CPU8080::sub(uint8_t data) {
 void CPU8080::sbb(uint8_t data) {
   uint16_t result = registers_.reg_a - (data + flags_.carry);
   flags_.carry = (result > 0xFF) ? 0 : 1;
-  registers_.reg_a = (uint8_t)result;
+  registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
 
