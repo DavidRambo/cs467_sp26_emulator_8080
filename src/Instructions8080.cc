@@ -32,7 +32,7 @@ void CPU8080::rlc() {
 }
 
 // STAX: Store Accumulator
-// Contents of A are stoed in the memory location from either BC, or DE.
+// Contents of A are stored in the memory location from either BC or DE.
 // Flags affected: N/A
 void CPU8080::stax(uint16_t mem_location) {
   mem_access_->write(mem_location, registers_.reg_a);
