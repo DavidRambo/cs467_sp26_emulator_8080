@@ -103,7 +103,8 @@ class CPU8080 {
   void push(uint8_t reg_1, uint8_t reg_2);
   void pop(uint8_t* reg_1, uint8_t* reg_2);
   void dad(uint8_t* reg_1, uint8_t* reg_2);
-  void lxi(uint16_t data);
+  void lxi_sp(uint8_t byte_2, uint8_t byte_3);
+  void lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2, uint8_t byte_3);
   void inx(uint8_t* reg_1, uint8_t* reg_2);
   void dcx(uint8_t* reg_1, uint8_t* reg_2);
   void xthl();
