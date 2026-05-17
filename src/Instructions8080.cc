@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdint>
 
 #include "CPU8080.h"
@@ -6,9 +7,9 @@ namespace intel_8080 {
 // INR Increment Register or Memory value
 //
 // Condition bits affected: Zero, Sign, Parity
-void CPU8080::inr(uint8_t* byte) {
-  *byte += 1;
-  update_flags_szp(*byte);
+void CPU8080::inr(uint8_t* reg) {
+  *reg += 1;
+  update_flags_szp(*reg);
 }
 
 // MOV Move data byte into register or memory address
@@ -58,9 +59,9 @@ void CPU8080::stc() { flags_.carry = 1; }
 // DCR: Decrement Register/Memory
 // Reduces the value of the register or memory by 1.
 // Flags affected: Zero, Sign, Parity, Aux Carry.
-void CPU8080::dcr(uint8_t* byte) {
-  *byte -= 1;
-  update_flags_szp(*byte);
+void CPU8080::dcr(uint8_t* reg) {
+  *reg -= 1;
+  update_flags_szp(*reg);
 }
 
 // CMA: Complement Accumulator
@@ -182,6 +183,163 @@ void CPU8080::rar() {
   uint8_t temp = registers_.reg_a >> 1;
   registers_.reg_a = temp | flags_.carry << 7;
   flags_.carry = lsb;
+}
+/*
+ * PUSH: Push Data onto stack
+ * The contents of the specified register pair is saved in two bytes
+ * of memory indicated by stack_pointer_. The first register is saved
+ * at one less than the stack pointer, and the second register is saved
+ * at two less than the stack pointer. The stack pointer is decremented
+ * by 2.
+ * Flags affected: N/A
+ */
+void CPU8080::push(uint8_t reg_1, uint8_t reg_2) {
+  stack_pointer_ -= 1;
+  mem_access_->write(stack_pointer_, reg_1);
+  stack_pointer_ -= 1;
+  mem_access_->write(stack_pointer_, reg_2);
+}
+
+/*
+ * POP: Pop Data Off Stack
+ * The contents of the specified register pair are restored
+ * by the stack pointer. The byte of data at the stack pointer is
+ * loaded into the second register. The byte of data at the stack
+ * pointer + 1 is loaded intp the first register.
+ * Flags affected: N/A
+ */
+void CPU8080::pop(uint8_t* reg_1, uint8_t* reg_2) {
+  *reg_2 = mem_access_->read(stack_pointer_);
+  stack_pointer_ += 1;
+  *reg_1 = mem_access_->read(stack_pointer_);
+  stack_pointer_ += 1;
+}
+/*
+ * DAD: Double Add.
+ * The 16 bit number in the specified register pair is added to the
+ * 16 bit number held in the HL register pair. The result replaces
+ * the contents of HL.
+ * Flags affected: N/A
+ */
+void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
+  uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
+  uint16_t hl_pair = (registers_.reg_h << 8) | registers_.reg_l;
+  uint32_t result = reg_pair + hl_pair;
+  flags_.carry = flags_.carry = (result > 0xFFFF) ? 0 : 1;
+  registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
+  registers_.reg_l = static_cast<uint8_t>(result | 0xFF);
+}
+
+/*
+ * INX: Increment register pair
+ * The 16 bit number held in the specified register pair is
+ * incremented by 1.
+ * Flags affected: N/A
+ */
+void CPU8080::inx(uint8_t* reg_1, uint8_t* reg_2) {
+  auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
+  reg_pair += 1;
+  *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
+  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+}
+
+/*
+ * DCX: Decrement register pair
+ * The 16 bit number in the specified register pair is decremented by 1.
+ * Flags affected: N/A
+ */
+void CPU8080::dcx(uint8_t* reg_1, uint8_t* reg_2) {
+  auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
+  reg_pair -= 1;
+  *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
+  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+}
+
+void CPU8080::xchg() {
+  std::swap(registers_.reg_h, registers_.reg_d);
+  std::swap(registers_.reg_l, registers_.reg_e);
+}
+
+void CPU8080::xthl() {
+  uint8_t byte_2 = mem_access_->read(stack_pointer_);
+  uint8_t byte_1 = mem_access_->read(stack_pointer_ + 1);
+  mem_access_->write(stack_pointer_, registers_.reg_l);
+  mem_access_->write(stack_pointer_ + 1, registers_.reg_h);
+  registers_.reg_h = byte_1;
+  registers_.reg_l = byte_2;
+}
+
+void CPU8080::sphl() {
+  stack_pointer_ =
+      static_cast<uint16_t>(registers_.reg_h << 8) | registers_.reg_l;
+}
+
+void CPU8080::lxi_sp(uint8_t byte_2, uint8_t byte_3) {
+  stack_pointer_ = static_cast<uint16_t>(byte_3 << 8) | byte_2;
+}
+
+void CPU8080::lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2,
+                  uint8_t byte_3) {
+  *reg_1 = byte_3;
+  *reg_2 = byte_2;
+}
+
+void CPU8080::sta(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  mem_access_->write(mem_location, registers_.reg_a);
+}
+
+void CPU8080::lda(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  registers_.reg_a = mem_access_->read(mem_location);
+}
+
+void CPU8080::shld(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  mem_access_->write(mem_location, registers_.reg_l);
+  mem_access_->write(mem_location + 1, registers_.reg_h);
+}
+
+void CPU8080::lhld(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  registers_.reg_l = mem_access_->read(mem_location);
+  registers_.reg_h = mem_access_->read(mem_location + 1);
+}
+
+void CPU8080::pchl() {
+  auto mem_location =
+      static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+  program_counter_ = mem_location;
+}
+
+void CPU8080::jmp(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  program_counter_ = mem_location;
+}
+
+void CPU8080::call(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  uint8_t high_byte = program_counter_ >> 8;
+  uint8_t low_byte = program_counter_ | 0xFF;
+  push(low_byte, high_byte);
+  program_counter_ = mem_location;
+}
+
+void CPU8080::ret() {
+  uint8_t* high_byte;
+  uint8_t* low_byte;
+  pop(low_byte, high_byte);
+  program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
+}
+
+void CPU8080::rst(uint8_t exp) { call(static_cast<uint8_t>(exp << 3), 0x00); }
+
+void CPU8080::ei() { INTE_ = true; }
+
+void CPU8080::di() { INTE_ = false; }
+
+void CPU8080::hlt() {
+  // Can't implement until we know how the interupt process works.
 }
 
 }  // namespace intel_8080

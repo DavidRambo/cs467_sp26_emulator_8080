@@ -38,32 +38,32 @@ std::uint8_t CPU8080::Flags::to_byte() {
 };
 
 void CPU8080::step() {
-  std::uint8_t instruction = fetch_byte();
+  uint8_t instruction = fetch_byte();
   execute(instruction);
 };
 
-std::uint8_t CPU8080::fetch_byte() {
-  std::uint8_t byte = mem_access_->read(program_counter_);
+uint8_t CPU8080::fetch_byte() {
+  uint8_t byte = mem_access_->read(program_counter_);
   program_counter_++;
   return byte;
 };
 
-std::uint8_t CPU8080::fetch_byte(std::uint16_t mem_location) {
-  std::uint8_t byte = mem_access_->read(mem_location);
+uint8_t CPU8080::fetch_byte(std::uint16_t mem_location) {
+  uint8_t byte = mem_access_->read(mem_location);
   return byte;
 };
 
-std::uint16_t CPU8080::fetch_word() {
-  std::uint8_t low_byte = fetch_byte();
-  std::uint8_t high_byte = fetch_byte();
-  std::uint16_t word = ((std::uint16_t)high_byte << 8) | low_byte;
+uint16_t CPU8080::fetch_word() {
+  uint8_t low_byte = fetch_byte();
+  uint8_t high_byte = fetch_byte();
+  auto word = static_cast<uint16_t>((high_byte << 8) | low_byte);
   return word;
 }
 
-std::uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
-  std::uint8_t low_byte = mem_access_->read(mem_location);
-  std::uint8_t high_byte = mem_access_->read(mem_location + 1);
-  std::uint16_t word = ((std::uint16_t)high_byte << 8) | low_byte;
+uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
+  uint8_t low_byte = mem_access_->read(mem_location);
+  uint8_t high_byte = mem_access_->read(mem_location + 1);
+  auto word = static_cast<uint16_t>((high_byte << 8) | low_byte);
   return word;
 };
 
@@ -105,47 +105,43 @@ void CPU8080::update_flags_szp(uint8_t byte) {
   update_parity(byte);
 }
 
-void CPU8080::execute(std::uint8_t opcode) {
+void CPU8080::execute(uint8_t opcode) {
   switch (opcode) {
     case 0x00:
       std::cout << "NOP" << std::endl;
       break;
     case 0x01:
-      std::cout << "LIX B,";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      lxi(&registers_.reg_b, &registers_.reg_c, fetch_byte(), fetch_byte());
       break;
     case 0x02:
+      auto reg =
+          static_cast<uint16_t>((registers_.reg_b << 8) | registers_.reg_c);
+      stax(reg);
       std::cout << "STAX B" << std::endl;
       break;
     case 0x03:
-      std::cout << "INX B" << std::endl;
+      inx(&registers_.reg_b, &registers_.reg_c);
       break;
     case 0x04:  // INR B: B += 1 flags
       inr(&registers_.reg_b);
-      std::cout << "INR B" << std::endl;
       break;
     case 0x05:
-      std::cout << "DCR B" << std::endl;
+      dcr(&registers_.reg_b);
       break;
     case 0x06:
-      std::cout << "MVI B,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      mov(&registers_.reg_b, fetch_byte());
       break;
     case 0x07:  // RLC
       rlc();
-      std::cout << "RLC" << std::endl;
       break;
     case 0x08:
       std::cout << "NOP*" << std::endl;
       break;
     case 0x09:
-      std::cout << "DAD B" << std::endl;
+      dad(&registers_.reg_b, &registers_.reg_c);
       break;
     case 0x0A:
-      std::cout << "DAD B" << std::endl;
+      std::cout << "LDAX B" << std::endl;
       break;
     case 0x0B:
       std::cout << "DCX B" << std::endl;
@@ -333,15 +329,12 @@ void CPU8080::execute(std::uint8_t opcode) {
       std::cout << "DCR A" << std::endl;
       break;
     case 0x3E:  // MVI A, D8
-      std::cout << "MVI A,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
       mov(&registers_.reg_a, fetch_byte());
       break;
     case 0x3F:
       std::cout << "CMC" << std::endl;
       break;
-    case 0x40:
+    Ask a follow - up question case 0x40:
       std::cout << "MOV B,B" << std::endl;
       break;
     case 0x41:
@@ -416,7 +409,7 @@ void CPU8080::execute(std::uint8_t opcode) {
     case 0x58:
       std::cout << "MOV E,B" << std::endl;
       break;
-    case 0x59:
+    Ask a follow - up question case 0x59:
       std::cout << "MOV E,C" << std::endl;
       break;
     case 0x5A:
@@ -605,7 +598,7 @@ void CPU8080::execute(std::uint8_t opcode) {
     case 0x97:
       std::cout << "SUB A" << std::endl;
       break;
-    case 0x98:
+    Ask a follow - up question case 0x98:
       std::cout << "SBB B" << std::endl;
       break;
     case 0x99:
@@ -922,6 +915,7 @@ void CPU8080::execute(std::uint8_t opcode) {
       print_hex_byte(fetch_byte());
       std::cout << std::endl;
       break;
+
     case 0xED:
       std::cout << "*CALL ";
       print_hex_byte(fetch_byte());

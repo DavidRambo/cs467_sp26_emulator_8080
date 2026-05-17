@@ -80,7 +80,7 @@ class CPU8080 {
   // counterpart except for lxi
   // Instructions
   void inr(uint8_t* reg);
-  void mov(uint8_t* addr, uint8_t data);
+  static void mov(uint8_t* addr, uint8_t data);
   void stax(uint16_t mem_location);
   void ldax(uint16_t mem_location);
   void rlc();
@@ -102,22 +102,24 @@ class CPU8080 {
   void rar();
   void push(uint8_t reg_1, uint8_t reg_2);
   void pop(uint8_t* reg_1, uint8_t* reg_2);
-  void dad(uint8_t* reg_1, uint8_t* reg_2);
+  void dad(const uint8_t* reg_1, const uint8_t* reg_2);
   void lxi_sp(uint8_t byte_2, uint8_t byte_3);
-  void lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2, uint8_t byte_3);
-  void inx(uint8_t* reg_1, uint8_t* reg_2);
-  void dcx(uint8_t* reg_1, uint8_t* reg_2);
+  static void lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2,
+                  uint8_t byte_3);
+  static void inx(uint8_t* reg_1, uint8_t* reg_2);
+  static void dcx(uint8_t* reg_1, uint8_t* reg_2);
   void xthl();
   void xchg();
   void sphl();
-  void sta(uint16_t mem_location);
-  void lda(uint16_t mem_location);
-  void shld(uint16_t mem_location);
-  void lhld(uint16_t mem_location);
-  void jmp(uint16_t mem_location);
-  void call(uint16_t mem_location);
+  void sta(uint8_t byte_2, uint8_t byte_3);
+  void lda(uint8_t byte_2, uint8_t byte_3);
+  void shld(uint8_t byte_2, uint8_t byte_3);
+  void lhld(uint8_t byte_2, uint8_t byte_3);
+  void pchl();
+  void jmp(uint8_t byte_2, uint8_t byte_3);
+  void call(uint8_t byte_2, uint8_t byte_3);
   void ret();
-  void rst();
+  void rst(uint8_t exp);
   void ei();
   void di();
   void hlt();
