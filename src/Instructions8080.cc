@@ -14,7 +14,7 @@ void CPU8080::in(uint8_t port_no) {
               << std::endl;
   }
 
-  registers_.reg_a = input_handler_->read_input(port_no);
+  registers_.reg_a = input_handler_->ReadInput(port_no);
 }
 
 // INR Increment Register or Memory value

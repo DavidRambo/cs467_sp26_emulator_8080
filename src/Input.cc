@@ -31,12 +31,12 @@ uint8_t InputDevice::to_byte() const {
 }
 
 // Returns the data corresponding to the specified input device.
-uint8_t InputHandler::read_input(uint8_t port_no) {
+uint8_t InputHandler::ReadInput(uint8_t port_no) {
   return devices_[port_no].to_byte();
 }
 
 // Returns the device ports to their base state.
-void InputHandler::reset_devices() {
+void InputHandler::ResetDevices() {
   devices_[1].bit0 = 0;
   devices_[1].bit1 = 0;
   devices_[1].bit2 = 0;
@@ -57,7 +57,7 @@ void InputHandler::reset_devices() {
 }
 
 // Sets the appropriate device data bits for the given key press.
-SDL_AppResult InputHandler::handle_key_press(SDL_Scancode keycode) {
+SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
   switch (keycode) {
     case SDL_SCANCODE_ESCAPE:
     case SDL_SCANCODE_Q:
@@ -113,7 +113,7 @@ SDL_AppResult InputHandler::handle_key_press(SDL_Scancode keycode) {
 // Note that this must be called in sync with the rest of the game code.
 // Otherwise, were the polling to happen at a greater rate, then it would likely
 // clear the input device state before it had a chance to be read by the 8080.
-SDL_AppResult InputHandler::poll_for_event() {
+SDL_AppResult InputHandler::PollForEvents() {
   SDL_Event event{0};
 
   // Event handling loop
@@ -123,8 +123,8 @@ SDL_AppResult InputHandler::poll_for_event() {
       // NOTE: This is here in case we have another SDL event to quit.
       break;
     case SDL_EVENT_KEY_DOWN:
-      reset_devices();
-      return handle_key_press(event.key.scancode);
+      ResetDevices();
+      return HandleKeyPress(event.key.scancode);
     default:
       break;
   }

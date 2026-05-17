@@ -17,7 +17,7 @@ TEST_CASE("Test IN input instruction with InputHandler") {
 
   SUBCASE("Player 1 Start") {
     // Player 1 start = Port 1 bit 2
-    input_handler->handle_key_press(SDL_SCANCODE_KP_ENTER);
+    input_handler->HandleKeyPress(SDL_SCANCODE_KP_ENTER);
 
     emu.step();
     intel_8080::CPU8080::State state = emu.get_state();
@@ -37,7 +37,7 @@ TEST_CASE("Test IN input instruction with InputHandler") {
 
   SUBCASE("Player 1 Move Left") {
     // Player 1 start = Port 1 bit 2
-    input_handler->handle_key_press(SDL_SCANCODE_LEFT);
+    input_handler->HandleKeyPress(SDL_SCANCODE_LEFT);
 
     emu.step();
     intel_8080::CPU8080::State state = emu.get_state();
@@ -57,7 +57,7 @@ TEST_CASE("Test IN input instruction with InputHandler") {
 
   SUBCASE("Player 1 Move Right") {
     // Player 1 start = Port 1 bit 2
-    input_handler->handle_key_press(SDL_SCANCODE_RIGHT);
+    input_handler->HandleKeyPress(SDL_SCANCODE_RIGHT);
 
     emu.step();
     intel_8080::CPU8080::State state = emu.get_state();
