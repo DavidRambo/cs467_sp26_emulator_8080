@@ -540,9 +540,9 @@ void CPU8080::execute(std::uint8_t opcode) {
       break;
     case 0xDA:
       break;
-    case 0xDB: {  // IN instruction + D8 (input port number)
+    case 0xDB:  // IN instruction + D8 (input port number)
       in(fetch_byte());
-    } break;
+      break;
     case 0xDC:
       break;
     case 0xDD:
