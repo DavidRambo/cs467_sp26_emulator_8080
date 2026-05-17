@@ -141,6 +141,18 @@ void CPU8080::ora(uint8_t data) {
   update_flags_szp(registers_.reg_a);
 }
 
+// CPI: Compare Immediate with Accumulator
+// Performs a comparison by subtracting a data byte from the accumulator without
+// updating the accumulator and checking the condition bits.
+// Zero flag is set if the are equal, reset otherwise. Carry bit is set if data
+// is larger than accumulator.
+// Flags affected: Carry, Zero, Sign, Parity
+void CPU8080::cpi(uint8_t data) {
+  uint16_t result = registers_.reg_a - data;
+  flags_.carry = (result > 0xFF) ? 0 : 1;
+  update_flags_szp(static_cast<uint8_t>(result));
+}
+
 // CMP: Compare Register or Memory w/ Accumulator
 // THe specified byte is compared to the contents of A. Internally
 // subtracts the byte from A, leaving both unchanged. Condition bits

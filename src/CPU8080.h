@@ -96,6 +96,7 @@ class CPU8080 {
   void ana(uint8_t data);
   void xra(uint8_t data);
   void ora(uint8_t data);
+  void cpi(uint8_t data);
   void cmp(uint8_t data);
   void rrc();
   void ral();

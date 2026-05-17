@@ -997,9 +997,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xFE:
-      std::cout << "CPI ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CPI \n";
+      cpi(fetch_byte());
       break;
     case 0xFF:
       std::cout << "RST 7\n";
