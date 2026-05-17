@@ -25,8 +25,9 @@ InputHandler::InputHandler() {
 
 // Converts the InputDevice bitfield into a unified byte of data.
 uint8_t InputDevice::to_byte() const {
-  return (bit0) | (bit1 << 1) | (bit2 << 2) | (bit3 << 3) | (bit4 << 4) |
-         (bit5 << 5) | (bit6 << 6) | (bit7 << 7);
+  return static_cast<uint8_t>((bit0) | (bit1 << 1) | (bit2 << 2) | (bit3 << 3) |
+                              (bit4 << 4) | (bit5 << 5) | (bit6 << 6) |
+                              (bit7 << 7));
 }
 
 // Returns the data corresponding to the specified input device.
