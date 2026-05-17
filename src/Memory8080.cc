@@ -19,8 +19,7 @@ std::uint8_t intel_8080::Memory8080::read(std::uint16_t mem_location) {
   return mem_buffer_[mem_location];
 }
 
-void intel_8080::Memory8080::write(std::uint16_t mem_location,
-                                   std::uint8_t data) {
+void intel_8080::Memory8080::write(uint16_t mem_location, uint8_t data) {
   if (mem_location <= end_of_ROM_) {
     return;
   }
@@ -34,7 +33,7 @@ void intel_8080::Memory8080::clear_rom() {
   end_of_ROM_ = 0x0000;
 }
 
-void intel_8080::Memory8080::load_rom(std::string file_path) {
+void intel_8080::Memory8080::load_rom(std::string const& file_path) {
   if (end_of_ROM_ != 0x0000) {
     clear_rom();
   }
@@ -54,7 +53,7 @@ void intel_8080::Memory8080::load_rom(std::string file_path) {
 
   file.read(reinterpret_cast<char*>(mem_buffer_.data()), file_size);
 
-  if (file.gcount() != (int)file_size) {
+  if (file.gcount() != static_cast<int>(file_size)) {
     std::cerr << "Warning: File size mismatch" << std::endl;
     std::exit(1);
   }
@@ -63,7 +62,7 @@ void intel_8080::Memory8080::load_rom(std::string file_path) {
   file.close();
 };
 
-void intel_8080::Memory8080::load_data(std::vector<uint8_t> data,
+void intel_8080::Memory8080::load_data(std::vector<uint8_t> const& data,
                                        uint16_t start) {
   if (data.size() + start > kSIZE) {
     std::cerr << "Data is too large for memory" << std::endl;

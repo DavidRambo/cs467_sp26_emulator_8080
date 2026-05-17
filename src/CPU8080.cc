@@ -16,8 +16,10 @@ void print_hex_byte(uint8_t value) {
 
 namespace intel_8080 {
 
-CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem)
-    : mem_access_(std::move(new_mem)) {
+CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
+                 std::shared_ptr<input::InputHandler> new_input_handler)
+    : mem_access_(std::move(new_mem)),
+      input_handler_(std::move(new_input_handler)) {
   stack_pointer_ = 0x0000;
   program_counter_ = 0x0000;
   flags_ = Flags();
@@ -844,10 +846,8 @@ void CPU8080::execute(std::uint8_t opcode) {
       print_hex_byte(fetch_byte());
       std::cout << std::endl;
       break;
-    case 0xDB:
-      std::cout << "IN ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+    case 0xDB:  // IN instruction + D8 (input port number)
+      in(fetch_byte());
       break;
     case 0xDC:
       std::cout << "CC ";

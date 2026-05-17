@@ -1,8 +1,22 @@
-#include <cstdint>
+#include <iostream>
 
 #include "CPU8080.h"
 
 namespace intel_8080 {
+// IN Input
+//
+// Prior to this function being called, a byte is read from memory after the
+// opcode to designate the port number. That data is written to the
+// accumulator.
+void CPU8080::in(uint8_t port_no) {
+  if (port_no != 1 && port_no != 2) {
+    std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
+              << std::endl;
+  }
+
+  registers_.reg_a = input_handler_->ReadInput(port_no);
+}
+
 // INR Increment Register or Memory value
 //
 // Condition bits affected: Zero, Sign, Parity
