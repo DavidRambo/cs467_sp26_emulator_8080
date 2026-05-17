@@ -751,7 +751,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xC7:
-      std::cout << "RST 0" << std::endl;
+      std::cout << "RST 0\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xC8:
       std::cout << "RZ" << std::endl;
@@ -789,7 +790,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xCF:
-      std::cout << "RST 1" << std::endl;
+      std::cout << "RST 1\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xD0:
       std::cout << "RNC" << std::endl;
@@ -823,7 +825,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xD7:
-      std::cout << "RST 2" << std::endl;
+      std::cout << "RST 2\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xD8:
       std::cout << "RC" << std::endl;
@@ -860,7 +863,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xDF:
-      std::cout << "RST 3" << std::endl;
+      std::cout << "RST 3\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xE0:
       std::cout << "RP0" << std::endl;
@@ -892,7 +896,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xE7:
-      std::cout << "RST 4" << std::endl;
+      std::cout << "RST 4\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xE8:
       std::cout << "RPE" << std::endl;
@@ -928,7 +933,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xEF:
-      std::cout << "RST 5" << std::endl;
+      std::cout << "RST 5\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xF0:
       std::cout << "RP" << std::endl;
@@ -960,7 +966,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xF7:
-      std::cout << "RST 6" << std::endl;
+      std::cout << "RST 6\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xF8:
       std::cout << "RM" << std::endl;
@@ -995,7 +1002,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xFF:
-      std::cout << "RST 7" << std::endl;
+      std::cout << "RST 7\n";
+      rst((opcode >> 3) & 0b0000'0111);
       break;
   }
 }
