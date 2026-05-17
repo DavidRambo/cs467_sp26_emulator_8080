@@ -86,8 +86,8 @@ SDL_AppResult InputHandler::handle_key_press(SDL_Scancode keycode) {
       // Set Port 1 bit 0 (Deposit Credit)
       devices_[1].bit0 = 1;
       break;
+    case SDL_SCANCODE_W:
     case SDL_SCANCODE_UP:
-      break;
     case SDL_SCANCODE_SPACE:
       if (first_player) {
         // Player 1 shoot: set Port 1 bit 4.
