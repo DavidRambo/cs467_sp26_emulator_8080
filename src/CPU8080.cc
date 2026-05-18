@@ -931,7 +931,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xF3:
-      std::cout << "DI" << std::endl;
+      std::cout << "DI\n";
+      di();
       break;
     case 0xF4:
       std::cout << "CP \n";
@@ -962,7 +963,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xFB:
-      std::cout << "EI" << std::endl;
+      std::cout << "EI\n";
+      ei();
       break;
     case 0xFC:
       std::cout << "CM \n";
