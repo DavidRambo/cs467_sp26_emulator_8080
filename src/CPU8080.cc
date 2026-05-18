@@ -113,12 +113,13 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x01:
       lxi(&registers_.reg_b, &registers_.reg_c, fetch_byte(), fetch_byte());
       break;
-    case 0x02:
+    case 0x02: {
       auto reg =
           static_cast<uint16_t>((registers_.reg_b << 8) | registers_.reg_c);
       stax(reg);
       std::cout << "STAX B" << std::endl;
       break;
+    }
     case 0x03:
       inx(&registers_.reg_b, &registers_.reg_c);
       break;
