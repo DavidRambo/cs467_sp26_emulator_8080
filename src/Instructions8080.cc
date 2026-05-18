@@ -385,10 +385,6 @@ void CPU8080::jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
 // clear. Pushes the program counter address onto the stack and then points the
 // program counter to the provided memory address.
 void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
-  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
-  uint8_t high_byte = program_counter_ >> 8;
-  uint8_t low_byte = program_counter_ | 0xFF;
-
   switch (call_type) {
     case CallType::kTrue:
       break;
@@ -433,6 +429,10 @@ void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
       }
       break;
   }
+
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  uint8_t high_byte = program_counter_ >> 8;
+  uint8_t low_byte = program_counter_ | 0xFF;
 
   push(low_byte, high_byte);
   program_counter_ = mem_location;
