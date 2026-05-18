@@ -853,9 +853,8 @@ void CPU8080::execute(uint8_t opcode) {
       call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xDE:
-      std::cout << "SBI ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "SBI \n";
+      sbb(fetch_byte());
       break;
     case 0xDF:
       std::cout << "RST 3\n";
