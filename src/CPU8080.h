@@ -6,7 +6,7 @@
 #include "Memory8080.h"
 
 namespace intel_8080 {
-enum class CallType {
+enum class JumpCondition {
   kNotZero,
   kZero,
   kNotCarry,
@@ -128,13 +128,14 @@ class CPU8080 {
   void shld(uint8_t byte_2, uint8_t byte_3);
   void lhld(uint8_t byte_2, uint8_t byte_3);
   void pchl();
-  void jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3);
-  void call(CallType call_type, uint8_t byte_2, uint8_t byte_3);
-  void ret(CallType call_type);
+  void jmp(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
+  void call(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
+  void ret(JumpCondition jump_condition);
   void rst(uint8_t exp);
   void ei();
   void di();
   void hlt();
+  bool check_jump_condition(JumpCondition jump_condition) const;
 
   Flags flags_;
   Registers registers_;

@@ -329,50 +329,10 @@ void CPU8080::pchl() {
 // condition. For example, JM, "Jump if Minus", jumps if the sign bit is set.
 // Sice the CALL instructions work the same way, this function reuses the
 // CallType enum class.
-void CPU8080::jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
-  switch (call_type) {
-    case CallType::kTrue:
-      break;
-    case CallType::kNotZero:
-      if (flags_.zero) {
-        return;
-      }
-      break;
-    case CallType::kZero:
-      if (!flags_.zero) {
-        return;
-      }
-      break;
-    case CallType::kNotCarry:
-      if (flags_.carry) {
-        return;
-      }
-      break;
-    case CallType::kCarry:
-      if (!flags_.carry) {
-        return;
-      }
-      break;
-    case CallType::kParityOdd:
-      if (flags_.parity) {
-        return;
-      }
-      break;
-    case CallType::kParityEven:
-      if (!flags_.parity) {
-        return;
-      }
-      break;
-    case CallType::kPositive:
-      if (flags_.sign) {
-        return;
-      }
-      break;
-    case CallType::kMinus:
-      if (!flags_.sign) {
-        return;
-      }
-      break;
+void CPU8080::jmp(JumpCondition jump_condition, uint8_t byte_2,
+                  uint8_t byte_3) {
+  if (!check_jump_condition(jump_condition)) {
+    return;
   }
 
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
@@ -384,50 +344,10 @@ void CPU8080::jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
 // condition. For example, CNZ will Call if Not Zero, i.e. if the zero flag is
 // clear. Pushes the program counter address onto the stack and then points the
 // program counter to the provided memory address.
-void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
-  switch (call_type) {
-    case CallType::kTrue:
-      break;
-    case CallType::kNotZero:
-      if (flags_.zero) {
-        return;
-      }
-      break;
-    case CallType::kZero:
-      if (!flags_.zero) {
-        return;
-      }
-      break;
-    case CallType::kNotCarry:
-      if (flags_.carry) {
-        return;
-      }
-      break;
-    case CallType::kCarry:
-      if (!flags_.carry) {
-        return;
-      }
-      break;
-    case CallType::kParityOdd:
-      if (flags_.parity) {
-        return;
-      }
-      break;
-    case CallType::kParityEven:
-      if (!flags_.parity) {
-        return;
-      }
-      break;
-    case CallType::kPositive:
-      if (flags_.sign) {
-        return;
-      }
-      break;
-    case CallType::kMinus:
-      if (!flags_.sign) {
-        return;
-      }
-      break;
+void CPU8080::call(JumpCondition jump_condition, uint8_t byte_2,
+                   uint8_t byte_3) {
+  if (!check_jump_condition(jump_condition)) {
+    return;
   }
 
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
@@ -442,50 +362,9 @@ void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
 // These instructions pop the last address off the stack and assign it to the
 // program counter in order to return from a subroutine. RET always does it,
 // while other return instructions do so under a condition.
-void CPU8080::ret(CallType call_type) {
-  switch (call_type) {
-    case CallType::kTrue:
-      break;
-    case CallType::kNotZero:
-      if (flags_.zero) {
-        return;
-      }
-      break;
-    case CallType::kZero:
-      if (!flags_.zero) {
-        return;
-      }
-      break;
-    case CallType::kNotCarry:
-      if (flags_.carry) {
-        return;
-      }
-      break;
-    case CallType::kCarry:
-      if (!flags_.carry) {
-        return;
-      }
-      break;
-    case CallType::kParityOdd:
-      if (flags_.parity) {
-        return;
-      }
-      break;
-    case CallType::kParityEven:
-      if (!flags_.parity) {
-        return;
-      }
-      break;
-    case CallType::kPositive:
-      if (flags_.sign) {
-        return;
-      }
-      break;
-    case CallType::kMinus:
-      if (!flags_.sign) {
-        return;
-      }
-      break;
+void CPU8080::ret(JumpCondition jump_condition) {
+  if (!check_jump_condition(jump_condition)) {
+    return;
   }
 
   uint8_t* high_byte;
@@ -495,7 +374,7 @@ void CPU8080::ret(CallType call_type) {
 }
 
 void CPU8080::rst(uint8_t exp) {
-  call(CallType::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
+  call(JumpCondition::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
 }
 
 void CPU8080::ei() { INTE_ = true; }
@@ -504,6 +383,31 @@ void CPU8080::di() { INTE_ = false; }
 
 void CPU8080::hlt() {
   // Can't implement until we know how the interupt process works.
+}
+
+// Returns true if the specified condition is true, otherwise false.
+// Called by JMP, RET, and CALL instructions that depend on a condition check.
+bool CPU8080::check_jump_condition(JumpCondition jump_condition) const {
+  switch (jump_condition) {
+    case JumpCondition::kTrue:
+      return true;
+    case JumpCondition::kNotZero:
+      return !flags_.zero;
+    case JumpCondition::kZero:
+      return flags_.zero;
+    case JumpCondition::kNotCarry:
+      return !flags_.carry;
+    case JumpCondition::kCarry:
+      return flags_.carry;
+    case JumpCondition::kParityOdd:
+      return !flags_.parity;
+    case JumpCondition::kParityEven:
+      return flags_.parity;
+    case JumpCondition::kPositive:
+      return !flags_.sign;
+    case JumpCondition::kMinus:
+      return flags_.sign;
+  }
 }
 
 }  // namespace intel_8080
