@@ -329,10 +329,61 @@ void CPU8080::jmp(uint8_t byte_2, uint8_t byte_3) {
   program_counter_ = mem_location;
 }
 
-void CPU8080::call(uint8_t byte_2, uint8_t byte_3) {
+// CALL Subroutine Instructions
+// CALL always transfers program control, while the others do so under a
+// condition. For example, CNZ will Call if Not Zero, i.e. if the zero flag is
+// clear. Pushes the program counter address onto the stack and then points the
+// program counter to the provided memory address.
+void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
   uint8_t high_byte = program_counter_ >> 8;
   uint8_t low_byte = program_counter_ | 0xFF;
+
+  switch (call_type) {
+    case CallType::kCall:
+      break;
+    case CallType::kCNZ:
+      if (flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kCZ:
+      if (!flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kCNC:
+      if (flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kCC:
+      if (!flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kCPO:
+      if (flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kCPE:
+      if (!flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kCP:
+      if (flags_.sign) {
+        return;
+      }
+      break;
+    case CallType::kCM:
+      if (!flags_.sign) {
+        return;
+      }
+      break;
+  }
+
   push(low_byte, high_byte);
   program_counter_ = mem_location;
 }
@@ -344,7 +395,9 @@ void CPU8080::ret() {
   program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
 }
 
-void CPU8080::rst(uint8_t exp) { call(static_cast<uint8_t>(exp << 3), 0x00); }
+void CPU8080::rst(uint8_t exp) {
+  call(CallType::kCall, static_cast<uint8_t>(exp << 3), 0x00);
+}
 
 void CPU8080::ei() { INTE_ = true; }
 

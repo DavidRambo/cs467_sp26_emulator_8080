@@ -738,10 +738,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xC4:
-      std::cout << "CNZ ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CNZ \n";
+      call(CallType::kCNZ, fetch_byte(), fetch_byte());
       break;
     case 0xC5:
       std::cout << "PUSH B" << std::endl;
@@ -774,16 +772,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xCC:
-      std::cout << "CZ ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CZ \n";
+      call(CallType::kCZ, fetch_byte(), fetch_byte());
       break;
     case 0xCD:
-      std::cout << "CALL ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CALL \n";
+      call(CallType::kCall, fetch_byte(), fetch_byte());
       break;
     case 0xCE:
       std::cout << "ACI ";
@@ -812,10 +806,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xD4:
-      std::cout << "CNC ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CNC \n";
+      call(CallType::kCNC, fetch_byte(), fetch_byte());
       break;
     case 0xD5:
       std::cout << "PUSH D" << std::endl;
@@ -847,16 +839,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0xDC:
-      std::cout << "CC ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CC \n";
+      call(CallType::kCC, fetch_byte(), fetch_byte());
       break;
     case 0xDD:
-      std::cout << "*CALL ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "*CALL \n";
+      call(CallType::kCall, fetch_byte(), fetch_byte());
       break;
     case 0xDE:
       std::cout << "SBI ";
@@ -883,10 +871,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "XTHL" << std::endl;
       break;
     case 0xE4:
-      std::cout << "CPO ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CPO \n";
+      call(CallType::kCPO, fetch_byte(), fetch_byte());
       break;
     case 0xE5:
       std::cout << "PUSH H" << std::endl;
@@ -916,17 +902,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "XCHG" << std::endl;
       break;
     case 0xEC:
-      std::cout << "CPE ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CPE \n";
+      call(CallType::kCPE, fetch_byte(), fetch_byte());
       break;
-
     case 0xED:
-      std::cout << "*CALL ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "*CALL !n";
+      call(CallType::kCall, fetch_byte(), fetch_byte());
       break;
     case 0xEE:
       std::cout << "XRI ";
@@ -953,10 +934,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "DI" << std::endl;
       break;
     case 0xF4:
-      std::cout << "CP ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CP \n";
+      call(CallType::kCP, fetch_byte(), fetch_byte());
       break;
     case 0xF5:
       std::cout << "PUSH PSW" << std::endl;
@@ -986,16 +965,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "EI" << std::endl;
       break;
     case 0xFC:
-      std::cout << "CM ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "CM \n";
+      call(CallType::kCM, fetch_byte(), fetch_byte());
       break;
     case 0xFD:
-      std::cout << "*CALL ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "*CALL \n";
+      call(CallType::kCall, fetch_byte(), fetch_byte());
       break;
     case 0xFE:
       std::cout << "CPI \n";

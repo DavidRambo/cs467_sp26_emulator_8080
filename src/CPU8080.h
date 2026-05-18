@@ -6,6 +6,17 @@
 #include "Memory8080.h"
 
 namespace intel_8080 {
+enum class CallType {
+  kCNZ,
+  kCZ,
+  kCNC,
+  kCC,
+  kCPO,
+  kCPE,
+  kCP,
+  kCM,
+  kCall,
+};
 
 class CPU8080 {
   struct Port {
@@ -118,7 +129,7 @@ class CPU8080 {
   void lhld(uint8_t byte_2, uint8_t byte_3);
   void pchl();
   void jmp(uint8_t byte_2, uint8_t byte_3);
-  void call(uint8_t byte_2, uint8_t byte_3);
+  void call(CallType call_type, uint8_t byte_2, uint8_t byte_3);
   void ret();
   void rst(uint8_t exp);
   void ei();
