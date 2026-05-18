@@ -862,7 +862,8 @@ void CPU8080::execute(uint8_t opcode) {
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xE0:
-      std::cout << "RP0" << std::endl;
+      std::cout << "RPO" << std::endl;
+      ret(JumpCondition::kParityOdd);
       break;
     case 0xE1:
       std::cout << "POP H\n";
