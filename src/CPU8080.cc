@@ -314,13 +314,13 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0x37:
-      std::cout << "STC" << std::endl;
+      std::cout << "STC\n";
       break;
     case 0x38:
-      std::cout << "NOP*" << std::endl;
+      std::cout << "NOP*\n";
       break;
     case 0x39:
-      std::cout << "DAD SP" << std::endl;
+      std::cout << "DAD SP\n";
       break;
     case 0x3A:
       std::cout << "LDA ";
@@ -329,307 +329,307 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << std::endl;
       break;
     case 0x3B:
-      std::cout << "DCX SP" << std::endl;
+      std::cout << "DCX SP\n";
       break;
     case 0x3C:
-      std::cout << "INR A" << std::endl;
+      std::cout << "INR A\n";
       break;
     case 0x3D:
-      std::cout << "DCR A" << std::endl;
+      std::cout << "DCR A\n";
       break;
     case 0x3E:  // MVI A, D8
       mov(&registers_.reg_a, fetch_byte());
       break;
     case 0x3F:
-      std::cout << "CMC" << std::endl;
+      std::cout << "CMC\n";
       break;
     case 0x40:
-      std::cout << "MOV B,B" << std::endl;
+      std::cout << "MOV B,B\n";
       break;
     case 0x41:
-      std::cout << "MOV B,C" << std::endl;
+      std::cout << "MOV B,C\n";
       break;
     case 0x42:
-      std::cout << "MOV B,D" << std::endl;
+      std::cout << "MOV B,D\n";
       break;
     case 0x43:
-      std::cout << "MOV B,E" << std::endl;
+      std::cout << "MOV B,E\n";
       break;
     case 0x44:
-      std::cout << "MOV, B,H" << std::endl;
+      std::cout << "MOV B,H\n";
       break;
     case 0x45:
-      std::cout << "MOV B,L" << std::endl;
+      std::cout << "MOV B,L\n";
       break;
     case 0x46:
-      std::cout << "MOV B,M" << std::endl;
+      std::cout << "MOV B,M\n";
       break;
     case 0x47:
-      std::cout << "MOV B,A" << std::endl;
+      std::cout << "MOV B,A\n";
       break;
     case 0x48:
-      std::cout << "MOV C,B" << std::endl;
+      std::cout << "MOV C,B\n";
       break;
     case 0x49:
-      std::cout << "MOV C,C" << std::endl;
+      std::cout << "MOV C,C\n";
       break;
     case 0x4A:
-      std::cout << "MOV C,D" << std::endl;
+      std::cout << "MOV C,D\n";
       break;
     case 0x4B:
-      std::cout << "MOV C,E" << std::endl;
+      std::cout << "MOV C,E\n";
       break;
     case 0x4C:
-      std::cout << "MOV C,H" << std::endl;
+      std::cout << "MOV C,H\n";
       break;
     case 0x4D:
-      std::cout << "MOV C,L" << std::endl;
+      std::cout << "MOV C,L\n";
       break;
     case 0x4E:
-      std::cout << "MOV C,M" << std::endl;
+      std::cout << "MOV C,M\n";
       break;
     case 0x4F:
-      std::cout << "MOV C,A" << std::endl;
+      std::cout << "MOV C,A\n";
       break;
     case 0x50:
-      std::cout << "MOV D,B" << std::endl;
+      std::cout << "MOV D,B\n";
       break;
     case 0x51:
-      std::cout << "MOV D,C" << std::endl;
+      std::cout << "MOV D,C\n";
       break;
     case 0x52:
-      std::cout << "MOV D,D" << std::endl;
+      std::cout << "MOV D,D\n";
       break;
     case 0x53:
-      std::cout << "MOV D,E" << std::endl;
+      std::cout << "MOV D,E\n";
       break;
     case 0x54:
-      std::cout << "MOV D,H" << std::endl;
+      std::cout << "MOV D,H\n";
       break;
     case 0x55:
-      std::cout << "MOV D,L" << std::endl;
+      std::cout << "MOV D,L\n";
       break;
     case 0x56:
-      std::cout << "MOV D,M" << std::endl;
+      std::cout << "MOV D,M\n";
       break;
     case 0x57:
-      std::cout << "MOV D,A" << std::endl;
+      std::cout << "MOV D,A\n";
       break;
     case 0x58:
-      std::cout << "MOV E,B" << std::endl;
+      std::cout << "MOV E,B\n";
       break;
     case 0x59:
-      std::cout << "MOV E,C" << std::endl;
+      std::cout << "MOV E,C\n";
       break;
     case 0x5A:
-      std::cout << "MOV E,D" << std::endl;
+      std::cout << "MOV E,D\n";
       break;
     case 0x5B:
-      std::cout << "MOV E,E" << std::endl;
+      std::cout << "MOV E,E\n";
       break;
     case 0x5C:
-      std::cout << "MOV E,H" << std::endl;
+      std::cout << "MOV E,H\n";
       break;
     case 0x5D:
-      std::cout << "MOV E,L" << std::endl;
+      std::cout << "MOV E,L\n";
       break;
     case 0x5E:
-      std::cout << "MOV E,M" << std::endl;
+      std::cout << "MOV E,M\n";
       break;
     case 0x5F:
-      std::cout << "MOV E,A" << std::endl;
+      std::cout << "MOV E,A\n";
       break;
     case 0x60:
-      std::cout << "MOV H,B" << std::endl;
+      std::cout << "MOV H,B\n";
       break;
     case 0x61:
-      std::cout << "MOV H,C" << std::endl;
+      std::cout << "MOV H,C\n";
       break;
     case 0x62:
-      std::cout << "MOV H,D" << std::endl;
+      std::cout << "MOV H,D\n";
       break;
     case 0x63:
-      std::cout << "MOV H,E" << std::endl;
+      std::cout << "MOV H,E\n";
       break;
     case 0x64:
-      std::cout << "MOV H,H" << std::endl;
+      std::cout << "MOV H,H\n";
       break;
     case 0x65:
-      std::cout << "MOV H,L" << std::endl;
+      std::cout << "MOV H,L\n";
       break;
     case 0x66:
-      std::cout << "MOV H,M" << std::endl;
+      std::cout << "MOV H,M\n";
       break;
     case 0x67:
-      std::cout << "MOV H,A" << std::endl;
+      std::cout << "MOV H,A\n";
       break;
     case 0x68:
-      std::cout << "MOV E,B" << std::endl;
+      std::cout << "MOV E,B\n";
       break;
     case 0x69:
-      std::cout << "MOV E,C" << std::endl;
+      std::cout << "MOV E,C\n";
       break;
     case 0x6A:
-      std::cout << "MOV E,D" << std::endl;
+      std::cout << "MOV E,D\n";
       break;
     case 0x6B:
-      std::cout << "MOV E,E" << std::endl;
+      std::cout << "MOV E,E\n";
       break;
     case 0x6C:
-      std::cout << "MOV E,H" << std::endl;
+      std::cout << "MOV E,H\n";
       break;
     case 0x6D:
-      std::cout << "MOV E,L" << std::endl;
+      std::cout << "MOV E,L\n";
       break;
     case 0x6E:
-      std::cout << "MOV E,M" << std::endl;
+      std::cout << "MOV E,M\n";
       break;
     case 0x6F:
-      std::cout << "MOV E,A" << std::endl;
+      std::cout << "MOV E,A\n";
       break;
     case 0x70:
-      std::cout << "MOV M,B" << std::endl;
+      std::cout << "MOV M,B\n";
       break;
     case 0x71:
-      std::cout << "MOV M,C" << std::endl;
+      std::cout << "MOV M,C\n";
       break;
     case 0x72:
-      std::cout << "MOV M,D" << std::endl;
+      std::cout << "MOV M,D\n";
       break;
     case 0x73:
-      std::cout << "MOV M,E" << std::endl;
+      std::cout << "MOV M,E\n";
       break;
     case 0x74:
-      std::cout << "MOV M,H" << std::endl;
+      std::cout << "MOV M,H\n";
       break;
     case 0x75:
-      std::cout << "MOV M,L" << std::endl;
+      std::cout << "MOV M,L\n";
       break;
     case 0x76:
-      std::cout << "HLT" << std::endl;
+      std::cout << "HLT\n";
       break;
     case 0x77:
-      std::cout << "MOV M,A" << std::endl;
+      std::cout << "MOV M,A\n";
       break;
     case 0x78:
-      std::cout << "MOV A,B" << std::endl;
+      std::cout << "MOV A,B\n";
       break;
     case 0x79:
-      std::cout << "MOV A,C" << std::endl;
+      std::cout << "MOV A,C\n";
       break;
     case 0x7A:
-      std::cout << "MOV A,D" << std::endl;
+      std::cout << "MOV A,D\n";
       break;
     case 0x7B:
-      std::cout << "MOV A,E" << std::endl;
+      std::cout << "MOV A,E\n";
       break;
     case 0x7C:
-      std::cout << "MOV A,H" << std::endl;
+      std::cout << "MOV A,H\n";
       break;
     case 0x7D:
-      std::cout << "MOV A,L" << std::endl;
+      std::cout << "MOV A,L\n";
       break;
     case 0x7E:
-      std::cout << "MOV A,M" << std::endl;
+      std::cout << "MOV A,M\n";
       break;
     case 0x7F:
-      std::cout << "MOV A,A" << std::endl;
+      std::cout << "MOV A,A\n";
       break;
     case 0x80:
-      std::cout << "ADD B" << std::endl;
+      std::cout << "ADD B\n";
       break;
     case 0x81:
-      std::cout << "ADD C" << std::endl;
+      std::cout << "ADD C\n";
       break;
     case 0x82:
-      std::cout << "ADD D" << std::endl;
+      std::cout << "ADD D\n";
       break;
     case 0x83:
-      std::cout << "ADD E" << std::endl;
+      std::cout << "ADD E\n";
       break;
     case 0x84:
-      std::cout << "ADD H" << std::endl;
+      std::cout << "ADD H\n";
       break;
     case 0x85:
-      std::cout << "ADD L" << std::endl;
+      std::cout << "ADD L\n";
       break;
     case 0x86:
-      std::cout << "ADD M" << std::endl;
+      std::cout << "ADD M\n";
       break;
     case 0x87:
-      std::cout << "ADD A" << std::endl;
+      std::cout << "ADD A\n";
       break;
     case 0x88:
-      std::cout << "ADC B" << std::endl;
+      std::cout << "ADC B\n";
       break;
     case 0x89:
-      std::cout << "ADC C" << std::endl;
+      std::cout << "ADC C\n";
       break;
     case 0x8A:
-      std::cout << "ADC D" << std::endl;
+      std::cout << "ADC D\n";
       break;
     case 0x8B:
-      std::cout << "ADC E" << std::endl;
+      std::cout << "ADC E\n";
       break;
     case 0x8C:
-      std::cout << "ADC H" << std::endl;
+      std::cout << "ADC H\n";
       break;
     case 0x8D:
-      std::cout << "ADC L" << std::endl;
+      std::cout << "ADC L\n";
       break;
     case 0x8E:
-      std::cout << "ADC M" << std::endl;
+      std::cout << "ADC M\n";
       break;
     case 0x8F:
-      std::cout << "ADC A" << std::endl;
+      std::cout << "ADC A\n";
       break;
     case 0x90:
-      std::cout << "SUB B" << std::endl;
+      std::cout << "SUB B\n";
       break;
     case 0x91:
-      std::cout << "SUB C" << std::endl;
+      std::cout << "SUB C\n";
       break;
     case 0x92:
-      std::cout << "SUB D" << std::endl;
+      std::cout << "SUB D\n";
       break;
     case 0x93:
-      std::cout << "SUB E" << std::endl;
+      std::cout << "SUB E\n";
       break;
     case 0x94:
-      std::cout << "SUB H" << std::endl;
+      std::cout << "SUB H\n";
       break;
     case 0x95:
-      std::cout << "SUB L" << std::endl;
+      std::cout << "SUB L\n";
       break;
     case 0x96:
-      std::cout << "SUB M" << std::endl;
+      std::cout << "SUB M\n";
       break;
     case 0x97:
-      std::cout << "SUB A" << std::endl;
+      std::cout << "SUB A\n";
       break;
     case 0x98:
-      std::cout << "SBB B" << std::endl;
+      std::cout << "SBB B\n";
       break;
     case 0x99:
-      std::cout << "SBB C" << std::endl;
+      std::cout << "SBB C\n";
       break;
     case 0x9A:
-      std::cout << "SBB D" << std::endl;
+      std::cout << "SBB D\n";
       break;
     case 0x9B:
-      std::cout << "SBB E" << std::endl;
+      std::cout << "SBB E\n";
       break;
     case 0x9C:
-      std::cout << "SBB H" << std::endl;
+      std::cout << "SBB H\n";
       break;
     case 0x9D:
-      std::cout << "SBB L" << std::endl;
+      std::cout << "SBB L\n";
       break;
     case 0x9E:
-      std::cout << "SBB M" << std::endl;
+      std::cout << "SBB M\n";
       break;
     case 0x9F:
-      std::cout << "SBB A" << std::endl;
+      std::cout << "SBB A\n";
       break;
     case 0xA0:
       std::cout << "ANA B\n";
