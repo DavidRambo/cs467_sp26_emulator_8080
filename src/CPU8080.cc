@@ -656,28 +656,37 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "ANA A" << std::endl;
       break;
     case 0xA8:
-      std::cout << "XRA B" << std::endl;
+      std::cout << "XRA B\n";
+      xra(registers_.reg_b);
       break;
     case 0xA9:
-      std::cout << "XRA C" << std::endl;
+      std::cout << "XRA C\n";
+      xra(registers_.reg_c);
       break;
     case 0xAA:
-      std::cout << "XRA D" << std::endl;
+      std::cout << "XRA D\n";
+      xra(registers_.reg_d);
       break;
     case 0xAB:
-      std::cout << "XRA E" << std::endl;
+      std::cout << "XRA E\n";
+      xra(registers_.reg_e);
       break;
     case 0xAC:
-      std::cout << "XRA H" << std::endl;
+      std::cout << "XRA H\n";
+      xra(registers_.reg_h);
       break;
     case 0xAD:
-      std::cout << "XRA L" << std::endl;
+      std::cout << "XRA L\n";
+      xra(registers_.reg_l);
       break;
     case 0xAE:
-      std::cout << "XRA M" << std::endl;
+      std::cout << "XRA M\n";
+      uint8_t data = mem_access_->read(registers_.hl());
+      xra(data);
       break;
     case 0xAF:
-      std::cout << "XRA A" << std::endl;
+      std::cout << "XRA A\n";
+      xra(registers_.reg_a);
       break;
     case 0xB0:
       std::cout << "ORA B\n";
