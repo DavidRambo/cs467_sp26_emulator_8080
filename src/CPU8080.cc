@@ -732,7 +732,8 @@ void CPU8080::execute(uint8_t opcode) {
       ret(JumpCondition::kNotZero);
       break;
     case 0xC1:
-      std::cout << "POP B" << std::endl;
+      std::cout << "POP B\n";
+      pop(&registers_.reg_b, &registers_.reg_c);
       break;
     case 0xC2:
       std::cout << "JNZ \n";
@@ -747,7 +748,8 @@ void CPU8080::execute(uint8_t opcode) {
       call(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
       break;
     case 0xC5:
-      std::cout << "PUSH B" << std::endl;
+      std::cout << "PUSH B\n";
+      push(registers_.reg_b, registers_.reg_c);
       break;
     case 0xC6:
       std::cout << "ADI ";
@@ -796,7 +798,8 @@ void CPU8080::execute(uint8_t opcode) {
       ret(JumpCondition::kNotCarry);
       break;
     case 0xD1:
-      std::cout << "POP B" << std::endl;
+      std::cout << "POP D\n";
+      pop(&registers_.reg_d, &registers_.reg_e);
       break;
     case 0xD2:
       std::cout << "JNZ \n";
@@ -812,7 +815,8 @@ void CPU8080::execute(uint8_t opcode) {
       call(JumpCondition::kNotCarry, fetch_byte(), fetch_byte());
       break;
     case 0xD5:
-      std::cout << "PUSH D" << std::endl;
+      std::cout << "PUSH D\n";
+      push(registers_.reg_d, registers_.reg_e);
       break;
     case 0xD6:
       std::cout << "SUI ";
@@ -861,7 +865,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "RP0" << std::endl;
       break;
     case 0xE1:
-      std::cout << "POP H" << std::endl;
+      std::cout << "POP H\n";
+      pop(&registers_.reg_h, &registers_.reg_l);
       break;
     case 0xE2:
       std::cout << "JPO \n";
@@ -875,7 +880,8 @@ void CPU8080::execute(uint8_t opcode) {
       call(JumpCondition::kParityOdd, fetch_byte(), fetch_byte());
       break;
     case 0xE5:
-      std::cout << "PUSH H" << std::endl;
+      std::cout << "PUSH H\n";
+      push(registers_.reg_h, registers_.reg_l);
       break;
     case 0xE6:
       std::cout << "ANI \n";
