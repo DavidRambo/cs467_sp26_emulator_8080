@@ -786,7 +786,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0xCE:
       std::cout << "ACI ";
-      print_hex_byte(fetch_byte());
+      ana(fetch_byte());
       std::cout << std::endl;
       break;
     case 0xCF:
