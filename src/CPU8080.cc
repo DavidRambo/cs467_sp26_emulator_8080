@@ -878,9 +878,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "PUSH H" << std::endl;
       break;
     case 0xE6:
-      std::cout << "ANI ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "ANI \n";
+      ana(fetch_byte());
       break;
     case 0xE7:
       std::cout << "RST 4\n";
