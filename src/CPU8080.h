@@ -128,7 +128,7 @@ class CPU8080 {
   void shld(uint8_t byte_2, uint8_t byte_3);
   void lhld(uint8_t byte_2, uint8_t byte_3);
   void pchl();
-  void jmp(uint8_t byte_2, uint8_t byte_3);
+  void jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3);
   void call(CallType call_type, uint8_t byte_2, uint8_t byte_3);
   void ret();
   void rst(uint8_t exp);

@@ -726,16 +726,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "POP B" << std::endl;
       break;
     case 0xC2:
-      std::cout << "JNZ ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JNZ \n";
+      jmp(CallType::kNotZero, fetch_byte(), fetch_byte());
       break;
     case 0xC3:
-      std::cout << "JMP ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JMP \n";
+      jmp(CallType::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xC4:
       std::cout << "CNZ \n";
@@ -760,16 +756,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "RET" << std::endl;
       break;
     case 0xCA:
-      std::cout << "JZ ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JZ \n";
+      jmp(CallType::kZero, fetch_byte(), fetch_byte());
       break;
     case 0xCB:
-      std::cout << "*JMP ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "*JMP \n";
+      jmp(CallType::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xCC:
       std::cout << "CZ \n";
@@ -795,10 +787,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "POP B" << std::endl;
       break;
     case 0xD2:
-      std::cout << "JNZ ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JNZ \n";
+      jmp(CallType::kNotZero, fetch_byte(), fetch_byte());
       break;
     case 0xD3:
       std::cout << "OUT ";
@@ -828,10 +818,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "*RET" << std::endl;
       break;
     case 0xDA:
-      std::cout << "JC ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JC \n";
+      jmp(CallType::kCarry, fetch_byte(), fetch_byte());
       break;
     case 0xDB:
       std::cout << "IN ";
@@ -862,10 +850,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "POP H" << std::endl;
       break;
     case 0xE2:
-      std::cout << "JPO ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JPO \n";
+      jmp(CallType::kParityOdd, fetch_byte(), fetch_byte());
       break;
     case 0xE3:
       std::cout << "XTHL" << std::endl;
@@ -893,10 +879,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "PCHL" << std::endl;
       break;
     case 0xEA:
-      std::cout << "JPE ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JPE \n";
+      jmp(CallType::kParityEven, fetch_byte(), fetch_byte());
       break;
     case 0xEB:
       std::cout << "XCHG" << std::endl;
@@ -925,10 +909,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "POP PSW" << std::endl;
       break;
     case 0xF2:
-      std::cout << "JP ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JP \n";
+      jmp(CallType::kPositive, fetch_byte(), fetch_byte());
       break;
     case 0xF3:
       std::cout << "DI\n";
@@ -957,10 +939,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "SPHL" << std::endl;
       break;
     case 0xFA:
-      std::cout << "JM ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "JM \n";
+      jmp(CallType::kMinus, fetch_byte(), fetch_byte());
       break;
     case 0xFB:
       std::cout << "EI\n";

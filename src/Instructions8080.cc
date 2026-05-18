@@ -324,7 +324,57 @@ void CPU8080::pchl() {
   program_counter_ = mem_location;
 }
 
-void CPU8080::jmp(uint8_t byte_2, uint8_t byte_3) {
+// JUMP Instructions
+// JMP always transfers program control, while the others do so under a
+// condition. For example, JM, "Jump if Minus", jumps if the sign bit is set.
+// Sice the CALL instructions work the same way, this function reuses the
+// CallType enum class.
+void CPU8080::jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
+  switch (call_type) {
+    case CallType::kTrue:
+      break;
+    case CallType::kNotZero:
+      if (flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kZero:
+      if (!flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kNotCarry:
+      if (flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kCarry:
+      if (!flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kParityOdd:
+      if (flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kParityEven:
+      if (!flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kPositive:
+      if (flags_.sign) {
+        return;
+      }
+      break;
+    case CallType::kMinus:
+      if (!flags_.sign) {
+        return;
+      }
+      break;
+  }
+
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
   program_counter_ = mem_location;
 }
