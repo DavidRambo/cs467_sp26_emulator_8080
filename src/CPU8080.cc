@@ -898,7 +898,8 @@ void CPU8080::execute(uint8_t opcode) {
       jmp(JumpCondition::kParityEven, fetch_byte(), fetch_byte());
       break;
     case 0xEB:
-      std::cout << "XCHG" << std::endl;
+      std::cout << "XCHG\n";
+      xchg();
       break;
     case 0xEC:
       std::cout << "CPE \n";
