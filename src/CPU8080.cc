@@ -909,9 +909,8 @@ void CPU8080::execute(uint8_t opcode) {
       call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xEE:
-      std::cout << "XRI ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "XRI \n";
+      xra(fetch_byte());
       break;
     case 0xEF:
       std::cout << "RST 5\n";
