@@ -141,6 +141,18 @@ void CPU8080::ora(uint8_t data) {
   update_flags_szp(registers_.reg_a);
 }
 
+// CPI: Compare Immediate with Accumulator
+// Performs a comparison by subtracting a data byte from the accumulator without
+// updating the accumulator and checking the condition bits.
+// Zero flag is set if the are equal, reset otherwise. Carry bit is set if data
+// is larger than accumulator.
+// Flags affected: Carry, Zero, Sign, Parity
+void CPU8080::cpi(uint8_t data) {
+  uint16_t result = registers_.reg_a - data;
+  flags_.carry = (result > 0xFF) ? 0 : 1;
+  update_flags_szp(static_cast<uint8_t>(result));
+}
+
 // CMP: Compare Register or Memory w/ Accumulator
 // THe specified byte is compared to the contents of A. Internally
 // subtracts the byte from A, leaving both unchanged. Condition bits
@@ -312,15 +324,116 @@ void CPU8080::pchl() {
   program_counter_ = mem_location;
 }
 
-void CPU8080::jmp(uint8_t byte_2, uint8_t byte_3) {
+// JUMP Instructions
+// JMP always transfers program control, while the others do so under a
+// condition. For example, JM, "Jump if Minus", jumps if the sign bit is set.
+// Sice the CALL instructions work the same way, this function reuses the
+// CallType enum class.
+void CPU8080::jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
+  switch (call_type) {
+    case CallType::kTrue:
+      break;
+    case CallType::kNotZero:
+      if (flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kZero:
+      if (!flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kNotCarry:
+      if (flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kCarry:
+      if (!flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kParityOdd:
+      if (flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kParityEven:
+      if (!flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kPositive:
+      if (flags_.sign) {
+        return;
+      }
+      break;
+    case CallType::kMinus:
+      if (!flags_.sign) {
+        return;
+      }
+      break;
+  }
+
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
   program_counter_ = mem_location;
 }
 
-void CPU8080::call(uint8_t byte_2, uint8_t byte_3) {
+// CALL Subroutine Instructions
+// CALL always transfers program control, while the others do so under a
+// condition. For example, CNZ will Call if Not Zero, i.e. if the zero flag is
+// clear. Pushes the program counter address onto the stack and then points the
+// program counter to the provided memory address.
+void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
   uint8_t high_byte = program_counter_ >> 8;
   uint8_t low_byte = program_counter_ | 0xFF;
+
+  switch (call_type) {
+    case CallType::kTrue:
+      break;
+    case CallType::kNotZero:
+      if (flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kZero:
+      if (!flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kNotCarry:
+      if (flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kCarry:
+      if (!flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kParityOdd:
+      if (flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kParityEven:
+      if (!flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kPositive:
+      if (flags_.sign) {
+        return;
+      }
+      break;
+    case CallType::kMinus:
+      if (!flags_.sign) {
+        return;
+      }
+      break;
+  }
+
   push(low_byte, high_byte);
   program_counter_ = mem_location;
 }
@@ -332,7 +445,9 @@ void CPU8080::ret() {
   program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
 }
 
-void CPU8080::rst(uint8_t exp) { call(static_cast<uint8_t>(exp << 3), 0x00); }
+void CPU8080::rst(uint8_t exp) {
+  call(CallType::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
+}
 
 void CPU8080::ei() { INTE_ = true; }
 
