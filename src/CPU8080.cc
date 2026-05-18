@@ -932,9 +932,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "PUSH PSW" << std::endl;
       break;
     case 0xF6:
-      std::cout << "ORI ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "ORI \n";
+      ora(fetch_byte());
       break;
     case 0xF7:
       std::cout << "RST 6\n";
