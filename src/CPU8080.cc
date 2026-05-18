@@ -720,7 +720,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "CMP A" << std::endl;
       break;
     case 0xC0:
-      std::cout << "RNZ" << std::endl;
+      std::cout << "RNZ\n";
+      ret(CallType::kNotZero);
       break;
     case 0xC1:
       std::cout << "POP B" << std::endl;
@@ -750,10 +751,12 @@ void CPU8080::execute(uint8_t opcode) {
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xC8:
-      std::cout << "RZ" << std::endl;
+      std::cout << "RZ\n";
+      ret(CallType::kZero);
       break;
     case 0xC9:
-      std::cout << "RET" << std::endl;
+      std::cout << "RET\n";
+      ret(CallType::kTrue);
       break;
     case 0xCA:
       std::cout << "JZ \n";
@@ -781,7 +784,8 @@ void CPU8080::execute(uint8_t opcode) {
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xD0:
-      std::cout << "RNC" << std::endl;
+      std::cout << "RNC\n";
+      ret(CallType::kNotCarry);
       break;
     case 0xD1:
       std::cout << "POP B" << std::endl;
@@ -812,10 +816,12 @@ void CPU8080::execute(uint8_t opcode) {
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xD8:
-      std::cout << "RC" << std::endl;
+      std::cout << "RC\n";
+      ret(CallType::kCarry);
       break;
     case 0xD9:
-      std::cout << "*RET" << std::endl;
+      std::cout << "*RET\n";
+      ret(CallType::kTrue);
       break;
     case 0xDA:
       std::cout << "JC \n";
@@ -873,7 +879,8 @@ void CPU8080::execute(uint8_t opcode) {
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xE8:
-      std::cout << "RPE" << std::endl;
+      std::cout << "RPE\n";
+      ret(CallType::kParityEven);
       break;
     case 0xE9:
       std::cout << "PCHL" << std::endl;
@@ -903,7 +910,8 @@ void CPU8080::execute(uint8_t opcode) {
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xF0:
-      std::cout << "RP" << std::endl;
+      std::cout << "RP\n";
+      ret(CallType::kPositive);
       break;
     case 0xF1:
       std::cout << "POP PSW" << std::endl;
@@ -933,7 +941,8 @@ void CPU8080::execute(uint8_t opcode) {
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xF8:
-      std::cout << "RM" << std::endl;
+      std::cout << "RM\n";
+      ret(CallType::kMinus);
       break;
     case 0xF9:
       std::cout << "SPHL\n";

@@ -438,7 +438,56 @@ void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
   program_counter_ = mem_location;
 }
 
-void CPU8080::ret() {
+// RETURN Instructions
+// These instructions pop the last address off the stack and assign it to the
+// program counter in order to return from a subroutine. RET always does it,
+// while other return instructions do so under a condition.
+void CPU8080::ret(CallType call_type) {
+  switch (call_type) {
+    case CallType::kTrue:
+      break;
+    case CallType::kNotZero:
+      if (flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kZero:
+      if (!flags_.zero) {
+        return;
+      }
+      break;
+    case CallType::kNotCarry:
+      if (flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kCarry:
+      if (!flags_.carry) {
+        return;
+      }
+      break;
+    case CallType::kParityOdd:
+      if (flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kParityEven:
+      if (!flags_.parity) {
+        return;
+      }
+      break;
+    case CallType::kPositive:
+      if (flags_.sign) {
+        return;
+      }
+      break;
+    case CallType::kMinus:
+      if (!flags_.sign) {
+        return;
+      }
+      break;
+  }
+
   uint8_t* high_byte;
   uint8_t* low_byte;
   pop(low_byte, high_byte);
