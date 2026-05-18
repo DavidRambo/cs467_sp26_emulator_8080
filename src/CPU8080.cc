@@ -704,28 +704,38 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "ORA A" << std::endl;
       break;
     case 0xB8:
-      std::cout << "CMP B" << std::endl;
+      std::cout << "CMP B\n";
+      cmp(registers_.reg_b);
       break;
     case 0xB9:
-      std::cout << "CMP C" << std::endl;
+      std::cout << "CMP C\n";
+      cmp(registers_.reg_c);
       break;
     case 0xBA:
-      std::cout << "CMP D" << std::endl;
+      std::cout << "CMP D\n";
+      cmp(registers_.reg_d);
       break;
     case 0xBB:
-      std::cout << "CMP E" << std::endl;
+      std::cout << "CMP E\n";
+      cmp(registers_.reg_e);
       break;
     case 0xBC:
-      std::cout << "CMP H" << std::endl;
+      std::cout << "CMP H\n";
+      cmp(registers_.reg_h);
       break;
     case 0xBD:
-      std::cout << "CMP L" << std::endl;
+      std::cout << "CMP L\n";
+      cmp(registers_.reg_l);
       break;
-    case 0xBE:
-      std::cout << "CMP M" << std::endl;
+    case 0xBE: {
+      std::cout << "CMP M\n";
+      uint8_t data = mem_access_->read(registers_.hl());
+      cmp(data);
       break;
+    }
     case 0xBF:
-      std::cout << "CMP A" << std::endl;
+      std::cout << "CMP A\n";
+      cmp(registers_.reg_a);
       break;
     case 0xC0:
       std::cout << "RNZ\n";

@@ -154,7 +154,7 @@ void CPU8080::cpi(uint8_t data) {
 }
 
 // CMP: Compare Register or Memory w/ Accumulator
-// THe specified byte is compared to the contents of A. Internally
+// The specified byte is compared to the contents of A. Internally
 // subtracts the byte from A, leaving both unchanged. Condition bits
 // are set based on the result, simlar to the SUB instruction.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
