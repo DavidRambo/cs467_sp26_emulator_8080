@@ -114,9 +114,9 @@ void CPU8080::execute(uint8_t opcode) {
       lxi(&registers_.reg_b, &registers_.reg_c, fetch_byte(), fetch_byte());
       break;
     case 0x02: {
-      auto reg =
+      auto reg_pair =
           static_cast<uint16_t>((registers_.reg_b << 8) | registers_.reg_c);
-      stax(reg);
+      stax(reg_pair);
       std::cout << "STAX B" << std::endl;
     } break;
     case 0x03:
@@ -146,18 +146,16 @@ void CPU8080::execute(uint8_t opcode) {
       ldax(mem_location);
     } break;
     case 0x0B:
-      std::cout << "DCX B" << std::endl;
+      dcx(&registers_.reg_b, &registers_.reg_c);
       break;
     case 0x0C:
-      std::cout << "INR C" << std::endl;
+      inr(&registers_.reg_c);
       break;
     case 0x0D:
-      std::cout << "DCR C" << std::endl;
+      dcr(&registers_.reg_c);
       break;
     case 0x0E:
-      std::cout << "MVI C,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      mov(&registers_.reg_c, fetch_byte());
       break;
     case 0x0F:
       std::cout << "RRC" << std::endl;
@@ -166,55 +164,52 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "NOP*" << std::endl;
       break;
     case 0x11:
-      std::cout << "LXI D,";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      lxi(&registers_.reg_d, &registers_.reg_e, fetch_byte(), fetch_byte());
       break;
-    case 0x12:
-      std::cout << "STAX D" << std::endl;
-      break;
+    case 0x12: {
+      auto reg_pair =
+          static_cast<uint16_t>((registers_.reg_d << 8) | registers_.reg_e);
+      stax(reg_pair);
+    } break;
     case 0x13:
-      std::cout << "INX D" << std::endl;
+      inx(&registers_.reg_d, &registers_.reg_e);
       break;
     case 0x14:
-      std::cout << "INR D" << std::endl;
+      inr(&registers_.reg_d);
       break;
     case 0x15:
-      std::cout << "DCR D" << std::endl;
+      dcr(&registers_.reg_d);
       break;
     case 0x16:
-      std::cout << "MVI D,";
-      print_hex_byte(fetch_byte());
+      mov(&registers_.reg_d, fetch_byte());
       break;
     case 0x17:
-      std::cout << "RAL" << std::endl;
+      ral();
       break;
     case 0x18:
       std::cout << "*NOP" << std::endl;
       break;
     case 0x19:
-      std::cout << "DAD D" << std::endl;
+      dad(&registers_.reg_d, &registers_.reg_e);
       break;
-    case 0x1A:
-      std::cout << "LDAX D" << std::endl;
-      break;
+    case 0x1A: {
+      auto mem_location =
+          static_cast<uint16_t>((registers_.reg_d << 8) | registers_.reg_e);
+    } break;
     case 0x1B:
-      std::cout << "DCX D" << std::endl;
+      dcx(&registers_.reg_d, &registers_.reg_e);
       break;
     case 0x1C:
-      std::cout << "INR E" << std::endl;
+      inr(&registers_.reg_e);
       break;
     case 0x1D:
-      std::cout << "DCR E" << std::endl;
+      dcr(&registers_.reg_e);
       break;
     case 0x1E:
-      std::cout << "MVI E,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      mov(&registers_.reg_e, fetch_byte());
       break;
     case 0x1F:
-      std::cout << "RAR" << std::endl;
+      rar();
       break;
     case 0x20:
       std::cout << "*NOP" << std::endl;
