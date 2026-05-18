@@ -680,28 +680,37 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "XRA A" << std::endl;
       break;
     case 0xB0:
-      std::cout << "ORA B" << std::endl;
+      std::cout << "ORA B\n";
+      ora(registers_.reg_b);
       break;
     case 0xB1:
-      std::cout << "ORA C" << std::endl;
+      std::cout << "ORA C\n";
+      ora(registers_.reg_c);
       break;
     case 0xB2:
-      std::cout << "ORA D" << std::endl;
+      std::cout << "ORA D\n";
+      ora(registers_.reg_d);
       break;
     case 0xB3:
-      std::cout << "ORA E" << std::endl;
+      std::cout << "ORA E\n";
+      ora(registers_.reg_e);
       break;
     case 0xB4:
-      std::cout << "ORA H" << std::endl;
+      std::cout << "ORA H\n";
+      ora(registers_.reg_h);
       break;
     case 0xB5:
-      std::cout << "ORA L" << std::endl;
+      std::cout << "ORA L\n";
+      ora(registers_.reg_l);
       break;
     case 0xB6:
-      std::cout << "ORA M" << std::endl;
+      std::cout << "ORA M\n";
+      uint8_t data = mem_access_->read(registers_.hl());
+      ora(data);
       break;
     case 0xB7:
-      std::cout << "ORA A" << std::endl;
+      std::cout << "ORA A\n";
+      ora(registers_.reg_a);
       break;
     case 0xB8:
       std::cout << "CMP B\n";
