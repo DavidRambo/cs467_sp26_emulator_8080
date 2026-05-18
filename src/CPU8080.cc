@@ -819,9 +819,8 @@ void CPU8080::execute(uint8_t opcode) {
       push(registers_.reg_d, registers_.reg_e);
       break;
     case 0xD6:
-      std::cout << "SUI ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "SUI \n";
+      sub(fetch_byte());
       break;
     case 0xD7:
       std::cout << "RST 2\n";
