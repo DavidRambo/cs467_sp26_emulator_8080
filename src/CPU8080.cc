@@ -335,9 +335,7 @@ void CPU8080::execute(std::uint8_t opcode) {
       std::cout << "DCR A" << std::endl;
       break;
     case 0x3E:  // MVI A, D8
-      std::cout << "MVI A,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "MVI A\n";
       mov(&registers_.reg_a, fetch_byte());
       break;
     case 0x3F:
