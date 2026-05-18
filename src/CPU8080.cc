@@ -632,28 +632,38 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "SBB A" << std::endl;
       break;
     case 0xA0:
-      std::cout << "ANA B" << std::endl;
+      std::cout << "ANA B\n";
+      ana(registers_.reg_b);
       break;
     case 0xA1:
-      std::cout << "ANA C" << std::endl;
+      std::cout << "ANA C\n";
+      ana(registers_.reg_c);
       break;
     case 0xA2:
-      std::cout << "ANA D" << std::endl;
+      std::cout << "ANA D\n";
+      ana(registers_.reg_d);
       break;
     case 0xA3:
-      std::cout << "ANA E" << std::endl;
+      std::cout << "ANA E\n";
+      ana(registers_.reg_e);
       break;
     case 0xA4:
-      std::cout << "ANA H" << std::endl;
+      std::cout << "ANA H\n";
+      ana(registers_.reg_h);
       break;
     case 0xA5:
-      std::cout << "ANA L" << std::endl;
+      std::cout << "ANA L\n";
+      ana(registers_.reg_l);
       break;
-    case 0xA6:
-      std::cout << "ANA M" << std::endl;
+    case 0xA6: {
+      std::cout << "ANA M\n";
+      uint8_t data = mem_access_->read(registers_.hl());
+      ana(data);
       break;
+    }
     case 0xA7:
-      std::cout << "ANA A" << std::endl;
+      std::cout << "ANA A\n";
+      ana(registers_.reg_a);
       break;
     case 0xA8:
       std::cout << "XRA B\n";
@@ -679,11 +689,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "XRA L\n";
       xra(registers_.reg_l);
       break;
-    case 0xAE:
+    case 0xAE: {
       std::cout << "XRA M\n";
       uint8_t data = mem_access_->read(registers_.hl());
       xra(data);
       break;
+    }
     case 0xAF:
       std::cout << "XRA A\n";
       xra(registers_.reg_a);
@@ -712,11 +723,12 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "ORA L\n";
       ora(registers_.reg_l);
       break;
-    case 0xB6:
+    case 0xB6: {
       std::cout << "ORA M\n";
       uint8_t data = mem_access_->read(registers_.hl());
       ora(data);
       break;
+    }
     case 0xB7:
       std::cout << "ORA A\n";
       ora(registers_.reg_a);
