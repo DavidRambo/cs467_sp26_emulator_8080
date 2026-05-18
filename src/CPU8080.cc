@@ -936,7 +936,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "RM" << std::endl;
       break;
     case 0xF9:
-      std::cout << "SPHL" << std::endl;
+      std::cout << "SPHL\n";
+      sphl();
       break;
     case 0xFA:
       std::cout << "JM \n";
