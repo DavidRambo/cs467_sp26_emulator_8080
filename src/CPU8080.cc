@@ -335,7 +335,7 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x3F:
       std::cout << "CMC" << std::endl;
       break;
-    Ask a follow - up question case 0x40:
+    case 0x40:
       std::cout << "MOV B,B" << std::endl;
       break;
     case 0x41:
@@ -410,7 +410,7 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x58:
       std::cout << "MOV E,B" << std::endl;
       break;
-    Ask a follow - up question case 0x59:
+    case 0x59:
       std::cout << "MOV E,C" << std::endl;
       break;
     case 0x5A:
@@ -599,7 +599,7 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x97:
       std::cout << "SUB A" << std::endl;
       break;
-    Ask a follow - up question case 0x98:
+    case 0x98:
       std::cout << "SBB B" << std::endl;
       break;
     case 0x99:
