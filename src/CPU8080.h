@@ -7,15 +7,15 @@
 
 namespace intel_8080 {
 enum class CallType {
-  kCNZ,
-  kCZ,
-  kCNC,
-  kCC,
-  kCPO,
-  kCPE,
-  kCP,
-  kCM,
-  kCall,
+  kNotZero,
+  kZero,
+  kNotCarry,
+  kCarry,
+  kParityOdd,
+  kParityEven,
+  kPositive,
+  kMinus,
+  kTrue,
 };
 
 class CPU8080 {

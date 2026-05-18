@@ -340,44 +340,44 @@ void CPU8080::call(CallType call_type, uint8_t byte_2, uint8_t byte_3) {
   uint8_t low_byte = program_counter_ | 0xFF;
 
   switch (call_type) {
-    case CallType::kCall:
+    case CallType::kTrue:
       break;
-    case CallType::kCNZ:
+    case CallType::kNotZero:
       if (flags_.zero) {
         return;
       }
       break;
-    case CallType::kCZ:
+    case CallType::kZero:
       if (!flags_.zero) {
         return;
       }
       break;
-    case CallType::kCNC:
+    case CallType::kNotCarry:
       if (flags_.carry) {
         return;
       }
       break;
-    case CallType::kCC:
+    case CallType::kCarry:
       if (!flags_.carry) {
         return;
       }
       break;
-    case CallType::kCPO:
+    case CallType::kParityOdd:
       if (flags_.parity) {
         return;
       }
       break;
-    case CallType::kCPE:
+    case CallType::kParityEven:
       if (!flags_.parity) {
         return;
       }
       break;
-    case CallType::kCP:
+    case CallType::kPositive:
       if (flags_.sign) {
         return;
       }
       break;
-    case CallType::kCM:
+    case CallType::kMinus:
       if (!flags_.sign) {
         return;
       }
@@ -396,7 +396,7 @@ void CPU8080::ret() {
 }
 
 void CPU8080::rst(uint8_t exp) {
-  call(CallType::kCall, static_cast<uint8_t>(exp << 3), 0x00);
+  call(CallType::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
 }
 
 void CPU8080::ei() { INTE_ = true; }
