@@ -873,7 +873,8 @@ void CPU8080::execute(uint8_t opcode) {
       jmp(JumpCondition::kParityOdd, fetch_byte(), fetch_byte());
       break;
     case 0xE3:
-      std::cout << "XTHL" << std::endl;
+      std::cout << "XTHL\n";
+      xthl();
       break;
     case 0xE4:
       std::cout << "CPO \n";
