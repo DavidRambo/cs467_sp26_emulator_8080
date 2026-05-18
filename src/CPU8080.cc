@@ -891,7 +891,8 @@ void CPU8080::execute(uint8_t opcode) {
       ret(JumpCondition::kParityEven);
       break;
     case 0xE9:
-      std::cout << "PCHL" << std::endl;
+      std::cout << "PCHL\n";
+      pchl();
       break;
     case 0xEA:
       std::cout << "JPE \n";
