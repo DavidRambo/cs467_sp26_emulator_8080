@@ -752,9 +752,8 @@ void CPU8080::execute(uint8_t opcode) {
       push(registers_.reg_b, registers_.reg_c);
       break;
     case 0xC6:
-      std::cout << "ADI ";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      std::cout << "ADI\n";
+      add(fetch_byte());
       break;
     case 0xC7:
       std::cout << "RST 0\n";
