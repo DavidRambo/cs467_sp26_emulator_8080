@@ -11,6 +11,7 @@ Checks: >
   portability-*,
   readability-*,
   -bugprone-exception-escape,
+  -google-readability-todo,
   -google-readability-braces-around-statements,
   -google-readability-namespace-comments,
   -google-runtime-references,
