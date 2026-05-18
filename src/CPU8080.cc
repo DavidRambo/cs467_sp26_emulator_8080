@@ -37,6 +37,14 @@ std::uint8_t CPU8080::Flags::to_byte() {
   return return_byte;
 };
 
+void CPU8080::Flags::from_byte(uint8_t data) {
+  carry = data & 0x1;
+  parity = data & (1 << 2);
+  aux_carry = data & (1 << 4);
+  zero = data & (1 << 6);
+  sign = data & (1 << 7);
+}
+
 void CPU8080::step() {
   uint8_t instruction = fetch_byte();
   execute(instruction);
@@ -913,9 +921,13 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "RP\n";
       ret(JumpCondition::kPositive);
       break;
-    case 0xF1:
-      std::cout << "POP PSW" << std::endl;
+    case 0xF1: {
+      std::cout << "POP PSW\n";
+      uint8_t temp_flags{0};
+      pop(&registers_.reg_a, &temp_flags);
+      flags_.from_byte(temp_flags);
       break;
+    }
     case 0xF2:
       std::cout << "JP \n";
       jmp(JumpCondition::kPositive, fetch_byte(), fetch_byte());
@@ -929,7 +941,8 @@ void CPU8080::execute(uint8_t opcode) {
       call(JumpCondition::kPositive, fetch_byte(), fetch_byte());
       break;
     case 0xF5:
-      std::cout << "PUSH PSW" << std::endl;
+      std::cout << "PUSH PSW\n";
+      push(registers_.reg_a, flags_.to_byte());
       break;
     case 0xF6:
       std::cout << "ORI \n";
