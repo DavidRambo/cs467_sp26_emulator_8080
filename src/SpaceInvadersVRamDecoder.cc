@@ -2,28 +2,28 @@
 #include <vector>
 #include "SpaceInvadersVRamDecoder.h"
 
-namespace SpaceInvadersVRamDecoder
+namespace space_invaders_vram_decoder
 {
-    constexpr int MM_COLS = 32;
-    constexpr int MM_ROWS = 224;
-    constexpr int MM_PIX_PER_BYTE = 8;
+    constexpr int kMmCols = 32;
+    constexpr int kMmRows = 224;
+    constexpr int kMmPixPerByte = 8;
 
     std::vector<SDL_FPoint> DecodeTopPixels(const char* data)
     {
         std::vector<SDL_FPoint> points;
 
-        for (int row = 112; row < MM_ROWS; row++)
+        for (int row = 112; row < kMmRows; row++)
         {
-            for (int col = 0; col < MM_COLS; col++)
+            for (int col = 0; col < kMmCols; col++)
             {
-                for (int bit = 0; bit < MM_PIX_PER_BYTE; bit++)
+                for (int bit = 0; bit < kMmPixPerByte; bit++)
                 {
-                    bool pixelSet =
-                        data[(row * MM_COLS) + col] & (0x01 << bit);
-                    if (pixelSet)
+                    bool pixel_set =
+                        static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
+                    if (pixel_set)
                     {
-                        SDL_FPoint pixel{ (float)((col * MM_PIX_PER_BYTE) + bit),
-                                        (float)(row) };
+                        SDL_FPoint pixel{ static_cast<float>((col * kMmPixPerByte) + bit),
+                                        static_cast<float>(row) };
                         points.push_back(pixel);
                     }
                 }
@@ -36,18 +36,18 @@ namespace SpaceInvadersVRamDecoder
     {
         std::vector<SDL_FPoint> points;
 
-        for (int row = 0; row < MM_ROWS / 2; row++)
+        for (int row = 0; row < kMmRows / 2; row++)
         {
-            for (int col = 0; col < MM_COLS; col++)
+            for (int col = 0; col < kMmCols; col++)
             {
-                for (int bit = 0; bit < MM_PIX_PER_BYTE; bit++)
+                for (int bit = 0; bit < kMmPixPerByte; bit++)
                 {
-                    bool pixelSet =
-                        data[(row * MM_COLS) + col] & (0x01 << bit);
-                    if (pixelSet)
+                    bool pixel_set =
+                        static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
+                    if (pixel_set)
                     {
-                        SDL_FPoint pixel{ (float)((col * MM_PIX_PER_BYTE) + bit),
-                                        (float)(row) };
+                        SDL_FPoint pixel{ static_cast<float>((col * kMmPixPerByte) + bit),
+                                        static_cast<float>(row) };
                         points.push_back(pixel);
                     }
                 }

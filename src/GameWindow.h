@@ -1,19 +1,20 @@
-#pragma once
+#ifndef GAMEWINDOW
+#define GAMEWINDOW
 #include <SDL3/SDL.h>
 #include <vector>
 
-namespace GraphicsDisplay
+namespace graphics_display
 {
     class GameWindow
     {
     private:
-        const char* videoData;
-        const char* windowName;
-        int windowWidth;
-        int windowHeight;
+        const char* video_data_;
+        const char* window_name_;
+        int window_width_;
+        int window_height_;
 
-        SDL_Window* window;
-        SDL_Renderer* renderer;
+        SDL_Window* window_;
+        SDL_Renderer* renderer_;
 
     public:
         GameWindow(const char* videoData,
@@ -25,3 +26,4 @@ namespace GraphicsDisplay
         void UpdateDisplayBottom(const std::vector<SDL_FPoint>& points);
     };
 }
+#endif
