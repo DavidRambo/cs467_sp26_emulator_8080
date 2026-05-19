@@ -420,27 +420,35 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x58:
       std::cout << "MOV E,B\n";
+      mov(&registers_.reg_e, registers_.reg_b);
       break;
     case 0x59:
       std::cout << "MOV E,C\n";
+      mov(&registers_.reg_e, registers_.reg_c);
       break;
     case 0x5A:
       std::cout << "MOV E,D\n";
+      mov(&registers_.reg_e, registers_.reg_d);
       break;
     case 0x5B:
       std::cout << "MOV E,E\n";
+      mov(&registers_.reg_e, registers_.reg_e);
       break;
     case 0x5C:
       std::cout << "MOV E,H\n";
+      mov(&registers_.reg_e, registers_.reg_h);
       break;
     case 0x5D:
       std::cout << "MOV E,L\n";
+      mov(&registers_.reg_e, registers_.reg_l);
       break;
     case 0x5E:
       std::cout << "MOV E,M\n";
+      mov(&registers_.reg_e, mem_access_->read(registers_.hl()));
       break;
     case 0x5F:
       std::cout << "MOV E,A\n";
+      mov(&registers_.reg_e, registers_.reg_a);
       break;
     case 0x60:
       std::cout << "MOV H,B\n";
@@ -475,36 +483,36 @@ void CPU8080::execute(uint8_t opcode) {
       mov(&registers_.reg_h, registers_.reg_a);
       break;
     case 0x68:
-      std::cout << "MOV E,B\n";
-      mov(&registers_.reg_e, registers_.reg_b);
+      std::cout << "MOV L,B\n";
+      mov(&registers_.reg_l, registers_.reg_b);
       break;
     case 0x69:
-      std::cout << "MOV E,C\n";
-      mov(&registers_.reg_e, registers_.reg_c);
+      std::cout << "MOV L,C\n";
+      mov(&registers_.reg_l, registers_.reg_c);
       break;
     case 0x6A:
-      std::cout << "MOV E,D\n";
-      mov(&registers_.reg_e, registers_.reg_d);
+      std::cout << "MOV L,D\n";
+      mov(&registers_.reg_l, registers_.reg_d);
       break;
     case 0x6B:
-      std::cout << "MOV E,E\n";
-      mov(&registers_.reg_e, registers_.reg_e);
+      std::cout << "MOV L,E\n";
+      mov(&registers_.reg_l, registers_.reg_e);
       break;
     case 0x6C:
-      std::cout << "MOV E,H\n";
-      mov(&registers_.reg_e, registers_.reg_h);
+      std::cout << "MOV L,H\n";
+      mov(&registers_.reg_l, registers_.reg_h);
       break;
     case 0x6D:
-      std::cout << "MOV E,L\n";
-      mov(&registers_.reg_e, registers_.reg_l);
+      std::cout << "MOV L,L\n";
+      mov(&registers_.reg_l, registers_.reg_l);
       break;
     case 0x6E:
-      std::cout << "MOV E,M\n";
-      mov(&registers_.reg_e, mem_access_->read(registers_.hl()));
+      std::cout << "MOV L,M\n";
+      mov(&registers_.reg_l, mem_access_->read(registers_.hl()));
       break;
     case 0x6F:
-      std::cout << "MOV E,A\n";
-      mov(&registers_.reg_e, registers_.reg_a);
+      std::cout << "MOV L,A\n";
+      mov(&registers_.reg_l, registers_.reg_a);
       break;
     case 0x70:
       std::cout << "MOV M,B\n";
