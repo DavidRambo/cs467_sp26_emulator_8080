@@ -6,7 +6,7 @@ TESTDIR = tests
 TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
 
 # Creates a list of object files
-OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o)
+OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o)
 
 CFLAGS = -lSDL3
 
@@ -38,6 +38,9 @@ $(BUILDDIR)/Instructions8080.o: $(SRCDIR)/Instructions8080.cc
 
 $(BUILDDIR)/Input.o: $(SRCDIR)/Input.cc $(SRCDIR)/Input.h
 	g++ -o $(BUILDDIR)/Input.o -c $(SRCDIR)/Input.cc
+
+$(BUILDDIR)/AudioMixer.o: $(SRCDIR)/AudioMixer.cc $(SRCDIR)/AudioMixer.h
+	g++ -o $(BUILDDIR)/AudioMixer.o -c $(SRCDIR)/AudioMixer.cc
 
 # The @ sign indicates a shell command.
 clean:
