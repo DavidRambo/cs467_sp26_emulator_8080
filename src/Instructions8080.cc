@@ -421,6 +421,9 @@ bool CPU8080::check_jump_condition(JumpCondition jump_condition) const {
     case JumpCondition::kMinus:
       return flags_.sign;
   }
+  // The switch case is exhaustive, so the following is to silence the warning:
+  std::cerr << "Failed to match a jump condition!\n";
+  return false;
 }
 
 }  // namespace intel_8080
