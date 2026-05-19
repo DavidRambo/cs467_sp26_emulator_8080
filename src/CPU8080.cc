@@ -396,27 +396,35 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x50:
       std::cout << "MOV D,B\n";
+      mov(&registers_.reg_d, registers_.reg_b);
       break;
     case 0x51:
       std::cout << "MOV D,C\n";
+      mov(&registers_.reg_d, registers_.reg_c);
       break;
     case 0x52:
       std::cout << "MOV D,D\n";
+      mov(&registers_.reg_d, registers_.reg_d);
       break;
     case 0x53:
       std::cout << "MOV D,E\n";
+      mov(&registers_.reg_d, registers_.reg_e);
       break;
     case 0x54:
       std::cout << "MOV D,H\n";
+      mov(&registers_.reg_d, registers_.reg_h);
       break;
     case 0x55:
       std::cout << "MOV D,L\n";
+      mov(&registers_.reg_d, registers_.reg_l);
       break;
     case 0x56:
       std::cout << "MOV D,M\n";
+      mov(&registers_.reg_d, mem_access_->read(registers_.hl()));
       break;
     case 0x57:
       std::cout << "MOV D,A\n";
+      mov(&registers_.reg_d, registers_.reg_a);
       break;
     case 0x58:
       std::cout << "MOV E,B\n";
