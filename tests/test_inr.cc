@@ -7,7 +7,9 @@
 TEST_CASE("Testing INR B: B += 1") {
   std::shared_ptr<intel_8080::Memory8080> mem =
       std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
-  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem);
+  std::shared_ptr<input::InputHandler> input_handler =
+      std::make_shared<input::InputHandler>();
+  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem, input_handler);
 
   SUBCASE("Incrementing B from 0 to 1") {
     std::vector<uint8_t> data = {0x04};
@@ -29,6 +31,7 @@ TEST_CASE("Testing INR B: B += 1") {
 
   SUBCASE("Incrementing B 256 times") {
     std::vector<uint8_t> data;
+    data.reserve(256);
     for (int i = 0; i < 256; i++) {
       data.emplace_back(0x04);
     }
