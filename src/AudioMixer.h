@@ -47,10 +47,16 @@ class Mixer {
   std::array<AudioAction, 8> SetOut5(uint8_t accumulator_bits);
 
  private:
+  static constexpr std::array<SoundId, 8> kSoundMap{
+      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
+      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
+      SoundId::kBackground, SoundId::kExplosion,
+  };
+
   // Holds all SDL resources and playback state for a single WAV sound effect.
   struct Channel {
     SDL_AudioStream* stream_ = nullptr;
-    SDL_AudioSpec spec_{};     // WAV file's native format.
+    SDL_AudioSpec spec_{};  // WAV file's native format.
     uint8_t* wav_buf_ = nullptr;
     uint32_t wav_len_ = 0;
     bool looping_ = false;
@@ -61,8 +67,8 @@ class Mixer {
   SDL_AudioDeviceID device_ = 0;  // Handle to the open SDL audio device.
   SDL_AudioSpec device_spec_;     // Hardware format used for stream conversion.
   std::array<Channel, 6> channels_;  // Array of all loaded sound effects.
-  uint8_t prev_port3_ = 0;  // Last accumulator value seen on port 3.
-  uint8_t prev_port5_ = 0;  // Last accumulator value seen on port 5.
+  uint8_t prev_port3_ = 0;           // Last accumulator value seen on port 3.
+  uint8_t prev_port5_ = 0;           // Last accumulator value seen on port 5.
 
   // Opens the default SDL audio device and loads all WAV files into channels_.
   void Load();

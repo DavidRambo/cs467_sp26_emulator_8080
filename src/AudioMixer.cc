@@ -38,7 +38,7 @@ void Mixer::Load() {
     Channel& chan = channels_[static_cast<std::size_t>(sound.id_)];
     SDL_LoadWAV(sound.file_, &chan.spec_, &chan.wav_buf_, &chan.wav_len_);
     chan.looping_ = sound.looping_;
-        chan.stream_ = SDL_CreateAudioStream(&chan.spec_, &device_spec_);
+    chan.stream_ = SDL_CreateAudioStream(&chan.spec_, &device_spec_);
     SDL_BindAudioStream(device_, chan.stream_);
   }
 }
@@ -106,7 +106,8 @@ std::array<Mixer::AudioAction, 8> Mixer::DecodePort(
 
   for (int i = 0; i < 8; ++i) {
     uint8_t bit = 1 << i;
-    // Use bit as mask to determine which action to select for each accumulator bit.
+    // Use bit as mask to determine which action to select for each accumulator
+    // bit.
     if (changed & bit) {
       (accumulator_bits & bit)
           ? actions[i] = {AudioAction::Action::kPlay, soundMap[i]}
@@ -131,7 +132,6 @@ std::array<Mixer::AudioAction, 8> Mixer::ApplyPort(
         Stop(action.id_);
         break;
       case AudioAction::Action::kContinue:
-        break;
       default:
         break;
     }
@@ -140,21 +140,12 @@ std::array<Mixer::AudioAction, 8> Mixer::ApplyPort(
 }
 
 std::array<Mixer::AudioAction, 8> Mixer::SetOut3(uint8_t accumulator_bits) {
-  static constexpr std::array<SoundId, 8> kSoundMap{
-      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
-      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
-      SoundId::kBackground, SoundId::kExplosion,
-  };
   auto actions = ApplyPort(accumulator_bits, prev_port3_, kSoundMap);
   prev_port3_ = accumulator_bits;
   return actions;
 }
 
 std::array<Mixer::AudioAction, 8> Mixer::SetOut5(uint8_t accumulator_bits) {
-  static constexpr std::array<SoundId, 8> kSoundMap{
-      SoundId::kTorpedo, SoundId::kUfoHit, SoundId::kUfo,     SoundId::kTorpedo,
-      SoundId::kUfoHit,  SoundId::kUfo,    SoundId::kTorpedo, SoundId::kUfoHit,
-  };
   auto actions = ApplyPort(accumulator_bits, prev_port5_, kSoundMap);
   prev_port5_ = accumulator_bits;
   return actions;
