@@ -323,147 +323,186 @@ void CPU8080::execute(uint8_t opcode) {
       cmc();
       break;
     case 0x40:
-      std::cout << "MOV B,B" << std::endl;
+      mov(&registers_.reg_b, registers_.reg_b);
       break;
     case 0x41:
-      std::cout << "MOV B,C" << std::endl;
+      mov(&registers_.reg_b, registers_.reg_c);
       break;
     case 0x42:
-      std::cout << "MOV B,D" << std::endl;
+      mov(&registers_.reg_b, registers_.reg_d);
       break;
     case 0x43:
-      std::cout << "MOV B,E" << std::endl;
+      mov(&registers_.reg_b, registers_.reg_e);
       break;
     case 0x44:
-      std::cout << "MOV, B,H" << std::endl;
+      mov(&registers_.reg_b, registers_.reg_h);
       break;
     case 0x45:
-      std::cout << "MOV B,L" << std::endl;
+      mov(&registers_.reg_b, registers_.reg_l);
       break;
-    case 0x46:
-      std::cout << "MOV B,M" << std::endl;
-      break;
+    case 0x46: {
+      auto mem_location =
+          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      mov(&registers_.reg_b, mem_access_->read(mem_location));
+    } break;
     case 0x47:
-      std::cout << "MOV B,A" << std::endl;
+      mov(&registers_.reg_b, registers_.reg_a);
       break;
     case 0x48:
-      std::cout << "MOV C,B" << std::endl;
+      mov(&registers_.reg_c, registers_.reg_b);
       break;
     case 0x49:
-      std::cout << "MOV C,C" << std::endl;
+      mov(&registers_.reg_c, registers_.reg_c);
       break;
     case 0x4A:
-      std::cout << "MOV C,D" << std::endl;
+      mov(&registers_.reg_c, registers_.reg_d);
       break;
     case 0x4B:
-      std::cout << "MOV C,E" << std::endl;
+      mov(&registers_.reg_c, registers_.reg_e);
       break;
     case 0x4C:
-      std::cout << "MOV C,H" << std::endl;
+      mov(&registers_.reg_c, registers_.reg_h);
       break;
     case 0x4D:
-      std::cout << "MOV C,L" << std::endl;
+      mov(&registers_.reg_c, registers_.reg_l);
       break;
-    case 0x4E:
-      std::cout << "MOV C,M" << std::endl;
-      break;
+    case 0x4E: {
+      auto mem_location =
+          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      mov(&registers_.reg_c, mem_access_->read(mem_location));
+    } break;
     case 0x4F:
+      mov(&registers_.reg_c, registers_.reg_a);
       std::cout << "MOV C,A" << std::endl;
       break;
     case 0x50:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,B" << std::endl;
       break;
     case 0x51:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,C" << std::endl;
       break;
     case 0x52:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,D" << std::endl;
       break;
     case 0x53:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,E" << std::endl;
       break;
     case 0x54:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,H" << std::endl;
       break;
     case 0x55:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,L" << std::endl;
       break;
     case 0x56:
+      auto mem_location =
+          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,M" << std::endl;
       break;
     case 0x57:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV D,A" << std::endl;
       break;
     case 0x58:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,B" << std::endl;
       break;
     case 0x59:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,C" << std::endl;
       break;
     case 0x5A:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,D" << std::endl;
       break;
     case 0x5B:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,E" << std::endl;
       break;
     case 0x5C:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,H" << std::endl;
       break;
     case 0x5D:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,L" << std::endl;
       break;
     case 0x5E:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,M" << std::endl;
       break;
     case 0x5F:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,A" << std::endl;
       break;
     case 0x60:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,B" << std::endl;
       break;
     case 0x61:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,C" << std::endl;
       break;
     case 0x62:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,D" << std::endl;
       break;
     case 0x63:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,E" << std::endl;
       break;
     case 0x64:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,H" << std::endl;
       break;
     case 0x65:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,L" << std::endl;
       break;
     case 0x66:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,M" << std::endl;
       break;
     case 0x67:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV H,A" << std::endl;
       break;
     case 0x68:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,B" << std::endl;
       break;
     case 0x69:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,C" << std::endl;
       break;
     case 0x6A:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,D" << std::endl;
       break;
     case 0x6B:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,E" << std::endl;
       break;
     case 0x6C:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,H" << std::endl;
       break;
     case 0x6D:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,L" << std::endl;
       break;
     case 0x6E:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,M" << std::endl;
       break;
     case 0x6F:
+      mov(&registers_.reg_b, registers_.reg_c);
       std::cout << "MOV E,A" << std::endl;
       break;
     case 0x70:
