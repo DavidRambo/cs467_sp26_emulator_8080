@@ -21,6 +21,8 @@ class Memory8080 {
 
   void load_rom(std::string const& file_path);
 
+  void load_rom_at_addr(std::string const& file_path, uint16_t addr);
+
   void load_data(std::vector<uint8_t> const& data, uint16_t start = 0);
 
  private:
