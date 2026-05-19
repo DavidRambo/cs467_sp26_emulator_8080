@@ -612,27 +612,35 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x98:
       std::cout << "SBB B\n";
+      sbb(registers_.reg_b);
       break;
     case 0x99:
       std::cout << "SBB C\n";
+      sbb(registers_.reg_c);
       break;
     case 0x9A:
       std::cout << "SBB D\n";
+      sbb(registers_.reg_d);
       break;
     case 0x9B:
       std::cout << "SBB E\n";
+      sbb(registers_.reg_e);
       break;
     case 0x9C:
       std::cout << "SBB H\n";
+      sbb(registers_.reg_h);
       break;
     case 0x9D:
       std::cout << "SBB L\n";
+      sbb(registers_.reg_l);
       break;
     case 0x9E:
       std::cout << "SBB M\n";
+      sbb(mem_access_->read(registers_.hl()));
       break;
     case 0x9F:
       std::cout << "SBB A\n";
+      sbb(registers_.reg_a);
       break;
     case 0xA0:
       std::cout << "ANA B\n";
