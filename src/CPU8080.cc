@@ -564,27 +564,35 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x88:
       std::cout << "ADC B\n";
+      adc(registers_.reg_b);
       break;
     case 0x89:
       std::cout << "ADC C\n";
+      adc(registers_.reg_c);
       break;
     case 0x8A:
       std::cout << "ADC D\n";
+      adc(registers_.reg_d);
       break;
     case 0x8B:
       std::cout << "ADC E\n";
+      adc(registers_.reg_e);
       break;
     case 0x8C:
       std::cout << "ADC H\n";
+      adc(registers_.reg_h);
       break;
     case 0x8D:
       std::cout << "ADC L\n";
+      adc(registers_.reg_l);
       break;
     case 0x8E:
       std::cout << "ADC M\n";
+      adc(mem_access_->read(registers_.hl()));
       break;
     case 0x8F:
       std::cout << "ADC A\n";
+      adc(registers_.reg_a);
       break;
     case 0x90:
       std::cout << "SUB B\n";
