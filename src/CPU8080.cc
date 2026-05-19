@@ -157,7 +157,7 @@ void CPU8080::execute(uint8_t opcode) {
       mov(&registers_.reg_c, fetch_byte());
       break;
     case 0x0F:
-      std::cout << "RRC" << std::endl;
+      rrc();
       break;
     case 0x10:
       std::cout << "NOP*" << std::endl;
@@ -214,30 +214,22 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x21:
-      std::cout << "LXI H,";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      lxi(&registers_.reg_h, &registers_.reg_l, fetch_byte(), fetch_byte());
       break;
     case 0x22:
-      std::cout << "SHLD ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      shld(fetch_byte(), fetch_byte());
       break;
     case 0x23:
-      std::cout << "INX H" << std::endl;
+      inx(&registers_.reg_h, &registers_.reg_l);
       break;
     case 0x24:
-      std::cout << "INR H" << std::endl;
+      inr(&registers_.reg_h);
       break;
     case 0x25:
-      std::cout << "DCR H" << std::endl;
+      dcr(&registers_.reg_h);
       break;
     case 0x26:
-      std::cout << "MVI H,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      mov(&registers_.reg_h, fetch_byte());
       break;
     case 0x27:
       std::cout << "DAA" << std::endl;
@@ -246,89 +238,89 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x29:
-      std::cout << "DAD H" << std::endl;
+      dad(&registers_.reg_h, &registers_.reg_l);
       break;
     case 0x2A:
-      std::cout << "LHLD ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      lhld(fetch_byte(), fetch_byte());
       break;
     case 0x2B:
-      std::cout << "DCX H" << std::endl;
+      dcx(&registers_.reg_h, &registers_.reg_l);
       break;
     case 0x2C:
-      std::cout << "INR L" << std::endl;
+      inr(&registers_.reg_l);
       break;
     case 0x2D:
-      std::cout << "DCR L" << std::endl;
+      dcr(&registers_.reg_l);
       break;
     case 0x2E:
-      std::cout << "MVI L,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      mov(&registers_.reg_l, fetch_byte());
       break;
     case 0x2F:
-      std::cout << "CMA" << std::endl;
+      cma();
       break;
     case 0x30:
       std::cout << "*NOP" << std::endl;
       break;
     case 0x31:
-      std::cout << "LXI SP,";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      lxi_sp(fetch_byte(), fetch_byte());
       break;
     case 0x32:
-      std::cout << "STA ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      sta(fetch_byte(), fetch_byte());
       break;
     case 0x33:
-      std::cout << "INX SP" << std::endl;
+      stack_pointer_ += 1;  // inx sp
       break;
-    case 0x34:
-      std::cout << "INR M" << std::endl;
-      break;
-    case 0x35:
-      std::cout << "DCR M" << std::endl;
-      break;
-    case 0x36:
-      std::cout << "MVI M,";
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
-      break;
+    case 0x34: {
+      auto mem_location =
+          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      uint8_t data = mem_access_->read(mem_location);
+      inr(&data);
+      mem_access_->write(mem_location, data);
+    } break;
+    case 0x35: {
+      auto mem_location =
+          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      uint8_t data = mem_access_->read(mem_location);
+      dcr(&data);
+      mem_access_->write(mem_location, data);
+    } break;
+    case 0x36: {
+      auto mem_location =
+          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      mem_access_->write(mem_location, fetch_byte());
+    } break;
     case 0x37:
-      std::cout << "STC" << std::endl;
+      stc();
       break;
     case 0x38:
       std::cout << "NOP*" << std::endl;
       break;
-    case 0x39:
-      std::cout << "DAD SP" << std::endl;
-      break;
+    case 0x39: {
+      uint8_t sp_high = stack_pointer_ >> 8;
+      uint8_t sp_low = stack_pointer_ | 0xFF;
+      dad(&sp_high, &sp_low);
+      stack_pointer_ = static_cast<uint16_t>((sp_high << 8) | sp_low);
+    } break;
     case 0x3A:
-      std::cout << "LDA ";
-      print_hex_byte(fetch_byte());
-      print_hex_byte(fetch_byte());
-      std::cout << std::endl;
+      lda(fetch_byte(), fetch_byte());
       break;
-    case 0x3B:
-      std::cout << "DCX SP" << std::endl;
-      break;
+    case 0x3B: {
+      uint8_t sp_high = stack_pointer_ >> 8;
+      uint8_t sp_low = stack_pointer_ | 0xFF;
+      dcx(&sp_high, &sp_low);
+      stack_pointer_ = static_cast<uint16_t>((sp_high << 8) | sp_low);
+    } break;
     case 0x3C:
-      std::cout << "INR A" << std::endl;
+      inr(&registers_.reg_a);
       break;
     case 0x3D:
-      std::cout << "DCR A" << std::endl;
+      dcr(&registers_.reg_a);
       break;
     case 0x3E:  // MVI A, D8
       mov(&registers_.reg_a, fetch_byte());
       break;
     case 0x3F:
-      std::cout << "CMC" << std::endl;
+      cmc();
       break;
     case 0x40:
       std::cout << "MOV B,B" << std::endl;
