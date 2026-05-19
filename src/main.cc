@@ -1,10 +1,17 @@
 #include <SDL3/SDL.h>
 
+#include <iostream>
+
 #include "AudioMixer.h"
 #include "CPU8080.h"
 #include "Input.h"
 #include "Memory8080.h"
-int main() {
+int main(int argc, char* argv[]) {
+  if (argc > 5) {
+    std::cerr << "Too many arguments. Usage: ./emu8008 <ROM file name>\n";
+    return 1;
+  }
+
   constexpr int kWindowWidth = 224;
   constexpr int kWindowHeight = 256;
 
@@ -37,6 +44,13 @@ int main() {
 
   std::shared_ptr<intel_8080::Memory8080> mem =
       std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
+
+  // TODO: Load ROM
+  // mem->load_rom(argv[1]); // invaders ROM as one file
+  mem->load_rom_at_addr(argv[1], 0);       // invaders.h
+  mem->load_rom_at_addr(argv[2], 0x800);   // invaders.g
+  mem->load_rom_at_addr(argv[3], 0x1000);  // invaders.f
+  mem->load_rom_at_addr(argv[4], 0x1800);  // invaders.e
 
   intel_8080::CPU8080 cpu = intel_8080::CPU8080(mem, input_handler, mixer);
 
