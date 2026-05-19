@@ -17,14 +17,17 @@ void print_hex_byte(uint8_t value) {
 namespace intel_8080 {
 
 CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
-                 std::shared_ptr<input::InputHandler> new_input_handler)
-    : mem_access_(std::move(new_mem)),
-      input_handler_(std::move(new_input_handler)) {
+                 std::shared_ptr<input::InputHandler> input_handler_ptr,
+                 std::shared_ptr<audio::Mixer> new_mixer)
+    : mem_access_(std::move(new_mem)), mixer_(std::move(new_mixer)) {
   stack_pointer_ = 0x0000;
   program_counter_ = 0x0000;
   flags_ = Flags();
   registers_ = Registers();
   INTE_ = false;
+  // Do not move shared pointer, as it is shared with the main loop for event
+  // polling.
+  input_handler_ = input_handler_ptr;
 };
 
 std::uint8_t CPU8080::Flags::to_byte() {
