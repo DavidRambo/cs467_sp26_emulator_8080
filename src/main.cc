@@ -5,23 +5,26 @@
 #include "Input.h"
 #include "Memory8080.h"
 int main() {
+  constexpr int kWindowWidth = 224;
+  constexpr int kWindowHeight = 256;
+
   if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO)) {
     SDL_Log("Initialization failed!");
     // return SDL_APP_FAILURE;
   }
 
-  // TODO: Create GameWindow
+  // Create GameWindow
   SDL_Window* window;
   SDL_Renderer* renderer;
-  if (!SDL_CreateWindowAndRenderer("Test SDL3", 224, 256, SDL_WINDOW_RESIZABLE,
-                                   &window, &renderer)) {
+  if (!SDL_CreateWindowAndRenderer("Test SDL3", kWindowWidth, kWindowHeight,
+                                   SDL_WINDOW_RESIZABLE, &window, &renderer)) {
     SDL_Log("Failed to create window and renderer.");
     return SDL_APP_FAILURE;
   }
 
-  // SDL_SetRenderLogicalPresentation(renderer, SDL_WINDOW_WIDTH,
-  //                                  SDL_WINDOW_HEIGHT,
-  //                                  SDL_LOGICAL_PRESENTATION_LETTERBOX);
+  SDL_SetRenderLogicalPresentation(renderer, kWindowWidth, kWindowHeight,
+                                   SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderPresent(renderer);
 
