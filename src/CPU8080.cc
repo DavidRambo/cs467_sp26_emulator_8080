@@ -540,27 +540,35 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x80:
       std::cout << "ADD B\n";
+      add(registers_.reg_b);
       break;
     case 0x81:
       std::cout << "ADD C\n";
+      add(registers_.reg_c);
       break;
     case 0x82:
       std::cout << "ADD D\n";
+      add(registers_.reg_d);
       break;
     case 0x83:
       std::cout << "ADD E\n";
+      add(registers_.reg_e);
       break;
     case 0x84:
       std::cout << "ADD H\n";
+      add(registers_.reg_h);
       break;
     case 0x85:
       std::cout << "ADD L\n";
+      add(registers_.reg_l);
       break;
     case 0x86:
       std::cout << "ADD M\n";
+      add(mem_access_->read(registers_.hl()));
       break;
     case 0x87:
       std::cout << "ADD A\n";
+      add(registers_.reg_a);
       break;
     case 0x88:
       std::cout << "ADC B\n";
