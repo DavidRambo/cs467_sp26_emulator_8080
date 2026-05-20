@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   while (running) {
     Uint64 start_tick = SDL_GetTicks();
 
-    if (input_handler->PollForEvents() == SDL_APP_SUCCESS) {
+    if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
       running = false;
       continue;
     }
