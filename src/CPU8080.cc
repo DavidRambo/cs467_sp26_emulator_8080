@@ -343,782 +343,589 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "CMC\n";
       break;
     case 0x40:
-      std::cout << "MOV B,B\n";
       mov(&registers_.reg_b, registers_.reg_b);
       break;
     case 0x41:
-      std::cout << "MOV B,C\n";
       mov(&registers_.reg_b, registers_.reg_c);
       break;
     case 0x42:
-      std::cout << "MOV B,D\n";
       mov(&registers_.reg_b, registers_.reg_d);
       break;
     case 0x43:
-      std::cout << "MOV B,E\n";
       mov(&registers_.reg_b, registers_.reg_e);
       break;
     case 0x44:
-      std::cout << "MOV B,H\n";
       mov(&registers_.reg_b, registers_.reg_h);
       break;
     case 0x45:
-      std::cout << "MOV B,L\n";
       mov(&registers_.reg_b, registers_.reg_l);
       break;
     case 0x46:
-      std::cout << "MOV B,M\n";
       mov(&registers_.reg_b, mem_access_->read(registers_.hl()));
       break;
     case 0x47:
-      std::cout << "MOV B,A\n";
       mov(&registers_.reg_b, registers_.reg_a);
       break;
     case 0x48:
-      std::cout << "MOV C,B\n";
       mov(&registers_.reg_c, registers_.reg_b);
       break;
     case 0x49:
-      std::cout << "MOV C,C\n";
       mov(&registers_.reg_c, registers_.reg_c);
       break;
     case 0x4A:
-      std::cout << "MOV C,D\n";
       mov(&registers_.reg_c, registers_.reg_d);
       break;
     case 0x4B:
-      std::cout << "MOV C,E\n";
       mov(&registers_.reg_c, registers_.reg_e);
       break;
     case 0x4C:
-      std::cout << "MOV C,H\n";
       mov(&registers_.reg_c, registers_.reg_h);
       break;
     case 0x4D:
-      std::cout << "MOV C,L\n";
       mov(&registers_.reg_c, registers_.reg_l);
       break;
     case 0x4E:
-      std::cout << "MOV C,M\n";
       mov(&registers_.reg_c, mem_access_->read(registers_.hl()));
       break;
     case 0x4F:
-      std::cout << "MOV C,A\n";
       mov(&registers_.reg_c, registers_.reg_a);
       break;
     case 0x50:
-      std::cout << "MOV D,B\n";
       mov(&registers_.reg_d, registers_.reg_b);
       break;
     case 0x51:
-      std::cout << "MOV D,C\n";
       mov(&registers_.reg_d, registers_.reg_c);
       break;
     case 0x52:
-      std::cout << "MOV D,D\n";
       mov(&registers_.reg_d, registers_.reg_d);
       break;
     case 0x53:
-      std::cout << "MOV D,E\n";
       mov(&registers_.reg_d, registers_.reg_e);
       break;
     case 0x54:
-      std::cout << "MOV D,H\n";
       mov(&registers_.reg_d, registers_.reg_h);
       break;
     case 0x55:
-      std::cout << "MOV D,L\n";
       mov(&registers_.reg_d, registers_.reg_l);
       break;
     case 0x56:
-      std::cout << "MOV D,M\n";
       mov(&registers_.reg_d, mem_access_->read(registers_.hl()));
       break;
     case 0x57:
-      std::cout << "MOV D,A\n";
       mov(&registers_.reg_d, registers_.reg_a);
       break;
     case 0x58:
-      std::cout << "MOV E,B\n";
       mov(&registers_.reg_e, registers_.reg_b);
       break;
     case 0x59:
-      std::cout << "MOV E,C\n";
       mov(&registers_.reg_e, registers_.reg_c);
       break;
     case 0x5A:
-      std::cout << "MOV E,D\n";
       mov(&registers_.reg_e, registers_.reg_d);
       break;
     case 0x5B:
-      std::cout << "MOV E,E\n";
       mov(&registers_.reg_e, registers_.reg_e);
       break;
     case 0x5C:
-      std::cout << "MOV E,H\n";
       mov(&registers_.reg_e, registers_.reg_h);
       break;
     case 0x5D:
-      std::cout << "MOV E,L\n";
       mov(&registers_.reg_e, registers_.reg_l);
       break;
     case 0x5E:
-      std::cout << "MOV E,M\n";
       mov(&registers_.reg_e, mem_access_->read(registers_.hl()));
       break;
     case 0x5F:
-      std::cout << "MOV E,A\n";
       mov(&registers_.reg_e, registers_.reg_a);
       break;
     case 0x60:
-      std::cout << "MOV H,B\n";
       mov(&registers_.reg_h, registers_.reg_b);
       break;
     case 0x61:
-      std::cout << "MOV H,C\n";
       mov(&registers_.reg_h, registers_.reg_c);
       break;
     case 0x62:
-      std::cout << "MOV H,D\n";
       mov(&registers_.reg_h, registers_.reg_d);
       break;
     case 0x63:
-      std::cout << "MOV H,E\n";
       mov(&registers_.reg_h, registers_.reg_e);
       break;
     case 0x64:
-      std::cout << "MOV H,H\n";
       mov(&registers_.reg_h, registers_.reg_h);
       break;
     case 0x65:
-      std::cout << "MOV H,L\n";
       mov(&registers_.reg_h, registers_.reg_l);
       break;
     case 0x66:
-      std::cout << "MOV H,M\n";
       mov(&registers_.reg_h, mem_access_->read(registers_.hl()));
       break;
     case 0x67:
-      std::cout << "MOV H,A\n";
       mov(&registers_.reg_h, registers_.reg_a);
       break;
     case 0x68:
-      std::cout << "MOV L,B\n";
       mov(&registers_.reg_l, registers_.reg_b);
       break;
     case 0x69:
-      std::cout << "MOV L,C\n";
       mov(&registers_.reg_l, registers_.reg_c);
       break;
     case 0x6A:
-      std::cout << "MOV L,D\n";
       mov(&registers_.reg_l, registers_.reg_d);
       break;
     case 0x6B:
-      std::cout << "MOV L,E\n";
       mov(&registers_.reg_l, registers_.reg_e);
       break;
     case 0x6C:
-      std::cout << "MOV L,H\n";
       mov(&registers_.reg_l, registers_.reg_h);
       break;
     case 0x6D:
-      std::cout << "MOV L,L\n";
       mov(&registers_.reg_l, registers_.reg_l);
       break;
     case 0x6E:
-      std::cout << "MOV L,M\n";
       mov(&registers_.reg_l, mem_access_->read(registers_.hl()));
       break;
     case 0x6F:
-      std::cout << "MOV L,A\n";
       mov(&registers_.reg_l, registers_.reg_a);
       break;
     case 0x70:
-      std::cout << "MOV M,B\n";
       mem_access_->write(registers_.hl(), registers_.reg_b);
       break;
     case 0x71:
-      std::cout << "MOV M,C\n";
       mem_access_->write(registers_.hl(), registers_.reg_c);
       break;
     case 0x72:
-      std::cout << "MOV M,D\n";
       mem_access_->write(registers_.hl(), registers_.reg_d);
       break;
     case 0x73:
-      std::cout << "MOV M,E\n";
       mem_access_->write(registers_.hl(), registers_.reg_e);
       break;
     case 0x74:
-      std::cout << "MOV M,H\n";
       mem_access_->write(registers_.hl(), registers_.reg_h);
       break;
     case 0x75:
-      std::cout << "MOV M,L\n";
       mem_access_->write(registers_.hl(), registers_.reg_l);
       break;
     case 0x76:
-      std::cout << "HLT\n";
       break;
     case 0x77:
-      std::cout << "MOV M,A\n";
       mem_access_->write(registers_.hl(), registers_.reg_a);
       break;
     case 0x78:
-      std::cout << "MOV A,B\n";
       mov(&registers_.reg_a, registers_.reg_b);
       break;
     case 0x79:
-      std::cout << "MOV A,C\n";
       mov(&registers_.reg_a, registers_.reg_c);
       break;
     case 0x7A:
-      std::cout << "MOV A,D\n";
       mov(&registers_.reg_a, registers_.reg_d);
       break;
     case 0x7B:
-      std::cout << "MOV A,E\n";
       mov(&registers_.reg_a, registers_.reg_e);
       break;
     case 0x7C:
-      std::cout << "MOV A,H\n";
       mov(&registers_.reg_a, registers_.reg_h);
       break;
     case 0x7D:
-      std::cout << "MOV A,L\n";
       mov(&registers_.reg_a, registers_.reg_l);
       break;
     case 0x7E:
-      std::cout << "MOV A,M\n";
       mov(&registers_.reg_a, mem_access_->read(registers_.hl()));
       break;
     case 0x7F:
-      std::cout << "MOV A,A\n";
       mov(&registers_.reg_a, registers_.reg_a);
       break;
     case 0x80:
-      std::cout << "ADD B\n";
       add(registers_.reg_b);
       break;
     case 0x81:
-      std::cout << "ADD C\n";
       add(registers_.reg_c);
       break;
     case 0x82:
-      std::cout << "ADD D\n";
       add(registers_.reg_d);
       break;
     case 0x83:
-      std::cout << "ADD E\n";
       add(registers_.reg_e);
       break;
     case 0x84:
-      std::cout << "ADD H\n";
       add(registers_.reg_h);
       break;
     case 0x85:
-      std::cout << "ADD L\n";
       add(registers_.reg_l);
       break;
     case 0x86:
-      std::cout << "ADD M\n";
       add(mem_access_->read(registers_.hl()));
       break;
     case 0x87:
-      std::cout << "ADD A\n";
       add(registers_.reg_a);
       break;
     case 0x88:
-      std::cout << "ADC B\n";
       adc(registers_.reg_b);
       break;
     case 0x89:
-      std::cout << "ADC C\n";
       adc(registers_.reg_c);
       break;
     case 0x8A:
-      std::cout << "ADC D\n";
       adc(registers_.reg_d);
       break;
     case 0x8B:
-      std::cout << "ADC E\n";
       adc(registers_.reg_e);
       break;
     case 0x8C:
-      std::cout << "ADC H\n";
       adc(registers_.reg_h);
       break;
     case 0x8D:
-      std::cout << "ADC L\n";
       adc(registers_.reg_l);
       break;
     case 0x8E:
-      std::cout << "ADC M\n";
       adc(mem_access_->read(registers_.hl()));
       break;
     case 0x8F:
-      std::cout << "ADC A\n";
       adc(registers_.reg_a);
       break;
     case 0x90:
-      std::cout << "SUB B\n";
       sub(registers_.reg_b);
       break;
     case 0x91:
-      std::cout << "SUB C\n";
       sub(registers_.reg_c);
       break;
     case 0x92:
-      std::cout << "SUB D\n";
       sub(registers_.reg_d);
       break;
     case 0x93:
-      std::cout << "SUB E\n";
       sub(registers_.reg_e);
       break;
     case 0x94:
-      std::cout << "SUB H\n";
       sub(registers_.reg_h);
       break;
     case 0x95:
-      std::cout << "SUB L\n";
       sub(registers_.reg_l);
       break;
     case 0x96:
-      std::cout << "SUB M\n";
       sub(mem_access_->read(registers_.hl()));
       break;
     case 0x97:
-      std::cout << "SUB A\n";
       sub(registers_.reg_a);
       break;
     case 0x98:
-      std::cout << "SBB B\n";
       sbb(registers_.reg_b);
       break;
     case 0x99:
-      std::cout << "SBB C\n";
       sbb(registers_.reg_c);
       break;
     case 0x9A:
-      std::cout << "SBB D\n";
       sbb(registers_.reg_d);
       break;
     case 0x9B:
-      std::cout << "SBB E\n";
       sbb(registers_.reg_e);
       break;
     case 0x9C:
-      std::cout << "SBB H\n";
       sbb(registers_.reg_h);
       break;
     case 0x9D:
-      std::cout << "SBB L\n";
       sbb(registers_.reg_l);
       break;
     case 0x9E:
-      std::cout << "SBB M\n";
       sbb(mem_access_->read(registers_.hl()));
       break;
     case 0x9F:
-      std::cout << "SBB A\n";
       sbb(registers_.reg_a);
       break;
     case 0xA0:
-      std::cout << "ANA B\n";
       ana(registers_.reg_b);
       break;
     case 0xA1:
-      std::cout << "ANA C\n";
       ana(registers_.reg_c);
       break;
     case 0xA2:
-      std::cout << "ANA D\n";
       ana(registers_.reg_d);
       break;
     case 0xA3:
-      std::cout << "ANA E\n";
       ana(registers_.reg_e);
       break;
     case 0xA4:
-      std::cout << "ANA H\n";
       ana(registers_.reg_h);
       break;
     case 0xA5:
-      std::cout << "ANA L\n";
       ana(registers_.reg_l);
       break;
     case 0xA6: {
-      std::cout << "ANA M\n";
       uint8_t data = mem_access_->read(registers_.hl());
       ana(data);
       break;
     }
     case 0xA7:
-      std::cout << "ANA A\n";
       ana(registers_.reg_a);
       break;
     case 0xA8:
-      std::cout << "XRA B\n";
       xra(registers_.reg_b);
       break;
     case 0xA9:
-      std::cout << "XRA C\n";
       xra(registers_.reg_c);
       break;
     case 0xAA:
-      std::cout << "XRA D\n";
       xra(registers_.reg_d);
       break;
     case 0xAB:
-      std::cout << "XRA E\n";
       xra(registers_.reg_e);
       break;
     case 0xAC:
-      std::cout << "XRA H\n";
       xra(registers_.reg_h);
       break;
     case 0xAD:
-      std::cout << "XRA L\n";
       xra(registers_.reg_l);
       break;
     case 0xAE: {
-      std::cout << "XRA M\n";
       uint8_t data = mem_access_->read(registers_.hl());
       xra(data);
       break;
     }
     case 0xAF:
-      std::cout << "XRA A\n";
       xra(registers_.reg_a);
       break;
     case 0xB0:
-      std::cout << "ORA B\n";
       ora(registers_.reg_b);
       break;
     case 0xB1:
-      std::cout << "ORA C\n";
       ora(registers_.reg_c);
       break;
     case 0xB2:
-      std::cout << "ORA D\n";
       ora(registers_.reg_d);
       break;
     case 0xB3:
-      std::cout << "ORA E\n";
       ora(registers_.reg_e);
       break;
     case 0xB4:
-      std::cout << "ORA H\n";
       ora(registers_.reg_h);
       break;
     case 0xB5:
-      std::cout << "ORA L\n";
       ora(registers_.reg_l);
       break;
     case 0xB6: {
-      std::cout << "ORA M\n";
       uint8_t data = mem_access_->read(registers_.hl());
       ora(data);
       break;
     }
     case 0xB7:
-      std::cout << "ORA A\n";
       ora(registers_.reg_a);
       break;
     case 0xB8:
-      std::cout << "CMP B\n";
       cmp(registers_.reg_b);
       break;
     case 0xB9:
-      std::cout << "CMP C\n";
       cmp(registers_.reg_c);
       break;
     case 0xBA:
-      std::cout << "CMP D\n";
       cmp(registers_.reg_d);
       break;
     case 0xBB:
-      std::cout << "CMP E\n";
       cmp(registers_.reg_e);
       break;
     case 0xBC:
-      std::cout << "CMP H\n";
       cmp(registers_.reg_h);
       break;
     case 0xBD:
-      std::cout << "CMP L\n";
       cmp(registers_.reg_l);
       break;
     case 0xBE: {
-      std::cout << "CMP M\n";
       uint8_t data = mem_access_->read(registers_.hl());
       cmp(data);
       break;
     }
     case 0xBF:
-      std::cout << "CMP A\n";
       cmp(registers_.reg_a);
       break;
     case 0xC0:
-      std::cout << "RNZ\n";
       ret(JumpCondition::kNotZero);
       break;
     case 0xC1:
-      std::cout << "POP B\n";
       pop(&registers_.reg_b, &registers_.reg_c);
       break;
     case 0xC2:
-      std::cout << "JNZ \n";
       jmp(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
       break;
     case 0xC3:
-      std::cout << "JMP \n";
       jmp(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xC4:
-      std::cout << "CNZ \n";
       call(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
       break;
     case 0xC5:
-      std::cout << "PUSH B\n";
       push(registers_.reg_b, registers_.reg_c);
       break;
     case 0xC6:
-      std::cout << "ADI\n";
       add(fetch_byte());
       break;
     case 0xC7:
-      std::cout << "RST 0\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xC8:
-      std::cout << "RZ\n";
       ret(JumpCondition::kZero);
       break;
     case 0xC9:
-      std::cout << "RET\n";
       ret(JumpCondition::kTrue);
       break;
     case 0xCA:
-      std::cout << "JZ \n";
       jmp(JumpCondition::kZero, fetch_byte(), fetch_byte());
       break;
     case 0xCB:
-      std::cout << "*JMP \n";
       jmp(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xCC:
-      std::cout << "CZ \n";
       call(JumpCondition::kZero, fetch_byte(), fetch_byte());
       break;
     case 0xCD:
-      std::cout << "CALL \n";
       call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xCE:
-      std::cout << "ACI ";
       ana(fetch_byte());
-      std::cout << std::endl;
       break;
     case 0xCF:
-      std::cout << "RST 1\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xD0:
-      std::cout << "RNC\n";
       ret(JumpCondition::kNotCarry);
       break;
     case 0xD1:
-      std::cout << "POP D\n";
       pop(&registers_.reg_d, &registers_.reg_e);
       break;
     case 0xD2:
-      std::cout << "JNZ \n";
       jmp(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
       break;
     case 0xD3:
-      std::cout << "OUT ";
       print_hex_byte(fetch_byte());
-      std::cout << std::endl;
       break;
     case 0xD4:
-      std::cout << "CNC \n";
       call(JumpCondition::kNotCarry, fetch_byte(), fetch_byte());
       break;
     case 0xD5:
-      std::cout << "PUSH D\n";
       push(registers_.reg_d, registers_.reg_e);
       break;
     case 0xD6:
-      std::cout << "SUI \n";
       sub(fetch_byte());
       break;
     case 0xD7:
-      std::cout << "RST 2\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xD8:
-      std::cout << "RC\n";
       ret(JumpCondition::kCarry);
       break;
     case 0xD9:
-      std::cout << "*RET\n";
       ret(JumpCondition::kTrue);
       break;
     case 0xDA:
-      std::cout << "JC \n";
       jmp(JumpCondition::kCarry, fetch_byte(), fetch_byte());
       break;
     case 0xDB:  // IN instruction + D8 (input port number)
       in(fetch_byte());
       break;
     case 0xDC:
-      std::cout << "CC \n";
       call(JumpCondition::kCarry, fetch_byte(), fetch_byte());
       break;
     case 0xDD:
-      std::cout << "*CALL \n";
       call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xDE:
-      std::cout << "SBI \n";
       sbb(fetch_byte());
       break;
     case 0xDF:
-      std::cout << "RST 3\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xE0:
-      std::cout << "RPO" << std::endl;
       ret(JumpCondition::kParityOdd);
       break;
     case 0xE1:
-      std::cout << "POP H\n";
       pop(&registers_.reg_h, &registers_.reg_l);
       break;
     case 0xE2:
-      std::cout << "JPO \n";
       jmp(JumpCondition::kParityOdd, fetch_byte(), fetch_byte());
       break;
     case 0xE3:
-      std::cout << "XTHL\n";
       xthl();
       break;
     case 0xE4:
-      std::cout << "CPO \n";
       call(JumpCondition::kParityOdd, fetch_byte(), fetch_byte());
       break;
     case 0xE5:
-      std::cout << "PUSH H\n";
       push(registers_.reg_h, registers_.reg_l);
       break;
     case 0xE6:
-      std::cout << "ANI \n";
       ana(fetch_byte());
       break;
     case 0xE7:
-      std::cout << "RST 4\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xE8:
-      std::cout << "RPE\n";
       ret(JumpCondition::kParityEven);
       break;
     case 0xE9:
-      std::cout << "PCHL\n";
       pchl();
       break;
     case 0xEA:
-      std::cout << "JPE \n";
       jmp(JumpCondition::kParityEven, fetch_byte(), fetch_byte());
       break;
     case 0xEB:
-      std::cout << "XCHG\n";
       xchg();
       break;
     case 0xEC:
-      std::cout << "CPE \n";
       call(JumpCondition::kParityEven, fetch_byte(), fetch_byte());
       break;
     case 0xED:
-      std::cout << "*CALL !n";
       call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xEE:
-      std::cout << "XRI \n";
       xra(fetch_byte());
       break;
     case 0xEF:
-      std::cout << "RST 5\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xF0:
-      std::cout << "RP\n";
       ret(JumpCondition::kPositive);
       break;
     case 0xF1: {
-      std::cout << "POP PSW\n";
       uint8_t temp_flags{0};
       pop(&registers_.reg_a, &temp_flags);
       flags_.from_byte(temp_flags);
       break;
     }
     case 0xF2:
-      std::cout << "JP \n";
       jmp(JumpCondition::kPositive, fetch_byte(), fetch_byte());
       break;
     case 0xF3:
-      std::cout << "DI\n";
       di();
       break;
     case 0xF4:
-      std::cout << "CP \n";
       call(JumpCondition::kPositive, fetch_byte(), fetch_byte());
       break;
     case 0xF5:
-      std::cout << "PUSH PSW\n";
       push(registers_.reg_a, flags_.to_byte());
       break;
     case 0xF6:
-      std::cout << "ORI \n";
       ora(fetch_byte());
       break;
     case 0xF7:
-      std::cout << "RST 6\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
     case 0xF8:
-      std::cout << "RM\n";
       ret(JumpCondition::kMinus);
       break;
     case 0xF9:
-      std::cout << "SPHL\n";
       sphl();
       break;
     case 0xFA:
-      std::cout << "JM \n";
       jmp(JumpCondition::kMinus, fetch_byte(), fetch_byte());
       break;
     case 0xFB:
-      std::cout << "EI\n";
       ei();
       break;
     case 0xFC:
-      std::cout << "CM \n";
       call(JumpCondition::kMinus, fetch_byte(), fetch_byte());
       break;
     case 0xFD:
-      std::cout << "*CALL \n";
       call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
       break;
     case 0xFE:
-      std::cout << "CPI \n";
       cpi(fetch_byte());
       break;
     case 0xFF:
-      std::cout << "RST 7\n";
       rst((opcode >> 3) & 0b0000'0111);
       break;
   }
