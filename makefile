@@ -1,12 +1,14 @@
-SHELL = /bin/sh
+CXX = g++
+CXX_FLAGS = -std=c++17 -ggdb
 
 SRCDIR = src
 BUILDDIR = build
 TESTDIR = tests
 TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
+LIBRARY = /usr/local/lib/
 
 # Creates a list of object files
-OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o)
+OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o)
 
 CFLAGS = -lSDL3
 
@@ -19,7 +21,7 @@ CFLAGS = -lSDL3
 TESTFLAGS =
 
 emu8080: $(OBJS) $(SRCDIR)/main.cc
-	g++ -o emu8080 $^ $(CFLAGS)
+	g++ -o emu8080 $^ -L$(LIBRARY) $(CFLAGS)
 
 test: all_tests
 	./all_tests $(TESTFLAGS)
@@ -35,6 +37,12 @@ $(BUILDDIR)/Memory8080.o: $(SRCDIR)/Memory8080.cc $(SRCDIR)/Memory8080.h
 
 $(BUILDDIR)/Instructions8080.o: $(SRCDIR)/Instructions8080.cc
 	g++ -o $(BUILDDIR)/Instructions8080.o -c $(SRCDIR)/Instructions8080.cc
+
+$(BUILDDIR)/GameWindow.o: $(SRCDIR)/GameWindow.cc $(SRCDIR)/GameWindow.h
+	$(CXX) $(CXX_FLAGS) -c $< -o $@
+
+$(BUILDDIR)/SpaceInvadersVRamDecoder.o: $(SRCDIR)/SpaceInvadersVRamDecoder.cc $(SRCDIR)/SpaceInvadersVRamDecoder.h
+	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 $(BUILDDIR)/Input.o: $(SRCDIR)/Input.cc $(SRCDIR)/Input.h
 	g++ -o $(BUILDDIR)/Input.o -c $(SRCDIR)/Input.cc
