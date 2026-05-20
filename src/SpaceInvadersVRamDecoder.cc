@@ -1,59 +1,50 @@
-#include <SDL3/SDL.h>
-#include <vector>
 #include "SpaceInvadersVRamDecoder.h"
 
-namespace space_invaders_vram_decoder
-{
-    constexpr int kMmCols = 32;
-    constexpr int kMmRows = 224;
-    constexpr int kMmPixPerByte = 8;
+#include <SDL3/SDL.h>
 
-    std::vector<SDL_FPoint> DecodeTopPixels(const char* data)
-    {
-        std::vector<SDL_FPoint> points;
+#include <vector>
 
-        for (int row = 112; row < kMmRows; row++)
-        {
-            for (int col = 0; col < kMmCols; col++)
-            {
-                for (int bit = 0; bit < kMmPixPerByte; bit++)
-                {
-                    bool pixel_set =
-                        static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
-                    if (pixel_set)
-                    {
-                        SDL_FPoint pixel{ static_cast<float>((col * kMmPixPerByte) + bit),
-                                        static_cast<float>(row) };
-                        points.push_back(pixel);
-                    }
-                }
-            }
+namespace space_invaders_vram_decoder {
+constexpr int kMmCols = 32;
+constexpr int kMmRows = 224;
+constexpr int kMmPixPerByte = 8;
+
+std::vector<SDL_FPoint> DecodeTopPixels(const char* data) {
+  std::vector<SDL_FPoint> points;
+
+  for (int row = 112; row < kMmRows; row++) {
+    for (int col = 0; col < kMmCols; col++) {
+      for (int bit = 0; bit < kMmPixPerByte; bit++) {
+        bool pixel_set =
+            static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
+        if (pixel_set) {
+          SDL_FPoint pixel{static_cast<float>((col * kMmPixPerByte) + bit),
+                           static_cast<float>(row)};
+          points.push_back(pixel);
         }
-        return points;
+      }
     }
-
-    std::vector<SDL_FPoint> DecodeBottomPixels(const char* data)
-    {
-        std::vector<SDL_FPoint> points;
-
-        for (int row = 0; row < kMmRows / 2; row++)
-        {
-            for (int col = 0; col < kMmCols; col++)
-            {
-                for (int bit = 0; bit < kMmPixPerByte; bit++)
-                {
-                    bool pixel_set =
-                        static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
-                    if (pixel_set)
-                    {
-                        SDL_FPoint pixel{ static_cast<float>((col * kMmPixPerByte) + bit),
-                                        static_cast<float>(row) };
-                        points.push_back(pixel);
-                    }
-                }
-            }
-        }
-
-        return points;
-    }
+  }
+  return points;
 }
+
+std::vector<SDL_FPoint> DecodeBottomPixels(const char* data) {
+  std::vector<SDL_FPoint> points;
+
+  for (int row = 0; row < kMmRows / 2; row++) {
+    for (int col = 0; col < kMmCols; col++) {
+      for (int bit = 0; bit < kMmPixPerByte; bit++) {
+        bool pixel_set =
+            static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
+        if (pixel_set) {
+          SDL_FPoint pixel{static_cast<float>((col * kMmPixPerByte) + bit),
+                           static_cast<float>(row)};
+          points.push_back(pixel);
+        }
+      }
+    }
+  }
+
+  return points;
+}
+}  // namespace space_invaders_vram_decoder
