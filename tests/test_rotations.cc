@@ -12,7 +12,10 @@
 TEST_CASE("Testing RLC instruction") {
   std::shared_ptr<intel_8080::Memory8080> mem =
       std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
-  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem);
+  std::shared_ptr<input::InputHandler> input_handler =
+      std::make_shared<input::InputHandler>();
+  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem, input_handler);
+
   std::vector<uint8_t> data = {0x3E, 0xF2, 0x07};
   mem->load_data(data);
   emu.step();
