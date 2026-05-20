@@ -12,11 +12,43 @@ void CPU8080::in(uint8_t port_no) {
   if (port_no >= 0 && port_no < 3) {
     registers_.reg_a = input_handler_->ReadInput(port_no);
   } else if (port_no == 3) {
-    // TODO: Call shift register code.
+    registers_.reg_a = shift_register_.GetShiftedByte();
     std::cerr << "ERROR: missing shift register code for READ 3\n";
   } else {
     std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
               << std::endl;
+  }
+}
+
+// OUT Output
+//
+// Routes the accumulator value written by an OUT instruction to the
+// peripheral mapped to port_no. Ports 2 and 4 drive the bit-shift register.
+// Ports 3 and 5 drive the sound hardware.
+void CPU8080::out(uint8_t port_no, uint8_t data) {
+  switch (port_no) {
+    case 2:
+      shift_register_.SetOffset(data);
+      break;
+    case 4:
+      shift_register_.LoadBuffer(data);
+      break;
+    case 3:
+      if (mixer_) {
+        mixer_->SetOut3(data);
+      }
+      break;
+    case 5:
+      if (mixer_) {
+        mixer_->SetOut5(data);
+      }
+      break;
+    case 6:
+      break;
+    default:
+      std::cerr << "<opcode 0xD3> Invalid output port number: "
+                << static_cast<int>(port_no) << std::endl;
+      break;
   }
 }
 

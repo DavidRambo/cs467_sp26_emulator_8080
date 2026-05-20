@@ -6,11 +6,12 @@ BUILDDIR = build
 TESTDIR = tests
 TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
 LIBRARY = /usr/local/lib/
+WAV_PATH = assets/audio
 
 # Creates a list of object files
 OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o)
 
-CFLAGS = -lSDL3
+CFLAGS = -lSDL3 -I$(WAV_PATH)
 
 # For passing doctest query flags when running tests.
 # Example use, which will run test cases with a name including "input":
@@ -48,7 +49,10 @@ $(BUILDDIR)/Input.o: $(SRCDIR)/Input.cc $(SRCDIR)/Input.h
 	g++ -o $(BUILDDIR)/Input.o -c $(SRCDIR)/Input.cc
 
 $(BUILDDIR)/AudioMixer.o: $(SRCDIR)/AudioMixer.cc $(SRCDIR)/AudioMixer.h
-	g++ -o $(BUILDDIR)/AudioMixer.o -c $(SRCDIR)/AudioMixer.cc
+	g++ -o $(BUILDDIR)/AudioMixer.o -c $(SRCDIR)/AudioMixer.cc $(CFLAGS)
+
+$(BUILDDIR)/ShiftRegister.o: $(SRCDIR)/ShiftRegister.cc $(SRCDIR)/ShiftRegister.h
+	g++ -o $(BUILDDIR)/ShiftRegister.o -c $(SRCDIR)/ShiftRegister.cc
 
 # The @ sign indicates a shell command.
 clean:

@@ -17,9 +17,11 @@ void print_hex_byte(uint8_t value) {
 namespace intel_8080 {
 
 CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
-                 std::shared_ptr<input::InputHandler> new_input_handler)
+                 std::shared_ptr<input::InputHandler> new_input_handler,
+                 std::shared_ptr<audio::Mixer> new_mixer)
     : mem_access_(std::move(new_mem)),
-      input_handler_(std::move(new_input_handler)) {
+      input_handler_(std::move(new_input_handler)),
+      mixer_(std::move(new_mixer)) {
   stack_pointer_ = 0x0000;
   program_counter_ = 0x0000;
   flags_ = Flags();
@@ -770,8 +772,8 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xD2:
       jmp(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
       break;
-    case 0xD3:
-      print_hex_byte(fetch_byte());
+    case 0xD3:  // OUT instruction
+      out(fetch_byte(), registers_.reg_a);
       break;
     case 0xD4:
       call(JumpCondition::kNotCarry, fetch_byte(), fetch_byte());

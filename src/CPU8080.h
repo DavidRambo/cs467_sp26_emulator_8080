@@ -3,8 +3,10 @@
 #include <cstdint>
 #include <memory>
 
+#include "AudioMixer.h"
 #include "Input.h"
 #include "Memory8080.h"
+#include "ShiftRegister.h"
 
 namespace intel_8080 {
 enum class JumpCondition {
@@ -60,7 +62,8 @@ class CPU8080 {
   };
 
   CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
-          std::shared_ptr<input::InputHandler> new_input_handler);
+          std::shared_ptr<input::InputHandler> new_input_handler,
+          std::shared_ptr<audio::Mixer> new_mixer);
 
   void step();
 
@@ -89,6 +92,7 @@ class CPU8080 {
   // counterpart except for lxi
   // Instructions
   void in(uint8_t port_no);
+  void out(uint8_t port_no, uint8_t data);
   void inr(uint8_t* reg);
   static void mov(uint8_t* addr, uint8_t data);
   void stax(uint16_t mem_location);
@@ -147,5 +151,11 @@ class CPU8080 {
   // Address Spaces
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
   std::shared_ptr<input::InputHandler> input_handler_;
+
+  // Bit-shift hardware behind ports IN 3 / OUT 2 / OUT 4.
+  hardware::ShiftRegister shift_register_;
+
+  // Sound hardware behind ports OUT 3 / OUT 5.
+  std::shared_ptr<audio::Mixer> mixer_;
 };
 }  // namespace intel_8080
