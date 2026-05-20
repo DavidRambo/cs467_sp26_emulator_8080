@@ -1,5 +1,5 @@
 CXX = g++
-CXX_FLAGS = -std=c++17 -ggdb
+CXX_FLAGS = -std=c++20 -ggdb
 
 SRCDIR = src
 BUILDDIR = build
@@ -10,7 +10,7 @@ LIBRARY = /usr/local/lib/
 # Creates a list of object files
 OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o)
 
-CFLAGS = -lSDL3
+CFLAGS = -lSDL3 -std=c++20
 
 # For passing doctest query flags when running tests.
 # Example use, which will run test cases with a name including "input":
