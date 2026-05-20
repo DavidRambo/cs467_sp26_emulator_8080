@@ -18,8 +18,8 @@ std::vector<SDL_FPoint> DecodeTopPixels(const char* data) {
         bool pixel_set =
             static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
         if (pixel_set) {
-          SDL_FPoint pixel{static_cast<float>((col * kMmPixPerByte) + bit),
-                           static_cast<float>(row)};
+          SDL_FPoint pixel{.x = static_cast<float>((col * kMmPixPerByte) + bit),
+                           .y = static_cast<float>(row)};
           points.push_back(pixel);
         }
       }
@@ -37,8 +37,8 @@ std::vector<SDL_FPoint> DecodeBottomPixels(const char* data) {
         bool pixel_set =
             static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
         if (pixel_set) {
-          SDL_FPoint pixel{static_cast<float>((col * kMmPixPerByte) + bit),
-                           static_cast<float>(row)};
+          SDL_FPoint pixel{.x = static_cast<float>((col * kMmPixPerByte) + bit),
+                           .y = static_cast<float>(row)};
           points.push_back(pixel);
         }
       }
