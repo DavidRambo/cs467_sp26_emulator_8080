@@ -8,7 +8,8 @@
 #include "Memory8080.h"
 int main(int argc, char* argv[]) {
   if (argc > 5) {
-    std::cerr << "Too many arguments. Usage: ./emu8008 <ROM file name>\n";
+    std::cerr << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g "
+                 "invaders.f invaders.e\n";
     return 1;
   }
 
