@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -10,6 +11,8 @@ class Memory8080 {
   static constexpr int kSIZE = 0x10000;  // 0xFFFF + 1 for inclusive indices
 
   Memory8080();
+
+  std::span<unsigned char, 0x1C00> get_vram_span();
 
   uint8_t read(uint16_t mem_location);
 

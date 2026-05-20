@@ -15,6 +15,18 @@ intel_8080::Memory8080::Memory8080() : mem_buffer_{} {
   mem_buffer_.fill(0x00);
   end_of_ROM_ = 0x0000;
 }
+
+std::span<unsigned char, 0x1C00> intel_8080::Memory8080::get_vram_span() {
+  // First create a span to view the entire buffer.
+  std::span<unsigned char, 0x10000> full_span{mem_buffer_};
+
+  // Then create a subspan of the video ram section, which starts at 0x2400 and
+  // is 0x1C00 bytes.
+  std::span<unsigned char, 0x1C00> vram_span{full_span.subspan(0x2400, 0x1C00)};
+
+  return vram_span;
+}
+
 std::uint8_t intel_8080::Memory8080::read(std::uint16_t mem_location) {
   return mem_buffer_[mem_location];
 }
