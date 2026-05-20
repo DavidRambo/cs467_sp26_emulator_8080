@@ -11,20 +11,20 @@ class Memory8080 {
 
   Memory8080();
 
-  uint8_t read(std::uint16_t mem_location);
+  uint8_t read(uint16_t mem_location);
 
-  void write(uint16_t mem_loation, uint8_t data);
+  void write(uint16_t mem_location, uint8_t data);
 
   void clear_mem();
 
   void clear_rom();
 
-  void load_rom(std::string file_path);
+  void load_rom(std::string const& file_path);
 
-  void load_data(std::vector<uint8_t> data, uint16_t start = 0);
+  void load_data(std::vector<uint8_t> const& data, uint16_t start = 0);
 
  private:
-  std::array<std::uint8_t, kSIZE> mem_buffer_;
-  std::uint16_t end_of_ROM_;
+  std::array<uint8_t, kSIZE> mem_buffer_;
+  uint16_t end_of_ROM_;
 };
 }  // namespace intel_8080

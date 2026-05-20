@@ -3,10 +3,11 @@
 #include <cstdint>
 #include <memory>
 
+#include "Input.h"
 #include "Memory8080.h"
 
 namespace intel_8080 {
-enum class CallType {
+enum class JumpCondition {
   kNotZero,
   kZero,
   kNotCarry,
@@ -19,17 +20,8 @@ enum class CallType {
 };
 
 class CPU8080 {
-  struct Port {
-    std::uint8_t bit0 : 1;
-    std::uint8_t bit1 : 1;
-    std::uint8_t bit2 : 1;
-    std::uint8_t bit3 : 1;
-    std::uint8_t bit4 : 1;
-    std::uint8_t bit5 : 1;
-    std::uint8_t bit6 : 1;
-    std::uint8_t bit7 : 1;
-  };
-
+  // Define private structs before public for sake of State struct.
+ private:
   struct Flags {
     std::uint8_t sign : 1;
     std::uint8_t zero : 1;
@@ -37,7 +29,12 @@ class CPU8080 {
     std::uint8_t parity : 1;
     std::uint8_t carry : 1;
 
+    // Converts the struct of condition bits to a byte representation. Combined
+    // with the accumulator register, it composes the Program Status Word.
     std::uint8_t to_byte();
+
+    // Sets and resets flags according to the byte of data.
+    void from_byte(uint8_t data);
   };
 
   struct Registers {
@@ -62,7 +59,8 @@ class CPU8080 {
     uint16_t program_counter;
   };
 
-  CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem);
+  CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
+          std::shared_ptr<input::InputHandler> new_input_handler);
 
   void step();
 
@@ -90,6 +88,7 @@ class CPU8080 {
   // Immediate instructions will utilize their register/mem
   // counterpart except for lxi
   // Instructions
+  void in(uint8_t port_no);
   void inr(uint8_t* reg);
   static void mov(uint8_t* addr, uint8_t data);
   void stax(uint16_t mem_location);
@@ -128,20 +127,25 @@ class CPU8080 {
   void shld(uint8_t byte_2, uint8_t byte_3);
   void lhld(uint8_t byte_2, uint8_t byte_3);
   void pchl();
-  void jmp(CallType call_type, uint8_t byte_2, uint8_t byte_3);
-  void call(CallType call_type, uint8_t byte_2, uint8_t byte_3);
-  void ret(CallType call_type);
+  void jmp(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
+  void call(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
+  void ret(JumpCondition jump_condition);
   void rst(uint8_t exp);
   void ei();
   void di();
   void hlt();
+  bool check_jump_condition(JumpCondition jump_condition) const;
 
+  // State
   Flags flags_;
   Registers registers_;
   std::uint16_t stack_pointer_;
   std::uint16_t program_counter_;
   // false = 0 and true = 1
   bool INTE_;
+
+  // Address Spaces
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
+  std::shared_ptr<input::InputHandler> input_handler_;
 };
 }  // namespace intel_8080
