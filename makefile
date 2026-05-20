@@ -9,7 +9,7 @@ LIBRARY = /usr/local/lib/
 WAV_PATH = assets/audio
 
 # Creates a list of object files
-OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o)
+OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o ShiftRegister.o)
 
 CFLAGS = -lSDL3 -I$(WAV_PATH)
 
