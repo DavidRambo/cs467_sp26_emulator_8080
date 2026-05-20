@@ -43,3 +43,6 @@
 # binaries
 emu8080
 all_tests
+
+#vscode configs
+.vscode/

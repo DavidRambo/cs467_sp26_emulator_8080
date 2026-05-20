@@ -9,20 +9,23 @@ namespace intel_8080 {
 // opcode to designate the port number. That data is written to the
 // accumulator.
 void CPU8080::in(uint8_t port_no) {
-  if (port_no != 1 && port_no != 2) {
+  if (port_no >= 0 && port_no < 3) {
+    registers_.reg_a = input_handler_->ReadInput(port_no);
+  } else if (port_no == 3) {
+    // TODO: Call shift register code.
+    std::cerr << "ERROR: missing shift register code for READ 3\n";
+  } else {
     std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
               << std::endl;
   }
-
-  registers_.reg_a = input_handler_->ReadInput(port_no);
 }
 
 // INR Increment Register or Memory value
 //
 // Condition bits affected: Zero, Sign, Parity
-void CPU8080::inr(uint8_t* byte) {
-  *byte += 1;
-  update_flags_szp(*byte);
+void CPU8080::inr(uint8_t* reg) {
+  *reg += 1;
+  update_flags_szp(*reg);
 }
 
 // MOV Move data byte into register or memory address
@@ -72,9 +75,9 @@ void CPU8080::stc() { flags_.carry = 1; }
 // DCR: Decrement Register/Memory
 // Reduces the value of the register or memory by 1.
 // Flags affected: Zero, Sign, Parity, Aux Carry.
-void CPU8080::dcr(uint8_t* byte) {
-  *byte -= 1;
-  update_flags_szp(*byte);
+void CPU8080::dcr(uint8_t* reg) {
+  *reg -= 1;
+  update_flags_szp(*reg);
 }
 
 // CMA: Complement Accumulator
@@ -154,8 +157,20 @@ void CPU8080::ora(uint8_t data) {
   update_flags_szp(registers_.reg_a);
 }
 
+// CPI: Compare Immediate with Accumulator
+// Performs a comparison by subtracting a data byte from the accumulator without
+// updating the accumulator and checking the condition bits.
+// Zero flag is set if the are equal, reset otherwise. Carry bit is set if data
+// is larger than accumulator.
+// Flags affected: Carry, Zero, Sign, Parity
+void CPU8080::cpi(uint8_t data) {
+  uint16_t result = registers_.reg_a - data;
+  flags_.carry = (result > 0xFF) ? 0 : 1;
+  update_flags_szp(static_cast<uint8_t>(result));
+}
+
 // CMP: Compare Register or Memory w/ Accumulator
-// THe specified byte is compared to the contents of A. Internally
+// The specified byte is compared to the contents of A. Internally
 // subtracts the byte from A, leaving both unchanged. Condition bits
 // are set based on the result, simlar to the SUB instruction.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
@@ -196,6 +211,222 @@ void CPU8080::rar() {
   uint8_t temp = registers_.reg_a >> 1;
   registers_.reg_a = temp | flags_.carry << 7;
   flags_.carry = lsb;
+}
+/*
+ * PUSH: Push Data onto stack
+ * The contents of the specified register pair is saved in two bytes
+ * of memory indicated by stack_pointer_. The first register is saved
+ * at one less than the stack pointer, and the second register is saved
+ * at two less than the stack pointer. The stack pointer is decremented
+ * by 2.
+ * Flags affected: N/A
+ */
+void CPU8080::push(uint8_t reg_1, uint8_t reg_2) {
+  stack_pointer_ -= 1;
+  mem_access_->write(stack_pointer_, reg_1);
+  stack_pointer_ -= 1;
+  mem_access_->write(stack_pointer_, reg_2);
+}
+
+/*
+ * POP: Pop Data Off Stack
+ * The contents of the specified register pair are restored
+ * by the stack pointer. The byte of data at the stack pointer is
+ * loaded into the second register. The byte of data at the stack
+ * pointer + 1 is loaded intp the first register.
+ * Flags affected: N/A
+ */
+void CPU8080::pop(uint8_t* reg_1, uint8_t* reg_2) {
+  *reg_2 = mem_access_->read(stack_pointer_);
+  stack_pointer_ += 1;
+  *reg_1 = mem_access_->read(stack_pointer_);
+  stack_pointer_ += 1;
+}
+/*
+ * DAD: Double Add.
+ * The 16 bit number in the specified register pair is added to the
+ * 16 bit number held in the HL register pair. The result replaces
+ * the contents of HL.
+ * Flags affected: N/A
+ */
+void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
+  uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
+  uint16_t hl_pair = (registers_.reg_h << 8) | registers_.reg_l;
+  uint32_t result = reg_pair + hl_pair;
+  flags_.carry = flags_.carry = (result > 0xFFFF) ? 0 : 1;
+  registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
+  registers_.reg_l = static_cast<uint8_t>(result | 0xFF);
+}
+
+/*
+ * INX: Increment register pair
+ * The 16 bit number held in the specified register pair is
+ * incremented by 1.
+ * Flags affected: N/A
+ */
+void CPU8080::inx(uint8_t* reg_1, uint8_t* reg_2) {
+  auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
+  reg_pair += 1;
+  *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
+  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+}
+
+/*
+ * DCX: Decrement register pair
+ * The 16 bit number in the specified register pair is decremented by 1.
+ * Flags affected: N/A
+ */
+void CPU8080::dcx(uint8_t* reg_1, uint8_t* reg_2) {
+  auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
+  reg_pair -= 1;
+  *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
+  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+}
+
+void CPU8080::xchg() {
+  std::swap(registers_.reg_h, registers_.reg_d);
+  std::swap(registers_.reg_l, registers_.reg_e);
+}
+
+void CPU8080::xthl() {
+  uint8_t byte_2 = mem_access_->read(stack_pointer_);
+  uint8_t byte_1 = mem_access_->read(stack_pointer_ + 1);
+  mem_access_->write(stack_pointer_, registers_.reg_l);
+  mem_access_->write(stack_pointer_ + 1, registers_.reg_h);
+  registers_.reg_h = byte_1;
+  registers_.reg_l = byte_2;
+}
+
+void CPU8080::sphl() {
+  stack_pointer_ =
+      static_cast<uint16_t>(registers_.reg_h << 8) | registers_.reg_l;
+}
+
+void CPU8080::lxi_sp(uint8_t byte_2, uint8_t byte_3) {
+  stack_pointer_ = static_cast<uint16_t>(byte_3 << 8) | byte_2;
+}
+
+void CPU8080::lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2,
+                  uint8_t byte_3) {
+  *reg_1 = byte_3;
+  *reg_2 = byte_2;
+}
+
+void CPU8080::sta(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  mem_access_->write(mem_location, registers_.reg_a);
+}
+
+void CPU8080::lda(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  registers_.reg_a = mem_access_->read(mem_location);
+}
+
+void CPU8080::shld(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  mem_access_->write(mem_location, registers_.reg_l);
+  mem_access_->write(mem_location + 1, registers_.reg_h);
+}
+
+void CPU8080::lhld(uint8_t byte_2, uint8_t byte_3) {
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  registers_.reg_l = mem_access_->read(mem_location);
+  registers_.reg_h = mem_access_->read(mem_location + 1);
+}
+
+void CPU8080::pchl() {
+  auto mem_location =
+      static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+  program_counter_ = mem_location;
+}
+
+// JUMP Instructions
+// JMP always transfers program control, while the others do so under a
+// condition. For example, JM, "Jump if Minus", jumps if the sign bit is set.
+// Sice the CALL instructions work the same way, this function reuses the
+// CallType enum class.
+void CPU8080::jmp(JumpCondition jump_condition, uint8_t byte_2,
+                  uint8_t byte_3) {
+  if (!check_jump_condition(jump_condition)) {
+    return;
+  }
+
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  program_counter_ = mem_location;
+}
+
+// CALL Subroutine Instructions
+// CALL always transfers program control, while the others do so under a
+// condition. For example, CNZ will Call if Not Zero, i.e. if the zero flag is
+// clear. Pushes the program counter address onto the stack and then points the
+// program counter to the provided memory address.
+void CPU8080::call(JumpCondition jump_condition, uint8_t byte_2,
+                   uint8_t byte_3) {
+  if (!check_jump_condition(jump_condition)) {
+    return;
+  }
+
+  auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
+  uint8_t high_byte = program_counter_ >> 8;
+  uint8_t low_byte = program_counter_ | 0xFF;
+
+  push(low_byte, high_byte);
+  program_counter_ = mem_location;
+}
+
+// RETURN Instructions
+// These instructions pop the last address off the stack and assign it to the
+// program counter in order to return from a subroutine. RET always does it,
+// while other return instructions do so under a condition.
+void CPU8080::ret(JumpCondition jump_condition) {
+  if (!check_jump_condition(jump_condition)) {
+    return;
+  }
+
+  uint8_t* high_byte;
+  uint8_t* low_byte;
+  pop(low_byte, high_byte);
+  program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
+}
+
+void CPU8080::rst(uint8_t exp) {
+  call(JumpCondition::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
+}
+
+void CPU8080::ei() { INTE_ = true; }
+
+void CPU8080::di() { INTE_ = false; }
+
+void CPU8080::hlt() {
+  // Can't implement until we know how the interupt process works.
+}
+
+// Returns true if the specified condition is true, otherwise false.
+// Called by JMP, RET, and CALL instructions that depend on a condition check.
+bool CPU8080::check_jump_condition(JumpCondition jump_condition) const {
+  switch (jump_condition) {
+    case JumpCondition::kTrue:
+      return true;
+    case JumpCondition::kNotZero:
+      return !flags_.zero;
+    case JumpCondition::kZero:
+      return flags_.zero;
+    case JumpCondition::kNotCarry:
+      return !flags_.carry;
+    case JumpCondition::kCarry:
+      return flags_.carry;
+    case JumpCondition::kParityOdd:
+      return !flags_.parity;
+    case JumpCondition::kParityEven:
+      return flags_.parity;
+    case JumpCondition::kPositive:
+      return !flags_.sign;
+    case JumpCondition::kMinus:
+      return flags_.sign;
+  }
+  // The switch case is exhaustive, so the following is to silence the warning:
+  std::cerr << "Failed to match a jump condition!\n";
+  return false;
 }
 
 }  // namespace intel_8080
