@@ -7,6 +7,7 @@
 #include "GameWindow.h"
 #include "Input.h"
 #include "Memory8080.h"
+#include "ShiftRegister.h"
 #include "SpaceInvadersVRamDecoder.h"
 
 int main(int argc, char* argv[]) {
@@ -42,11 +43,15 @@ int main(int argc, char* argv[]) {
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
 
+  std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr =
+      std::make_shared<hardware::ShiftRegister>(hardware::ShiftRegister());
+
   // Shared with cpu and main loop for event polling.
   std::shared_ptr<input::InputHandler> input_handler =
       std::make_shared<input::InputHandler>();
 
-  intel_8080::CPU8080 cpu = intel_8080::CPU8080(mem, input_handler, mixer);
+  intel_8080::CPU8080 cpu =
+      intel_8080::CPU8080(mem, input_handler, mixer, shift_reg_ptr);
 
   // Main loop
   bool running{true};

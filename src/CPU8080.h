@@ -6,6 +6,7 @@
 #include "AudioMixer.h"
 #include "Input.h"
 #include "Memory8080.h"
+#include "ShiftRegister.h"
 
 namespace intel_8080 {
 enum class JumpCondition {
@@ -62,7 +63,8 @@ class CPU8080 {
 
   CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
           std::shared_ptr<input::InputHandler> input_handler_ptr,
-          std::shared_ptr<audio::Mixer> new_mixer);
+          std::shared_ptr<audio::Mixer> new_mixer,
+          std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr);
 
   void step();
 
@@ -150,5 +152,6 @@ class CPU8080 {
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
   std::shared_ptr<input::InputHandler> input_handler_;
   std::shared_ptr<audio::Mixer> mixer_;
+  std::shared_ptr<hardware::ShiftRegister> shift_register_;
 };
 }  // namespace intel_8080
