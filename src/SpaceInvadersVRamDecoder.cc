@@ -9,8 +9,8 @@ constexpr int kMmCols = 32;
 constexpr int kMmRows = 224;
 constexpr int kMmPixPerByte = 8;
 
-std::vector<SDL_FPoint> DecodeTopPixels(std::vector<SDL_FPoint>& points,
-                                        std::span<unsigned char, 0x1C00> data) {
+std::vector<SDL_FPoint> const& DecodeTopPixels(
+    std::vector<SDL_FPoint>& points, std::span<unsigned char, 0x1C00> data) {
   for (int row = 112; row < kMmRows; row++) {
     for (int col = 0; col < kMmCols; col++) {
       for (int bit = 0; bit < kMmPixPerByte; bit++) {
@@ -27,7 +27,7 @@ std::vector<SDL_FPoint> DecodeTopPixels(std::vector<SDL_FPoint>& points,
   return points;
 }
 
-std::vector<SDL_FPoint> DecodeBottomPixels(
+std::vector<SDL_FPoint> const& DecodeBottomPixels(
     std::vector<SDL_FPoint>& points, std::span<unsigned char, 0x1C00> data) {
   for (int row = 0; row < kMmRows / 2; row++) {
     for (int col = 0; col < kMmCols; col++) {
