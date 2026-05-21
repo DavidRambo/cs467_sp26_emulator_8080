@@ -5,10 +5,8 @@
 #include <cstdlib>
 
 namespace graphics_display {
-GameWindow::GameWindow(std::span<unsigned char, 0x1C00> videoData,
-                       int windowWidth, int windowHeight,
-                       const char* windowName)
-    : video_data_(videoData) {
+GameWindow::GameWindow(int windowWidth, int windowHeight,
+                       const char* windowName) {
   window_name_ = windowName;
   window_width_ = windowWidth;
   window_height_ = windowHeight;

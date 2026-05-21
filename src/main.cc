@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 
   // Create GameWindow
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
-      mem->get_vram_span(), kWindowWidth, kWindowHeight, "Space Invaders");
+      kWindowWidth, kWindowHeight, "Space Invaders");
 
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
