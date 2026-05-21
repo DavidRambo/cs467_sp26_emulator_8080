@@ -917,6 +917,9 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xFF:
       rst((opcode >> 3) & 0b0000'0111);
       break;
+    default:
+      std::cerr << "CPU8080:execute() : default case for opcode switch\n";
+      break;
   }
 }
 }  // namespace intel_8080
