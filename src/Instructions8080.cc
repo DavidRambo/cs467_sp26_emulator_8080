@@ -251,9 +251,8 @@ void CPU8080::pop(uint8_t* reg_1, uint8_t* reg_2) {
  */
 void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
   uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
-  uint16_t hl_pair = (registers_.reg_h << 8) | registers_.reg_l;
-  uint32_t result = reg_pair + hl_pair;
-  flags_.carry = flags_.carry = (result > 0xFFFF) ? 0 : 1;
+  uint32_t result = reg_pair + registers_.hl();
+  flags_.carry = (result > 0xFFFF) ? 0 : 1;
   registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
   registers_.reg_l = static_cast<uint8_t>(result | 0xFF);
 }
