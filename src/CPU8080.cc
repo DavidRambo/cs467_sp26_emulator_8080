@@ -768,7 +768,7 @@ void CPU8080::execute(uint8_t opcode) {
       pop(&registers_.reg_d, &registers_.reg_e);
       break;
     case 0xD2:
-      jmp(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
+      jmp(JumpCondition::kNotCarry, fetch_byte(), fetch_byte());
       break;
     case 0xD3:
       print_hex_byte(fetch_byte());
