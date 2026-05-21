@@ -85,7 +85,10 @@ uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
 
 // Copies the state of the CPU and returns in a State struct.
 CPU8080::State CPU8080::get_state() {
-  return State{registers_, flags_, stack_pointer_, program_counter_};
+  return State{.registers = registers_,
+               .flags = flags_,
+               .stack_pointer = stack_pointer_,
+               .program_counter = program_counter_};
 }
 
 void CPU8080::reset() { program_counter_ = 0x0000; };
