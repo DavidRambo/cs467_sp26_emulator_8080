@@ -19,6 +19,23 @@ void CPU8080::in(uint8_t port_no) {
   }
 }
 
+// OUT Output
+//
+// The 8080 would write data from the accumulator to the data bus and indicate
+// which peripheral device should fetch that data by setting bits in the address
+// bus. Here, the port_no is an immediate byte following the OUT opcode, which
+// is used to call the respective device's emulation.
+void CPU8080::out(uint8_t port_no) {
+  if (port_no == 2) {
+    shift_register_->SetOffset(registers_.reg_a);
+  } else if (port_no == 4) {
+    shift_register_->LoadBuffer(registers_.reg_a);
+  } else {
+    std::cerr << "<opcode 0xD3> invalid output port number: " << port_no
+              << std::endl;
+  }
+}
+
 // INR Increment Register or Memory value
 //
 // Condition bits affected: Zero, Sign, Parity

@@ -93,6 +93,7 @@ class CPU8080 {
   // counterpart except for lxi
   // Instructions
   void in(uint8_t port_no);
+  void out(uint8_t port_no);
   void inr(uint8_t* reg);
   static void mov(uint8_t* addr, uint8_t data);
   void stax(uint16_t mem_location);
