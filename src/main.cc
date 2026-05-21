@@ -11,9 +11,9 @@
 #include "SpaceInvadersVRamDecoder.h"
 
 int main(int argc, char* argv[]) {
-  if (argc > 5) {
-    std::cerr << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g "
-                 "invaders.f invaders.e\n";
+  if (argc > 3) {
+    std::cerr
+        << "Too many arguments. Usage: ./emu8008 invaders [vram_segment]\n";
     return 1;
   }
 
@@ -30,11 +30,12 @@ int main(int argc, char* argv[]) {
       std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
 
   // Load ROM
-  // mem->load_rom(argv[1]); // invaders ROM as one file
-  mem->load_rom_at_addr(argv[1], 0);       // invaders.h
-  mem->load_rom_at_addr(argv[2], 0x800);   // invaders.g
-  mem->load_rom_at_addr(argv[3], 0x1000);  // invaders.f
-  mem->load_rom_at_addr(argv[4], 0x1800);  // invaders.e
+  mem->load_rom(argv[1]);  // invaders ROM as one file
+
+  if (argc == 3) {
+    // dummy data to set bits in video ram segment
+    mem->load_rom_at_addr(argv[2], 0x2400);
+  }
 
   // Create GameWindow
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
