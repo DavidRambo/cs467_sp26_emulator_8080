@@ -7,6 +7,7 @@
 #include "GameWindow.h"
 #include "Input.h"
 #include "Memory8080.h"
+#include "SpaceInvadersVRamDecoder.h"
 
 int main(int argc, char* argv[]) {
   if (argc > 5) {
@@ -66,6 +67,10 @@ int main(int argc, char* argv[]) {
     }
 
     // Update display
+    game_window.UpdateDisplayTop(
+        space_invaders_vram_decoder::DecodeTopPixels(mem->get_vram_span()));
+    game_window.UpdateDisplayBottom(
+        space_invaders_vram_decoder::DecodeTopPixels(mem->get_vram_span()));
   }
 
   // Shut down application.
