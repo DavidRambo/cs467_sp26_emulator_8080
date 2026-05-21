@@ -2,18 +2,26 @@
 
 #include <SDL3/SDL.h>
 
-namespace graphics_display {
-GameWindow::GameWindow(std::span<unsigned char, 0x1C00> videoData,
-                       int windowWidth, int windowHeight,
-                       const char* windowName)
-    : video_data_(videoData) {
-  this->window_name_ = windowName;
-  this->window_width_ = windowWidth;
-  this->window_height_ = windowHeight;
+#include <cstdlib>
 
-  window_ = SDL_CreateWindow(windowName, windowWidth, windowHeight,
-                             SDL_WINDOW_RESIZABLE);
-  renderer_ = SDL_CreateRenderer(window_, nullptr);
+namespace graphics_display {
+GameWindow::GameWindow(int windowWidth, int windowHeight,
+                       const char* windowName) {
+  window_name_ = windowName;
+  window_width_ = windowWidth;
+  window_height_ = windowHeight;
+
+  if (!SDL_CreateWindowAndRenderer("Test SDL3", windowWidth, windowHeight,
+                                   SDL_WINDOW_RESIZABLE, &window_,
+                                   &renderer_)) {
+    SDL_Log("Failed to create window and renderer.");
+    std::exit(1);
+    // return SDL_APP_FAILURE;
+  }
+
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderClear(renderer_);
+  SDL_RenderPresent(renderer_);
 }
 
 void GameWindow::UpdateDisplayTop(const std::vector<SDL_FPoint>& points) {

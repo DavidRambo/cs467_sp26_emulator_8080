@@ -1,5 +1,5 @@
 CXX = g++
-CXX_FLAGS = -std=c++20 -ggdb
+CXX_FLAGS = -std=c++20 -lSDL3 -ggdb 
 
 SRCDIR = src
 BUILDDIR = build
@@ -10,8 +10,6 @@ LIBRARY = /usr/local/lib/
 # Creates a list of object files
 OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o)
 
-CFLAGS = -lSDL3 -std=c++20
-
 # For passing doctest query flags when running tests.
 # Example use, which will run test cases with a name including "input":
 #   make test TESTFLAGS='--test-case=*input*'
@@ -21,13 +19,13 @@ CFLAGS = -lSDL3 -std=c++20
 TESTFLAGS =
 
 emu8080: $(OBJS) $(SRCDIR)/main.cc
-	$(CXX) -o emu8080 $^ -L$(LIBRARY) $(CFLAGS)
+	$(CXX) -o emu8080 $^ -L$(LIBRARY) $(CXX_FLAGS)
 
 test: all_tests
 	./all_tests $(TESTFLAGS)
 
 all_tests: $(OBJS) $(TESTSRCFILES)
-	$(CXX) $(CXX_FLAGS) -o all_tests $^ $(CFLAGS)
+	$(CXX) $(CXX_FLAGS) -o all_tests $^
 
 $(BUILDDIR)/CPU8080.o: $(SRCDIR)/CPU8080.cc $(SRCDIR)/CPU8080.h
 	$(CXX) $(CXX_FLAGS) -o $(BUILDDIR)/CPU8080.o -c $(SRCDIR)/CPU8080.cc

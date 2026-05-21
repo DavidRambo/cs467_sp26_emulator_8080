@@ -7,6 +7,7 @@
 #include "GameWindow.h"
 #include "Input.h"
 #include "Memory8080.h"
+#include "SpaceInvadersVRamDecoder.h"
 
 int main(int argc, char* argv[]) {
   if (argc > 5) {
@@ -36,7 +37,7 @@ int main(int argc, char* argv[]) {
 
   // Create GameWindow
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
-      mem->get_vram_span(), kWindowWidth, kWindowHeight, "Space Invaders");
+      kWindowWidth, kWindowHeight, "Space Invaders");
 
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
@@ -66,6 +67,12 @@ int main(int argc, char* argv[]) {
     }
 
     // Update display
+    std::vector<SDL_FPoint> points;
+    game_window.UpdateDisplayTop(space_invaders_vram_decoder::DecodeTopPixels(
+        points, mem->get_vram_span()));
+    game_window.UpdateDisplayBottom(
+        space_invaders_vram_decoder::DecodeTopPixels(points,
+                                                     mem->get_vram_span()));
   }
 
   // Shut down application.
