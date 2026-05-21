@@ -253,7 +253,7 @@ void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
   uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
   uint16_t hl_pair = (registers_.reg_h << 8) | registers_.reg_l;
   uint32_t result = reg_pair + hl_pair;
-  flags_.carry = flags_.carry = (result > 0xFFFF) ? 0 : 1;
+  flags_.carry = (result > 0xFFFF) ? 0 : 1;
   registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
   registers_.reg_l = static_cast<uint8_t>(result | 0xFF);
 }
@@ -383,10 +383,10 @@ void CPU8080::ret(JumpCondition jump_condition) {
     return;
   }
 
-  uint8_t* high_byte;
-  uint8_t* low_byte;
-  pop(low_byte, high_byte);
-  program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
+  uint8_t high_byte;
+  uint8_t low_byte;
+  pop(&low_byte, &high_byte);
+  program_counter_ = static_cast<uint16_t>((high_byte << 8) | low_byte);
 }
 
 void CPU8080::rst(uint8_t exp) {

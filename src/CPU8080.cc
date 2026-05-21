@@ -32,7 +32,6 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
 
 std::uint8_t CPU8080::Flags::to_byte() {
   std::uint8_t return_byte = 0x02;
-
   // Shift flags to proper location
   return_byte = return_byte | (sign << 7);
   return_byte = return_byte | (zero << 6);
@@ -51,7 +50,13 @@ void CPU8080::Flags::from_byte(uint8_t data) {
 }
 
 void CPU8080::step() {
-  uint8_t instruction = fetch_byte();
+  uint8_t instruction;
+  if (!interupt_queue_.empty() && INTE_) {
+    instruction = interupt_queue_.front();
+    interupt_queue_.pop();
+  } else {
+    instruction = fetch_byte();
+  }
   execute(instruction);
 };
 
