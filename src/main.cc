@@ -67,10 +67,12 @@ int main(int argc, char* argv[]) {
     }
 
     // Update display
-    game_window.UpdateDisplayTop(
-        space_invaders_vram_decoder::DecodeTopPixels(mem->get_vram_span()));
+    std::vector<SDL_FPoint> points;
+    game_window.UpdateDisplayTop(space_invaders_vram_decoder::DecodeTopPixels(
+        points, mem->get_vram_span()));
     game_window.UpdateDisplayBottom(
-        space_invaders_vram_decoder::DecodeTopPixels(mem->get_vram_span()));
+        space_invaders_vram_decoder::DecodeTopPixels(points,
+                                                     mem->get_vram_span()));
   }
 
   // Shut down application.
