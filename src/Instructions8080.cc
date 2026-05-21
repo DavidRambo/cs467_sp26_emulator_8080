@@ -13,7 +13,6 @@ void CPU8080::in(uint8_t port_no) {
     registers_.reg_a = input_handler_->ReadInput(port_no);
   } else if (port_no == 3) {
     registers_.reg_a = shift_register_->GetShiftedByte();
-    std::cerr << "ERROR: missing shift register code for READ 3\n";
   } else {
     std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
               << std::endl;
