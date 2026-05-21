@@ -126,7 +126,6 @@ void CPU8080::update_flags_szp(uint8_t byte) {
 void CPU8080::execute(uint8_t opcode) {
   switch (opcode) {
     case 0x00:
-      std::cout << "NOP" << std::endl;
       break;
     case 0x01:
       lxi(&registers_.reg_b, &registers_.reg_c, fetch_byte(), fetch_byte());
@@ -150,7 +149,6 @@ void CPU8080::execute(uint8_t opcode) {
       rlc();
       break;
     case 0x08:
-      std::cout << "NOP*" << std::endl;
       break;
     case 0x09:
       dad(&registers_.reg_b, &registers_.reg_c);
@@ -174,7 +172,6 @@ void CPU8080::execute(uint8_t opcode) {
       rrc();
       break;
     case 0x10:
-      std::cout << "NOP*" << std::endl;
       break;
     case 0x11:
       lxi(&registers_.reg_d, &registers_.reg_e, fetch_byte(), fetch_byte());
@@ -200,7 +197,6 @@ void CPU8080::execute(uint8_t opcode) {
       ral();
       break;
     case 0x18:
-      std::cout << "*NOP" << std::endl;
       break;
     case 0x19:
       dad(&registers_.reg_d, &registers_.reg_e);
@@ -224,7 +220,6 @@ void CPU8080::execute(uint8_t opcode) {
       rar();
       break;
     case 0x20:
-      std::cout << "*NOP" << std::endl;
       break;
     case 0x21:
       lxi(&registers_.reg_h, &registers_.reg_l, fetch_byte(), fetch_byte());
@@ -248,7 +243,6 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "DAA" << std::endl;
       break;
     case 0x28:
-      std::cout << "*NOP" << std::endl;
       break;
     case 0x29:
       dad(&registers_.reg_h, &registers_.reg_l);
@@ -272,7 +266,6 @@ void CPU8080::execute(uint8_t opcode) {
       cma();
       break;
     case 0x30:
-      std::cout << "*NOP" << std::endl;
       break;
     case 0x31:
       lxi_sp(fetch_byte(), fetch_byte());
@@ -304,7 +297,6 @@ void CPU8080::execute(uint8_t opcode) {
       stc();
       break;
     case 0x38:
-      std::cout << "NOP*\n";
       break;
     case 0x39: {
       uint8_t sp_high = stack_pointer_ >> 8;

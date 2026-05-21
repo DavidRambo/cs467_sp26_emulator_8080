@@ -10,9 +10,9 @@
 #include "SpaceInvadersVRamDecoder.h"
 
 int main(int argc, char* argv[]) {
-  if (argc > 5) {
-    std::cerr << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g "
-                 "invaders.f invaders.e\n";
+  if (argc != 5) {
+    std::cout << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g "
+              << "invaders.f invaders.e\n";
     return 1;
   }
 
@@ -51,6 +51,7 @@ int main(int argc, char* argv[]) {
   // Main loop
   bool running{true};
   Uint64 last_time{0};
+  std::vector<SDL_FPoint> points;
   while (running) {
     Uint64 start_tick = SDL_GetTicks();
 
@@ -67,7 +68,6 @@ int main(int argc, char* argv[]) {
     }
 
     // Update display
-    std::vector<SDL_FPoint> points;
     game_window.UpdateDisplayTop(space_invaders_vram_decoder::DecodeTopPixels(
         points, mem->get_vram_span()));
     game_window.UpdateDisplayBottom(
