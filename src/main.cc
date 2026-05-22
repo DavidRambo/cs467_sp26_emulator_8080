@@ -76,6 +76,10 @@ int main(int argc, char* argv[]) {
     }
 
     // Run CPU for 8 ms to approximate the "first half" of 60 fps.
+    // NOTE: the emulated cpu will perform a much greater number of cycles in
+    // this time than it would as physical hardware running at 2Mhz. The way to
+    // account for this would be to count cycles and to limit it to however many
+    // cycles could occur at 2Mhz within 8ms (i.e. 30hz) = 2Mhz/30hz.
     Uint64 current_tick = SDL_GetTicks();
     while (cpu.is_not_stopped() && current_tick < start_tick + 8) {
       cpu.step();
