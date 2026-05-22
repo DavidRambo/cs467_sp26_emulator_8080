@@ -72,6 +72,8 @@ class CPU8080 {
 
   State get_state();
 
+  void print_instruction(uint8_t opcode);
+
  private:
   std::uint8_t fetch_byte();
 
