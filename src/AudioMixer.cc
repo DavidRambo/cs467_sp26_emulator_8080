@@ -25,12 +25,12 @@ void Mixer::Load() {
   constexpr std::array kSounds{
       // clang-format off
     //          Sound ID              File                Looping
-    SoundEffect{SoundId::kBackground, "background.wav",   true},
-    SoundEffect{SoundId::kExplosion,  "explosion.wav",    false},
-    SoundEffect{SoundId::kInvaderHit, "invader_hit.wav",  false},
-    SoundEffect{SoundId::kTorpedo,    "torpedo.wav",      false},
-    SoundEffect{SoundId::kUfoHit,     "ufo_hit.wav",      false},
-    SoundEffect{SoundId::kUfo,        "ufo.wav",          true},
+    SoundEffect{.id_=SoundId::kBackground, .file_="../assets/background.wav",   .looping_=true},
+    SoundEffect{.id_=SoundId::kExplosion,  .file_="../assets/explosion.wav",    .looping_=false},
+    SoundEffect{.id_=SoundId::kInvaderHit, .file_="../assets/invader_hit.wav",  .looping_=false},
+    SoundEffect{.id_=SoundId::kTorpedo,    .file_="../assets/torpedo.wav",      .looping_=false},
+    SoundEffect{.id_=SoundId::kUfoHit,     .file_="../assets/ufo_hit.wav",      .looping_=false},
+    SoundEffect{.id_=SoundId::kUfo,        .file_="../assets/ufo.wav",          .looping_=true},
       // clang-format on
   };
 
@@ -110,10 +110,13 @@ std::array<Mixer::AudioAction, 8> Mixer::DecodePort(
     // bit.
     if (changed & bit) {
       (accumulator_bits & bit)
-          ? actions[i] = {AudioAction::Action::kPlay, soundMap[i]}
-          : actions[i] = {AudioAction::Action::kStop, soundMap[i]};
+          ? actions[i] = {.action_ = AudioAction::Action::kPlay,
+                          .id_ = soundMap[i]}
+          : actions[i] = {.action_ = AudioAction::Action::kStop,
+                          .id_ = soundMap[i]};
     } else {
-      actions[i] = {AudioAction::Action::kContinue, soundMap[i]};
+      actions[i] = {.action_ = AudioAction::Action::kContinue,
+                    .id_ = soundMap[i]};
     }
   }
   return actions;
