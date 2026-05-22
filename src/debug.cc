@@ -12,11 +12,20 @@ static void print_hex_byte(uint8_t value) {
             << static_cast<int>(value) << std::dec;
 }
 
+static void print_hex_word(uint16_t value) {
+  std::cout << std::hex << std::uppercase << std::setfill('0') << std::setw(4)
+            << static_cast<int>(value) << std::dec;
+}
+
 void CPU8080::print_debug() {
   std::cout << "==== CPU8080 ====\n";
   State state = get_state();
-  std::cout << "PC: " << state.program_counter << "\n";
-  std::cout << "SP: " << state.stack_pointer << "\n";
+  std::cout << "PC: ";
+  print_hex_word(state.program_counter);
+  std::cout << "\n";
+  std::cout << "SP: ";
+  print_hex_word(state.stack_pointer);
+  std::cout << "\n";
   std::cout << "B: ";
   print_hex_byte(state.registers.reg_b);
   std::cout << ", ";
@@ -38,10 +47,10 @@ void CPU8080::print_debug() {
   std::cout << "A: ";
   print_hex_byte(state.registers.reg_a);
   std::cout << "\n";
-  std::cout << "Sign: " << state.flags.sign << "\n";
-  std::cout << "Zero: " << state.flags.zero << "\n";
-  std::cout << "Parity: " << state.flags.parity << "\n";
-  std::cout << "Carry: " << state.flags.carry << "\n" << std::endl;
+  std::cout << "Sign: " << +state.flags.sign << "\n";
+  std::cout << "Zero: " << +state.flags.zero << "\n";
+  std::cout << "Parity: " << +state.flags.parity << "\n";
+  std::cout << "Carry: " << +state.flags.carry << "\n" << std::endl;
 }
 
 void CPU8080::print_instruction(uint8_t opcode) {

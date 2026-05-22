@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
   //                "invaders.f invaders.e\n";
   //                }
   if (argc > 2) {
-#ifdef debug
+#ifdef DEBUG
     std::cerr << "Too many arguments. Use: ./emu8080 invaders 1>outpt.txt "
                  "2>err.txt\n";
 #endif
@@ -79,6 +79,7 @@ int main(int argc, char* argv[]) {
         break;
       }
       cpu.step();
+
       current_tick = SDL_GetTicks();
     }
 

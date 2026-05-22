@@ -125,7 +125,11 @@ void CPU8080::update_flags_szp(uint8_t byte) {
 
 void CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG
+  char ch{0};
+  std::cout << "Next instruction: ";
   print_instruction(opcode);
+  std::cout << "Execution paused, press Enter to continue... ";
+  std::cin.get(ch);
 #endif
 
   switch (opcode) {
@@ -999,5 +1003,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cerr << "CPU8080:execute() : default case for opcode switch\n";
       break;
   }
+#ifdef DEBUG
+  print_debug();
+#endif
 }
 }  // namespace intel_8080
