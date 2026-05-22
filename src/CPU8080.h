@@ -31,6 +31,8 @@ class CPU8080 {
     std::uint8_t parity : 1;
     std::uint8_t carry : 1;
 
+    Flags();
+
     // Converts the struct of condition bits to a byte representation. Combined
     // with the accumulator register, it composes the Program Status Word.
     std::uint8_t to_byte();

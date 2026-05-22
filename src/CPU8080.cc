@@ -24,6 +24,14 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
   input_handler_ = input_handler_ptr;
 };
 
+CPU8080::Flags::Flags() {
+  sign = 0;
+  zero = 0;
+  aux_carry = 0;
+  parity = 0;
+  carry = 0;
+}
+
 std::uint8_t CPU8080::Flags::to_byte() {
   std::uint8_t return_byte = 0x02;
 
