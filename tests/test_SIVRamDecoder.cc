@@ -4,14 +4,15 @@
 TEST_CASE("Sample test") { CHECK(1); }
 
 TEST_CASE("Space Invaders Pixel Decoding") {
+  std::vector<SDL_FPoint> top_pixels;
+  std::vector<SDL_FPoint> bottom_pixels;
+
   SUBCASE("All pixel values set") {
     std::vector<char> buffer(7168, 0xFF);
     REQUIRE(buffer.size() == 7168);
 
-    std::vector<SDL_FPoint> top_pixels;
     space_invaders_vram_decoder::DecodeTopPixels(top_pixels, buffer.data());
 
-    std::vector<SDL_FPoint> bottom_pixels;
     space_invaders_vram_decoder::DecodeTopPixels(bottom_pixels, buffer.data());
 
     CHECK(top_pixels.size() == 28672);
@@ -22,10 +23,8 @@ TEST_CASE("Space Invaders Pixel Decoding") {
     std::vector<char> buffer(7168, 0x00);
     REQUIRE(buffer.size() == 7168);
 
-    std::vector<SDL_FPoint> top_pixels;
     space_invaders_vram_decoder::DecodeTopPixels(top_pixels, buffer.data());
 
-    std::vector<SDL_FPoint> bottom_pixels;
     space_invaders_vram_decoder::DecodeTopPixels(bottom_pixels, buffer.data());
 
     CHECK(top_pixels.size() == 0);
@@ -50,10 +49,8 @@ TEST_CASE("Space Invaders Pixel Decoding") {
     REQUIRE(buffer[5375] == (char)0xFF);
     REQUIRE(buffer[7167] == (char)0xFF);
 
-    std::vector<SDL_FPoint> top_pixels;
     space_invaders_vram_decoder::DecodeTopPixels(top_pixels, buffer.data());
 
-    std::vector<SDL_FPoint> bottom_pixels;
     space_invaders_vram_decoder::DecodeTopPixels(bottom_pixels, buffer.data());
 
     CHECK(top_pixels.size() == 24);
