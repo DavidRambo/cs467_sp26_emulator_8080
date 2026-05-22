@@ -37,9 +37,17 @@ int main(int argc, char* argv[]) {
     mem->load_rom_at_addr(argv[2], 0x2400);
   }
 
+  mem->fill_vram();
+
   // Create GameWindow
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
       kWindowWidth, kWindowHeight, "Space Invaders");
+
+  std::vector<SDL_FPoint> points;
+  space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
+  game_window.UpdateDisplay(points);
+
+  SDL_Delay(3000);
 
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
