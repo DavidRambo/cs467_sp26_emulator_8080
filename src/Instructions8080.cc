@@ -398,8 +398,8 @@ void CPU8080::ret(JumpCondition jump_condition) {
     return;
   }
 
-  uint8_t* high_byte;
-  uint8_t* low_byte;
+  uint8_t* high_byte{nullptr};
+  uint8_t* low_byte{nullptr};
   pop(low_byte, high_byte);
   program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
 }

@@ -11,9 +11,17 @@
 #include "SpaceInvadersVRamDecoder.h"
 
 int main(int argc, char* argv[]) {
-  if (argc > 3) {
-    std::cerr
-        << "Too many arguments. Usage: ./emu8008 invaders [vram_segment]\n";
+  // if (argc > 5) {
+  //   std::cerr << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g
+  //   "
+  //                "invaders.f invaders.e\n";
+  //                }
+  if (argc > 2) {
+#ifdef debug
+    std::cerr << "Too many arguments. Use: ./emu8080 invaders 1>outpt.txt "
+                 "2>err.txt\n";
+#endif
+    std::cerr << "Too many arguments. Use: ./emu8080 invaders\n";
     return 1;
   }
 
@@ -31,11 +39,6 @@ int main(int argc, char* argv[]) {
 
   // Load ROM
   mem->load_rom(argv[1]);  // invaders ROM as one file
-
-  if (argc == 3) {
-    // dummy data to set bits in video ram segment
-    mem->load_rom_at_addr(argv[2], 0x2400);
-  }
 
   mem->fill_vram();
 

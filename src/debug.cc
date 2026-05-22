@@ -2,8 +2,21 @@
 
 #include "CPU8080.h"
 
+// For printing hex bytes to stdout
+#include <iomanip>
+
 namespace intel_8080 {
+// For printing hex bytes to stdout
+static void print_hex_byte(uint8_t value) {
+  std::cout << std::hex << std::uppercase << std::setfill('0') << std::setw(2)
+            << static_cast<int>(value) << std::dec;
+}
+
 void CPU8080::print_instruction(uint8_t opcode) {
+  // Get the next two bytes in case they're needed as immediate data.
+  uint8_t b1 = mem_access_->read(program_counter_);
+  uint8_t b2 = mem_access_->read(program_counter_ + 1);
+
   switch (opcode) {
     case 0x00:
       std::cout << "NOP" << std::endl;
@@ -24,7 +37,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR B\n";
       break;
     case 0x06:
-      std::cout << "MOV B, D8\n";
+      std::cout << "MOV B, D8 (";
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x07:
       std::cout << "RLC\n";
@@ -610,9 +625,12 @@ void CPU8080::print_instruction(uint8_t opcode) {
     case 0xC2: {
       std::cout << "JNZ\n";
     } break;
-    case 0xC3:
-      std::cout << "JMP \n";
-      break;
+    case 0xC3: {
+      std::cout << "JMP ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
+    } break;
     case 0xC4:
       std::cout << "CNZ\n";
       break;
@@ -632,11 +650,17 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "RET\n";
       break;
     case 0xCA: {
-      std::cout << "JZ\n";
+      std::cout << "JZ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     }
     case 0xCB:
-      std::cout << "JMP\n";
+      std::cout << "JMP";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xCC:
       std::cout << "CZ\n";
