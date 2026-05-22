@@ -71,14 +71,13 @@ int main(int argc, char* argv[]) {
   while (running) {
     Uint64 start_tick = SDL_GetTicks();
 
-    if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
-      running = false;
-      continue;
-    }
-
     // Run CPU for 16 ms to approximate 60 fps.
     Uint64 current_tick = SDL_GetTicks();
     while (current_tick < start_tick + 16) {
+      if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
+        running = false;
+        break;
+      }
       cpu.step();
       current_tick = SDL_GetTicks();
     }
