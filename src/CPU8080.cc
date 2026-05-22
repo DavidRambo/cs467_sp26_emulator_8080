@@ -83,6 +83,8 @@ uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
   return word;
 };
 
+bool CPU8080::is_not_stopped() const { return !halted_; }
+
 // Copies the state of the CPU and returns in a State struct.
 CPU8080::State CPU8080::get_state() {
   return State{.registers = registers_,

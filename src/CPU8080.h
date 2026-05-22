@@ -72,6 +72,8 @@ class CPU8080 {
 
   void reset();
 
+  bool is_not_stopped() const;
+
   State get_state();
 
   // Defined in debug.cc

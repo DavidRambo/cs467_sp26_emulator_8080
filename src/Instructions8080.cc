@@ -423,7 +423,7 @@ void CPU8080::rst(uint8_t exp) {
   call(JumpCondition::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
 
   // CPU enters a STOPPED state to await an interrupt.
-  // TODO: Check for halted_ in the main loop while the CPU is stepping.
+  // Main loop checks for halted_ while the CPU is stepping.
   halted_ = false;
 }
 

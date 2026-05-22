@@ -70,18 +70,32 @@ int main(int argc, char* argv[]) {
   Uint64 last_time{0};
   while (running) {
     Uint64 start_tick = SDL_GetTicks();
+    if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
+      running = false;
+      break;
+    }
 
-    // Run CPU for 16 ms to approximate 60 fps.
+    // Run CPU for 8 ms to approximate the "first half" of 60 fps.
     Uint64 current_tick = SDL_GetTicks();
-    while (current_tick < start_tick + 16) {
-      if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
-        running = false;
-        break;
-      }
+    while (cpu.is_not_stopped() && current_tick < start_tick + 8) {
       cpu.step();
-
       current_tick = SDL_GetTicks();
     }
+
+    // Trigger first half of screen update with RST 1.
+    // TODO: call RST(1) diectly? -> instruction methods are private. But
+    // neither can we "manually" do so by pushing the current program_counter_
+    // onto the stack and then placing the RST opcode into it, since it's
+    // possible the CPU is STOPPED from a HLT instruction.
+
+    // Run CPU for another 8 ms to approximate the "second half" of 60 fps.
+    while (cpu.is_not_stopped() && current_tick < start_tick + 8) {
+      cpu.step();
+      current_tick = SDL_GetTicks();
+    }
+
+    // Trigger first half of screen update with RST 2.
+    // TODO: call RST(2) diectly?
 
     // Update display
     std::vector<SDL_FPoint> points;
