@@ -148,6 +148,7 @@ class CPU8080 {
   std::uint16_t program_counter_;
   // false = 0 and true = 1
   bool INTE_;
+  bool halted_;
 
   // Address Spaces
   std::shared_ptr<intel_8080::Memory8080> mem_access_;

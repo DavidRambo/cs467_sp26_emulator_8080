@@ -413,9 +413,14 @@ void CPU8080::ei() { INTE_ = true; }
 
 void CPU8080::di() { INTE_ = false; }
 
-void CPU8080::hlt() {
-  // Can't implement until we know how the interupt process works.
-}
+// HLT Halt instruction
+// Increments the program counter by one, then tells the CPU to await an
+// interrupt.
+//
+// Could be emulated by checking the CPU8080::halted_ member variable, and
+// reseting when an interrupt occurs. However, that may not be necessary based
+// on interrupts are implemented.
+void CPU8080::hlt() { halted_ = true; }
 
 // Returns true if the specified condition is true, otherwise false.
 // Called by JMP, RET, and CALL instructions that depend on a condition check.
