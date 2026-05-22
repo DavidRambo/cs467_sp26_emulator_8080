@@ -57,5 +57,7 @@ TEST_CASE("Testing INR B: B += 1") {
     CHECK_EQ(state.flags.zero, 1);
     CHECK_EQ(state.flags.parity, 1);
     CHECK_EQ(state.flags.carry, 0);
+    CHECK_EQ(state.flags.aux_carry, 0);
+    CHECK_EQ(state.flags.to_byte(), 0b0100'0110);
   }
 }
