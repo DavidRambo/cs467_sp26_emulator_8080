@@ -966,14 +966,15 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "POP B\n";
       pop(&registers_.reg_b, &registers_.reg_c);
       break;
-    case 0xC2:
-      std::cout << "JNZ\n";
-      {
-        uint8_t b1 = fetch_byte();
-        uint8_t b2 = fetch_byte();
-        jmp(JumpCondition::kNotZero, b1, b2);
-      }
-      break;
+    case 0xC2: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      std::cout << "JNZ ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
+      jmp(JumpCondition::kNotZero, b1, b2);
+    } break;
     case 0xC3:
       std::cout << "JMP ";
       {
@@ -1016,14 +1017,16 @@ void CPU8080::execute(uint8_t opcode) {
       std::cout << "RET\n";
       ret(JumpCondition::kTrue);
       break;
-    case 0xCA:
-      std::cout << "JZ\n";
-      {
-        uint8_t b1 = fetch_byte();
-        uint8_t b2 = fetch_byte();
-        jmp(JumpCondition::kZero, b1, b2);
-        break;
-      }
+    case 0xCA: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      std::cout << "JZ ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
+      jmp(JumpCondition::kZero, b1, b2);
+      break;
+    }
     case 0xCB:
       std::cout << "JMP\n";
       {
