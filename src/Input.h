@@ -35,6 +35,7 @@ class InputHandler {
 
   // Made public for the sake of testing.
   SDL_AppResult HandleKeyPress(SDL_Scancode keycode);
+  SDL_AppResult HandleKeyRelease(SDL_Scancode keycode);
 
   // Polls for input event, to be called by SDL3 game loop.
   SDL_AppResult PollForEvents();
@@ -43,8 +44,6 @@ class InputHandler {
   uint8_t ReadInput(uint8_t port_no);
 
  private:
-  void ResetDevices();
-
   // Corresponds to Input (Read) Devices 0–2. Only 1 and 2 are used by the game.
   std::array<InputDevice, 3> devices_;
 };
