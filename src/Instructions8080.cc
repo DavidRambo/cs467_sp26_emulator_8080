@@ -405,8 +405,27 @@ void CPU8080::ret(JumpCondition jump_condition) {
   program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
 }
 
+// Restart instructions
+// A particular RST instruction is called by an interrupting device to transfer
+// control to a subroutine that handles the situation. A RET (return)
+// instruction causes the previously running program to resume control.
+//
+// For example, according to computer archaeology, the two display update
+// interrupts are RST 8 and RST 10. The 3-bit `exp` value is bits 3–5, so
+// for the first interrupt, it would need to call rst(1), and for the second,
+// rst(2).
+//
+// WARN: The CPU's state must be preserved before and restored following an
+// interrupt subroutine, and a subroutine must conclude with a RET (return)
+// instruction. Since it is the programmer's responsibility to do this, I
+// suspect it is accounted for by the hardware interrupt subroutines in the
+// Space Invaders ROM.
 void CPU8080::rst(uint8_t exp) {
   call(JumpCondition::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
+
+  // CPU enters a STOPPED state to await an interrupt.
+  // TODO: Check for halted_ in the main loop while the CPU is stepping.
+  halted_ = false;
 }
 
 void CPU8080::ei() { INTE_ = true; }
