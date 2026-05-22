@@ -11,7 +11,10 @@ TEST_CASE("Testing MVI A, D8") {
       std::make_shared<input::InputHandler>();
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
-  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem, input_handler, mixer);
+  std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr =
+      std::make_shared<hardware::ShiftRegister>(hardware::ShiftRegister());
+  intel_8080::CPU8080 emu =
+      intel_8080::CPU8080(mem, input_handler, mixer, shift_reg_ptr);
 
   std::vector<uint8_t> data = {0x3E, 0xAB};
   mem->load_data(data);
