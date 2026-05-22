@@ -46,3 +46,5 @@ all_tests
 
 #vscode configs
 .vscode/
+invaders.zip
+invaders/
