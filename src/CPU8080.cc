@@ -46,11 +46,11 @@ std::uint8_t CPU8080::Flags::to_byte() {
 };
 
 void CPU8080::Flags::from_byte(uint8_t data) {
-  carry = data & 0x1;
-  parity = data & (1 << 2);
-  aux_carry = data & (1 << 4);
-  zero = data & (1 << 6);
-  sign = data & (1 << 7);
+  carry = data & 1;
+  parity = (data >> 2) & 1;
+  aux_carry = (data >> 4) & 1;
+  zero = (data >> 6) & 1;
+  sign = (data >> 7) & 1;
 }
 
 void CPU8080::step() {
