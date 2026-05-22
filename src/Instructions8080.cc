@@ -145,7 +145,7 @@ void CPU8080::sbb(uint8_t data) {
 
 // ANA: Logical And Register or Memory w/ Accumulator
 // The specified byte is logically and'd with A. The carry bit is reset.
-// Logical AND is 1 if and only if both bits are different
+// Logical AND is 1 if and only if both bits are set.
 // Flags affected: Carry, Zero, Sign, Parity
 void CPU8080::ana(uint8_t data) {
   registers_.reg_a = registers_.reg_a & data;
