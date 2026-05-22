@@ -12,7 +12,7 @@ void CPU8080::in(uint8_t port_no) {
   if (port_no >= 0 && port_no < 3) {
     registers_.reg_a = input_handler_->ReadInput(port_no);
   } else if (port_no == 3) {
-    // TODO: Call shift register code.
+    registers_.reg_a = shift_register_->GetShiftedByte();
     std::cerr << "ERROR: missing shift register code for READ 3\n";
   } else {
     std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
@@ -251,8 +251,7 @@ void CPU8080::pop(uint8_t* reg_1, uint8_t* reg_2) {
  */
 void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
   uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
-  uint16_t hl_pair = (registers_.reg_h << 8) | registers_.reg_l;
-  uint32_t result = reg_pair + hl_pair;
+  uint32_t result = reg_pair + registers_.hl();
   flags_.carry = (result > 0xFFFF) ? 0 : 1;
   registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
   registers_.reg_l = static_cast<uint8_t>(result | 0xFF);

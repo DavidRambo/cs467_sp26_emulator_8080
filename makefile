@@ -8,7 +8,7 @@ TESTSRCFILES = $(wildcard $(TESTDIR)/test_*.cc)
 LIBRARY = /usr/local/lib/
 
 # Creates a list of object files
-OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o)
+OBJS = $(addprefix $(BUILDDIR)/, CPU8080.o Memory8080.o Instructions8080.o Input.o AudioMixer.o GameWindow.o SpaceInvadersVRamDecoder.o ShiftRegister.o)
 
 # For passing doctest query flags when running tests.
 # Example use, which will run test cases with a name including "input":
@@ -47,6 +47,9 @@ $(BUILDDIR)/Input.o: $(SRCDIR)/Input.cc $(SRCDIR)/Input.h
 
 $(BUILDDIR)/AudioMixer.o: $(SRCDIR)/AudioMixer.cc $(SRCDIR)/AudioMixer.h
 	$(CXX) $(CXX_FLAGS) -o $(BUILDDIR)/AudioMixer.o -c $(SRCDIR)/AudioMixer.cc
+
+$(BUILDDIR)/ShiftRegister.o: $(SRCDIR)/ShiftRegister.cc $(SRCDIR)/ShiftRegister.h
+	g++ -o $(BUILDDIR)/ShiftRegister.o -c $(SRCDIR)/ShiftRegister.cc
 
 # The @ sign indicates a shell command.
 clean:
