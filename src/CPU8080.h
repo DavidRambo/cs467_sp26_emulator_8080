@@ -72,6 +72,8 @@ class CPU8080 {
 
   State get_state();
 
+  // Defined in debug.cc
+  void print_debug();
   void print_instruction(uint8_t opcode);
 
  private:

@@ -12,6 +12,38 @@ static void print_hex_byte(uint8_t value) {
             << static_cast<int>(value) << std::dec;
 }
 
+void CPU8080::print_debug() {
+  std::cout << "==== CPU8080 ====\n";
+  State state = get_state();
+  std::cout << "PC: " << state.program_counter << "\n";
+  std::cout << "SP: " << state.stack_pointer << "\n";
+  std::cout << "B: ";
+  print_hex_byte(state.registers.reg_b);
+  std::cout << ", ";
+  std::cout << "C: ";
+  print_hex_byte(state.registers.reg_c);
+  std::cout << ", ";
+  std::cout << "D: ";
+  print_hex_byte(state.registers.reg_d);
+  std::cout << ", ";
+  std::cout << "E: ";
+  print_hex_byte(state.registers.reg_e);
+  std::cout << ", ";
+  std::cout << "H: ";
+  print_hex_byte(state.registers.reg_h);
+  std::cout << ", ";
+  std::cout << "L: ";
+  print_hex_byte(state.registers.reg_l);
+  std::cout << "\n";
+  std::cout << "A: ";
+  print_hex_byte(state.registers.reg_a);
+  std::cout << "\n";
+  std::cout << "Sign: " << state.flags.sign << "\n";
+  std::cout << "Zero: " << state.flags.zero << "\n";
+  std::cout << "Parity: " << state.flags.parity << "\n";
+  std::cout << "Carry: " << state.flags.carry << "\n" << std::endl;
+}
+
 void CPU8080::print_instruction(uint8_t opcode) {
   // Get the next two bytes in case they're needed as immediate data.
   uint8_t b1 = mem_access_->read(program_counter_);
