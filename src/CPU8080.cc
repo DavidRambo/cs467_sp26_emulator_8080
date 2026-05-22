@@ -22,6 +22,7 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
   // Do not move shared pointer, as it is shared with the main loop for event
   // polling.
   input_handler_ = input_handler_ptr;
+  halted_ = false;
 };
 
 CPU8080::Flags::Flags() {
@@ -777,7 +778,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     }
     case 0xC7:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 0
       break;
     case 0xC8:
       ret(JumpCondition::kZero);
@@ -812,7 +813,7 @@ void CPU8080::execute(uint8_t opcode) {
       ana(fetch_byte());
       break;
     case 0xCF:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 1
       break;
     case 0xD0:
       ret(JumpCondition::kNotCarry);
@@ -827,6 +828,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     }
     case 0xD3:
+      out(fetch_byte());
       break;
     case 0xD4: {
       uint8_t b1 = fetch_byte();
@@ -841,7 +843,7 @@ void CPU8080::execute(uint8_t opcode) {
       sub(fetch_byte());
       break;
     case 0xD7:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 2
       break;
     case 0xD8:
       ret(JumpCondition::kCarry);
@@ -873,7 +875,7 @@ void CPU8080::execute(uint8_t opcode) {
       sbb(fetch_byte());
       break;
     case 0xDF:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 3
       break;
     case 0xE0:
       ret(JumpCondition::kParityOdd);
@@ -902,7 +904,7 @@ void CPU8080::execute(uint8_t opcode) {
       ana(fetch_byte());
       break;
     case 0xE7:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 4
       break;
     case 0xE8:
       ret(JumpCondition::kParityEven);
@@ -936,7 +938,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     }
     case 0xEF:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 5
       break;
     case 0xF0:
       ret(JumpCondition::kPositive);
@@ -967,7 +969,7 @@ void CPU8080::execute(uint8_t opcode) {
       ora(fetch_byte());
       break;
     case 0xF7:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 6
       break;
     case 0xF8:
       ret(JumpCondition::kMinus);
@@ -997,7 +999,7 @@ void CPU8080::execute(uint8_t opcode) {
       cpi(fetch_byte());
       break;
     case 0xFF:
-      rst((opcode >> 3) & 0b0000'0111);
+      rst((opcode >> 3) & 0b0000'0111);  // RST 7
       break;
     default:
       std::cerr << "CPU8080:execute() : default case for opcode switch\n";
