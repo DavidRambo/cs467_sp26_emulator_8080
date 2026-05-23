@@ -30,9 +30,13 @@ void CPU8080::out(uint8_t port_no) {
     shift_register_->SetOffset(registers_.reg_a);
   } else if (port_no == 4) {
     shift_register_->LoadBuffer(registers_.reg_a);
+  } else if (port_no == 3) {
+    mixer_->SetOut3(registers_.reg_a);
+  } else if (port_no == 5) {
+    mixer_->SetOut5(registers_.reg_a);
   } else {
-    std::cerr << "<opcode 0xD3> invalid output port number: " << port_no
-              << std::endl;
+    std::cerr << "<opcode 0xD3> invalid output port number: "
+              << static_cast<int>(port_no) << std::endl;
   }
 }
 
@@ -115,7 +119,6 @@ void CPU8080::add(uint8_t data) {
 // Adds the specified byte + the carry flag to A and store in A.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::adc(uint8_t data) {
-  data += flags_.carry;
   uint16_t result = registers_.reg_a + data + flags_.carry;
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
@@ -205,7 +208,7 @@ void CPU8080::cmp(uint8_t data) {
 void CPU8080::rrc() {
   uint8_t lsb = registers_.reg_a & 0x01;
   flags_.carry = lsb;
-  registers_.reg_a = (registers_.reg_a >> 7) | (lsb << 7);
+  registers_.reg_a = (registers_.reg_a >> 1) | (lsb << 7);
 }
 
 // RAL: Rotate Accumulator Left Through Carry
