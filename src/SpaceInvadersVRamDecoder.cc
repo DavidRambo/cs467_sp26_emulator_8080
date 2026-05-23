@@ -87,18 +87,20 @@ void DecodePixels(std::vector<SDL_FPoint>& points,
 
   // Start at bottom left coordinate.
   for (int col = 0; col < 224; col++) {
-    for (int row = 31; row >= 0; row--) {
-      // Calculate which byte the loop is on by reducing the pixel number by a
-      // factor of 8.
-      uint16_t video_byte = v_idx / 8;
+    for (int row = 32; row > 0; row--) {
+      for (int bit{0}; bit < 8; bit++) {
+        // Calculate which byte the loop is on by reducing the pixel number by a
+        // factor of 8.
+        uint16_t video_byte = v_idx / 8;
 
-      if (video_data[video_byte] & (0x01 << (v_idx % 8))) {
-        // col is the x coordinate, row is the y.
-        points.push_back(SDL_FPoint{.x = static_cast<float>(col),
-                                    .y = static_cast<float>(row)});
+        if (video_data[video_byte] & (0x01 << bit)) {
+          int y = (row * 8) - 1 - bit;
+          points.push_back(SDL_FPoint{.x = static_cast<float>(col),
+                                      .y = static_cast<float>(y)});
+        }
+
+        v_idx++;
       }
-
-      v_idx++;
     }
   }
 }
