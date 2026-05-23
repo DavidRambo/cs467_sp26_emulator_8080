@@ -63,7 +63,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "NOP" << std::endl;
       break;
     case 0x01:
-      std::cout << "LXI B, d16\n";
+      std::cout << "LXI BC ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x02:
       std::cout << "STAX B\n";
@@ -152,7 +155,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR E\n";
       break;
     case 0x1E:
-      std::cout << "MOV E, d8\n";
+      std::cout << "MOV E, d8 (";
+      print_hex_byte(b1);
+      std::cout << ")";
       break;
     case 0x1F:
       std::cout << "RAR\n";
@@ -161,10 +166,15 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x21:
-      std::cout << "LXI H, d16\n";
+      std::cout << "LXI H ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x22:
-      std::cout << "SHLD D8\n";
+      std::cout << "SHLD ";
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x23:
       std::cout << "INX H" << std::endl;
@@ -176,7 +186,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR H" << std::endl;
       break;
     case 0x26:
-      std::cout << "MVI H, d8\n";
+      std::cout << "MVI H ";
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x27:
       std::cout << "DAA" << std::endl;
@@ -188,7 +200,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DAD H" << std::endl;
       break;
     case 0x2A:
-      std::cout << "LHLD d8\n";
+      std::cout << "LHLD ";
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x2B:
       std::cout << "DCX H" << std::endl;
@@ -200,7 +214,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR L" << std::endl;
       break;
     case 0x2E:
-      std::cout << "MVI L, d8\n";
+      std::cout << "MVI L ";
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x2F:
       std::cout << "CMA" << std::endl;
@@ -209,22 +225,37 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x31:
-      std::cout << "LXI SP, d16 \n";
+      std::cout << "LXI SP ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x32:
-      std::cout << "STA, d16\n";
+      std::cout << "STA ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x33:
-      std::cout << "INX SP" << std::endl;
+      std::cout << "INX SP (";
+      print_hex_byte(stack_pointer_);
+      std::cout << ")\n";
       break;
     case 0x34:
       std::cout << "INR M" << std::endl;
       break;
     case 0x35:
-      std::cout << "DCR M" << std::endl;
+      std::cout << "DCR M (";
+      print_hex_word(registers_.hl());
+      std::cout << ")\n";
       break;
     case 0x36:
-      std::cout << "MVI M, d8\n";
+      std::cout << "MVI M (";
+      print_hex_word(registers_.hl());
+      std::cout << ")";
+      std::cout << " <- ";
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x37:
       std::cout << "STC" << std::endl;
@@ -233,25 +264,38 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "NOP*\n";
       break;
     case 0x39:
-      std::cout << "DAD SP" << std::endl;
+      std::cout << "DAD SP (";
+      print_hex_byte(stack_pointer_);
+      std::cout << ")\n";
       break;
     case 0x3A:
       std::cout << "LDA ";
       print_hex_byte(b2);
       print_hex_byte(b1);
+      std::cout << " [0x";
+      print_hex_byte(mem_access_->read(static_cast<uint16_t>((b2 << 8) | b1)));
+      std::cout << "]";
       std::cout << "\n";
       break;
     case 0x3B:
-      std::cout << "DCX SP" << std::endl;
+      std::cout << "DCX SP (";
+      print_hex_byte(stack_pointer_);
+      std::cout << ")\n";
       break;
     case 0x3C:
-      std::cout << "INR A" << std::endl;
+      std::cout << "INR A (";
+      print_hex_byte(registers_.reg_a);
+      std::cout << ")\n";
       break;
     case 0x3D:
-      std::cout << "DCR A" << std::endl;
+      std::cout << "DCR A (";
+      print_hex_byte(registers_.reg_a);
+      std::cout << ")\n";
       break;
     case 0x3E:  // MVI A, D8
-      std::cout << "MVI A, D8" << std::endl;
+      std::cout << "MVI A, D8 (";
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x3F:
       std::cout << "CMC" << std::endl;
@@ -422,7 +466,12 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "HLT\n";
       break;
     case 0x77:
-      std::cout << "MOV M, a\n";
+      std::cout << "MOV M (";
+      print_hex_word(registers_.hl());
+      std::cout << ") ";
+      std::cout << ", A (";
+      print_hex_byte(registers_.reg_a);
+      std::cout << ")\n";
       break;
     case 0x78:
       std::cout << "MOV A, b\n";
@@ -443,7 +492,14 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "MOV A, l\n";
       break;
     case 0x7E:
-      std::cout << "MOV A, M\n";
+      std::cout << "MOV A (";
+      print_hex_byte(registers_.reg_a);
+      std::cout << ") ";
+      std::cout << ", M (";
+      print_hex_word(registers_.hl());
+      std::cout << ") = ";
+      print_hex_byte(mem_access_->read(registers_.hl()));
+      std::cout << "\n";
       break;
     case 0x7F:
       std::cout << "MOV A, A\n";
@@ -474,96 +530,75 @@ void CPU8080::print_instruction(uint8_t opcode) {
       break;
     case 0x88:
       std::cout << "ADC b\n";
-      adc(registers_.reg_b);
       break;
     case 0x89:
       std::cout << "ADC c\n";
-      adc(registers_.reg_c);
       break;
     case 0x8A:
       std::cout << "ADC d\n";
-      adc(registers_.reg_d);
       break;
     case 0x8B:
       std::cout << "ADC e\n";
-      adc(registers_.reg_e);
       break;
     case 0x8C:
       std::cout << "ADC h\n";
-      adc(registers_.reg_h);
       break;
     case 0x8D:
       std::cout << "ADC l\n";
-      adc(registers_.reg_l);
       break;
     case 0x8E:
       std::cout << "ADC m\n";
       break;
     case 0x8F:
       std::cout << "ADC a\n";
-      adc(registers_.reg_a);
       break;
     case 0x90:
       std::cout << "SUB B\n";
-      sub(registers_.reg_b);
       break;
     case 0x91:
       std::cout << "SUB C\n";
-      sub(registers_.reg_c);
       break;
     case 0x92:
       std::cout << "SUB d\n";
-      sub(registers_.reg_d);
       break;
     case 0x93:
       std::cout << "SUB e\n";
-      sub(registers_.reg_e);
       break;
     case 0x94:
       std::cout << "SUB h\n";
-      sub(registers_.reg_h);
       break;
     case 0x95:
       std::cout << "SUB l\n";
-      sub(registers_.reg_l);
       break;
     case 0x96:
       std::cout << "SUB M\n";
       break;
     case 0x97:
       std::cout << "SUB A\n";
-      sub(registers_.reg_a);
       break;
     case 0x98:
       std::cout << "SUB B\n";
-      sbb(registers_.reg_b);
       break;
     case 0x99:
       std::cout << "SUB C\n";
-      sbb(registers_.reg_c);
       break;
     case 0x9A:
       std::cout << "SUB D\n";
-      sbb(registers_.reg_d);
       break;
     case 0x9B:
       std::cout << "SUB E\n";
-      sbb(registers_.reg_e);
       break;
     case 0x9C:
       std::cout << "SUB H\n";
-      sbb(registers_.reg_h);
       break;
     case 0x9D:
       std::cout << "SUB L\n";
-      sbb(registers_.reg_l);
       break;
     case 0x9E:
       std::cout << "SUB M\n";
       break;
     case 0x9F:
       std::cout << "SUB A\n";
-      sbb(registers_.reg_a);
       break;
     case 0xA0:
       std::cout << "ANA B\n";
@@ -663,13 +698,26 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "CMP A\n";
       break;
     case 0xC0:
-      std::cout << "RNZ\n";
+      std::cout << "RNZ (zero = ";
+      std::cout << static_cast<int>(flags_.zero);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xC1:
       std::cout << "POP B\n";
       break;
     case 0xC2: {
-      std::cout << "JNZ\n";
+      std::cout << "JNZ (zero = ";
+      std::cout << static_cast<int>(flags_.zero);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << " [opcode 0x";
+      print_hex_byte(mem_access_->read(static_cast<uint16_t>((b2 << 8) | b1)));
+      std::cout << "]";
+      std::cout << "\n";
     } break;
     case 0xC3: {
       std::cout << "JMP ";
@@ -678,7 +726,12 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "\n";
     } break;
     case 0xC4:
-      std::cout << "CNZ\n";
+      std::cout << "CN (zero = ";
+      std::cout << static_cast<int>(flags_.zero);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xC5:
       std::cout << "PUSH B\n";
@@ -690,29 +743,44 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "RST 0\n";
       break;
     case 0xC8:
-      std::cout << "RZ\n";
+      std::cout << "RZ (zero = ";
+      std::cout << static_cast<int>(flags_.zero);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xC9:
       std::cout << "RET\n";
       break;
     case 0xCA: {
-      std::cout << "JZ";
+      std::cout << "JZ (zero = ";
+      std::cout << static_cast<int>(flags_.zero);
+      std::cout << ") to ";
       print_hex_byte(b2);
       print_hex_byte(b1);
       std::cout << "\n";
       break;
     }
     case 0xCB:
-      std::cout << "JMP";
+      std::cout << "JMP to ";
       print_hex_byte(b2);
       print_hex_byte(b1);
       std::cout << "\n";
       break;
     case 0xCC:
-      std::cout << "CZ\n";
+      std::cout << "CZ (zero = ";
+      std::cout << static_cast<int>(flags_.zero);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xCD:
-      std::cout << "CALL \n";
+      std::cout << "CALL to";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xCE:
       std::cout << "ACI, D8\n";
@@ -726,13 +794,23 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "POP D\n";
       break;
     case 0xD2:
-      std::cout << "JNC\n";
+      std::cout << "JN (carry = ";
+      std::cout << static_cast<int>(flags_.carry);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xD3:
       std::cout << "OUT d8\n";
       break;
     case 0xD4:
-      std::cout << "CNC\n";
+      std::cout << "CNC (carry = ";
+      std::cout << static_cast<int>(flags_.carry);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xD5:
       std::cout << "PUSH D\n";
@@ -744,22 +822,42 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "RST 2\n";
       break;
     case 0xD8:
-      std::cout << "RC\n";
+      std::cout << "RC (carry = ";
+      std::cout << static_cast<int>(flags_.carry);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xD9:
       std::cout << "RET\n";
       break;
     case 0xDA:
-      std::cout << "JC\n";
+      std::cout << "JC (carry = ";
+      std::cout << static_cast<int>(flags_.carry);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xDB:  // IN instruction + D8 (input port number)
-      std::cout << "IN d8\n";
+      std::cout << "IN ";
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xDC:
-      std::cout << "CC\n";
+      std::cout << "CC (carry = ";
+      std::cout << static_cast<int>(flags_.carry);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xDD:
-      std::cout << "*CALL A16\n";
+      std::cout << "*CALL A16 (";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0xDE:
       std::cout << "SBI d8\n";
@@ -768,19 +866,34 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "RST 3\n";
       break;
     case 0xE0:
-      std::cout << "RPO\n";
+      std::cout << "RPO (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xE1:
       std::cout << "POP H\n";
       break;
     case 0xE2:
-      std::cout << "JPO\n";
+      std::cout << "JPO (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xE3:
       std::cout << "XTHL\n";
       break;
     case 0xE4:
-      std::cout << "CPO\n";
+      std::cout << "CPO (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xE5:
       std::cout << "PUSH H\n";
@@ -792,22 +905,42 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "RST 4\n";
       break;
     case 0xE8:
-      std::cout << "RPE\n";
+      std::cout << "RPE (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xE9:
-      std::cout << "PCHL\n";
+      std::cout << "PCHL (";
+      print_hex_word(registers_.hl());
+      std::cout << ")\n";
       break;
     case 0xEA:
-      std::cout << "JPE\n";
+      std::cout << "JPE (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xEB:
       std::cout << "XCHG\n";
       break;
     case 0xEC:
-      std::cout << "CPE\n";
+      std::cout << "CPE (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xED:
-      std::cout << "*CALL\n";
+      std::cout << "*CALL ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xEE:
       std::cout << "XRA\n";
@@ -816,20 +949,35 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "RST 5\n";
       break;
     case 0xF0:
-      std::cout << "RP\n";
+      std::cout << "RP (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xF1: {
       std::cout << "POP PSW\n";
       break;
     }
     case 0xF2:
-      std::cout << "JP\n";
+      std::cout << "JP (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xF3:
       std::cout << "DI\n";
       break;
     case 0xF4:
-      std::cout << "CP\n";
+      std::cout << "CP (parity = ";
+      std::cout << static_cast<int>(flags_.parity);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xF5:
       std::cout << "PUSH PSW\n";
@@ -841,22 +989,40 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "RST 6\n";
       break;
     case 0xF8:
-      std::cout << "RM\n";
+      std::cout << "RM (sign = ";
+      std::cout << static_cast<int>(flags_.sign);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xF9:
       std::cout << "SPHL\n";
       break;
     case 0xFA:
-      std::cout << "JM\n";
+      std::cout << "JM (sign = ";
+      std::cout << static_cast<int>(flags_.sign);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xFB:
       std::cout << "EI\n";
       break;
     case 0xFC:
-      std::cout << "CM\n";
+      std::cout << "CM (sign = ";
+      std::cout << static_cast<int>(flags_.sign);
+      std::cout << ") to ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xFD:
-      std::cout << "*CALL\n";
+      std::cout << "*CALL ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xFE:
       std::cout << "CPI\n";
