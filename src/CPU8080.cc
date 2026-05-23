@@ -129,10 +129,10 @@ void CPU8080::update_flags_szp(uint8_t byte) {
 void CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG
   char ch{0};
-  std::cout << "Next instruction: ";
+  std::cout << "Next instruction (with above cpu state): ";
   print_instruction(opcode);
-  std::cout << "Execution paused, press Enter to continue... ";
-  std::cin.get(ch);
+  // std::cout << "Execution paused, press Enter to continue...\n";
+  // std::cin.get(ch);
 #endif
 
   switch (opcode) {

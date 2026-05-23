@@ -420,6 +420,13 @@ void CPU8080::ret(JumpCondition jump_condition) {
 // suspect it is accounted for by the hardware interrupt subroutines in the
 // Space Invaders ROM.
 void CPU8080::rst(uint8_t exp) {
+#ifdef DEBUG
+  if (exp == 1) {
+    print_instruction(0xCF);
+  } else if (exp == 2) {
+    print_instruction(0xD7);
+  }
+#endif
   call(JumpCondition::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
 
   // CPU enters a STOPPED state to await an interrupt.

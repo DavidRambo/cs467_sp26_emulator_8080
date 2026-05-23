@@ -117,7 +117,7 @@ void intel_8080::Memory8080::load_data(std::vector<uint8_t> const& data,
 }
 
 void intel_8080::Memory8080::fill_vram() {
-  for (uint16_t addr{0x2400}; addr < 0x2FFF; addr++) {
+  for (uint16_t addr{0x2401}; addr < 0x2FFF; addr++) {
     mem_buffer_[addr] = 5;
   }
   for (uint16_t addr{0x2FFF}; addr < 0x3FFF; addr++) {

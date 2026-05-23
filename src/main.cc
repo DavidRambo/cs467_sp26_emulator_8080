@@ -40,7 +40,9 @@ int main(int argc, char* argv[]) {
   // Load ROM
   mem->load_rom(argv[1]);  // invaders ROM as one file
 
+#ifdef DEBUG
   mem->fill_vram();
+#endif
 
   // Create GameWindow
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
@@ -67,8 +69,13 @@ int main(int argc, char* argv[]) {
 
   // Main loop
   bool running{true};
+  int loop_count{0};
   while (running) {
-    Uint64 start_tick = SDL_GetTicks();
+#ifdef DEBUG
+    if (loop_count > 0) {
+      std::cerr << "On loop # " << loop_count << "\n";
+    }
+#endif
     if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
       running = false;
       break;
@@ -79,11 +86,15 @@ int main(int argc, char* argv[]) {
     // this time than it would as physical hardware running at 2Mhz. The way to
     // account for this would be to count cycles and to limit it to however many
     // cycles could occur at 2Mhz within 8ms (i.e. 30hz) = 2Mhz/30hz.
+    Uint64 start_tick = SDL_GetTicks();
     Uint64 current_tick = SDL_GetTicks();
     while (cpu.is_not_stopped() && current_tick < start_tick + 8) {
       cpu.step();
       current_tick = SDL_GetTicks();
     }
+#ifdef DEBUG
+    std::cerr << "Made it to the first RST call\n";
+#endif
 
     // Trigger first half of screen update with RST 8, which has exp = 1.
     cpu.rst(1);
@@ -93,6 +104,10 @@ int main(int argc, char* argv[]) {
       cpu.step();
       current_tick = SDL_GetTicks();
     }
+
+#ifdef DEBUG
+    std::cerr << "Made it to the second RST call\n";
+#endif
 
     // Trigger first half of screen update with RST 10, which has exp = 2.
     cpu.rst(2);

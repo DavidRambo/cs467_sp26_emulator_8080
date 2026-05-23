@@ -18,13 +18,19 @@ static void print_hex_word(uint16_t value) {
 }
 
 void CPU8080::print_debug() {
-  std::cout << "==== CPU8080 ====\n";
+  std::cout << "==== CPU8080 (after executing above) ====\n";
   State state = get_state();
   std::cout << "PC: ";
   print_hex_word(state.program_counter);
   std::cout << "\n";
   std::cout << "SP: ";
   print_hex_word(state.stack_pointer);
+  std::cout << "\n";
+  std::cout << "Addr at SP = ";
+  uint8_t low_byte = mem_access_->read(state.stack_pointer);
+  uint8_t high_byte = mem_access_->read(state.stack_pointer + 1);
+  auto addr = static_cast<uint16_t>((high_byte << 8) | low_byte);
+  print_hex_word(addr);
   std::cout << "\n";
   std::cout << "B: ";
   print_hex_byte(state.registers.reg_b);
@@ -63,7 +69,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "NOP" << std::endl;
       break;
     case 0x01:
-      std::cout << "LXI B, d16\n";
+      std::cout << "LXI B, d16 (";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x02:
       std::cout << "STAX B\n";
@@ -104,7 +113,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR C\n";
       break;
     case 0x0E:
-      std::cout << "MOV C, D8\n";
+      std::cout << "MOV C, D8 (";
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x0F:
       std::cout << "RRC" << std::endl;
@@ -113,7 +124,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "NOP*" << std::endl;
       break;
     case 0x11:
-      std::cout << "LXI D, D16\n";
+      std::cout << "LXI D, d16 (";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x12:
       std::cout << "STAX D\n";
@@ -128,7 +142,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR D\n";
       break;
     case 0x16:
-      std::cout << "MOV D, D8\n";
+      std::cout << "MOV D, D8 (";
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x17:
       std::cout << "RAL \n";
@@ -152,7 +168,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR E\n";
       break;
     case 0x1E:
-      std::cout << "MOV E, d8\n";
+      std::cout << "MOV E, D8 (";
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x1F:
       std::cout << "RAR\n";
@@ -161,7 +179,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x21:
-      std::cout << "LXI H, d16\n";
+      std::cout << "LXI H, d16 (";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x22:
       std::cout << "SHLD D8\n";
@@ -209,7 +230,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x31:
-      std::cout << "LXI SP, d16 \n";
+      std::cout << "LXI SP, d16 (";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0x32:
       std::cout << "STA, d16\n";
@@ -248,7 +272,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR A" << std::endl;
       break;
     case 0x3E:  // MVI A, D8
-      std::cout << "MVI A, D8" << std::endl;
+      std::cout << "MVI A, D8 (";
+      print_hex_byte(b1);
+      std::cout << "\n";
     case 0x3F:
       std::cout << "CMC" << std::endl;
       break;
@@ -707,7 +733,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "CZ\n";
       break;
     case 0xCD:
-      std::cout << "CALL \n";
+      std::cout << "CALL 0x";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0xCE:
       std::cout << "ACI, D8\n";
@@ -748,7 +777,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "JC\n";
       break;
     case 0xDB:  // IN instruction + D8 (input port number)
-      std::cout << "IN d8\n";
+      std::cout << "IN d8 (";
+      print_hex_byte(b1);
+      std::cout << ")\n";
       break;
     case 0xDC:
       std::cout << "CC\n";

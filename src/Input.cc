@@ -2,6 +2,11 @@
 
 #include <SDL3/SDL.h>
 
+#ifdef DEBUG
+#include <iomanip>
+#include <iostream>
+#endif
+
 // Anonymous namespace for global variable
 namespace {
 // true = player 1, false = player 2
@@ -32,6 +37,12 @@ uint8_t InputDevice::to_byte() const {
 
 // Returns the data corresponding to the specified input device.
 uint8_t InputHandler::ReadInput(uint8_t port_no) {
+#ifdef DEBUG
+  std::cerr << "Reading input from port " << static_cast<int>(port_no) << ": ";
+  std::cerr << std::hex << std::setfill('0') << std::setw(2)
+            << static_cast<int>(devices_[port_no].to_byte()) << std::dec;
+  std::cerr << "\n";
+#endif
   return devices_[port_no].to_byte();
 }
 
