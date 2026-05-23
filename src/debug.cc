@@ -249,6 +249,7 @@ void CPU8080::print_instruction(uint8_t opcode) {
       break;
     case 0x3E:  // MVI A, D8
       std::cout << "MVI A, D8" << std::endl;
+      break;
     case 0x3F:
       std::cout << "CMC" << std::endl;
       break;
