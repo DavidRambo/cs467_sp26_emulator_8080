@@ -729,7 +729,8 @@ void CPU8080::print_instruction(uint8_t opcode) {
       print_hex_byte(b1);
       std::cout << " [opcode 0x";
       print_hex_byte(mem_access_->read(static_cast<uint16_t>((b2 << 8) | b1)));
-      std::cout << "]";
+      std::cout << "] else run opcode 0x";
+      print_hex_byte(mem_access_->read(program_counter_));
       std::cout << "\n";
     } break;
     case 0xC3: {
