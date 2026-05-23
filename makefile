@@ -1,6 +1,9 @@
 CXX = g++
 CXX_FLAGS = -std=c++20 -lSDL3 -O1 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wnull-dereference
 DEBUG_FLAGS = -ggdb -DDEBUG=1
+# To pause execution after each instruction as well as to print the 8080's state:
+# make debug DEBUG_STATE='-DDEBUG_STATE=1'
+DEBUG_STATE =
 
 SRCDIR = src
 BUILDDIR = build
@@ -23,7 +26,7 @@ emu8080: $(OBJS) $(SRCDIR)/main.cc
 	$(CXX) -o emu8080 $^ -L$(LIBRARY) $(CXX_FLAGS)
 
 debug: $(SRCDIR)/main.cc $(SRCDIR)/debug.cc $(SRCDIR)/CPU8080.cc $(SRCDIR)/CPU8080.h $(BUILDDIR)/Memory8080.o $(BUILDDIR)/Instructions8080.o $(BUILDDIR)/Input.o $(BUILDDIR)/AudioMixer.o $(BUILDDIR)/GameWindow.o $(BUILDDIR)/SpaceInvadersVRamDecoder.o $(BUILDDIR)/ShiftRegister.o
-	$(CXX) -o emu8080 $^ -L$(LIBRARY) $(CXX_FLAGS) $(DEBUG_FLAGS)
+	$(CXX) -o emu8080 $^ -L$(LIBRARY) $(CXX_FLAGS) $(DEBUG_FLAGS) $(DEBUG_STATE)
 
 test: all_tests
 	./all_tests $(TESTFLAGS)
