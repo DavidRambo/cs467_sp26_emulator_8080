@@ -832,6 +832,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     }
     case 0xD3:
+      out(fetch_byte());
       break;
     case 0xD4: {
       uint8_t b1 = fetch_byte();

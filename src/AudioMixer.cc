@@ -25,12 +25,12 @@ void Mixer::Load() {
   constexpr std::array kSounds{
       // clang-format off
     //          Sound ID              File                Looping
-    SoundEffect{SoundId::kBackground, "background.wav",   true},
-    SoundEffect{SoundId::kExplosion,  "explosion.wav",    false},
-    SoundEffect{SoundId::kInvaderHit, "invader_hit.wav",  false},
-    SoundEffect{SoundId::kTorpedo,    "torpedo.wav",      false},
-    SoundEffect{SoundId::kUfoHit,     "ufo_hit.wav",      false},
-    SoundEffect{SoundId::kUfo,        "ufo.wav",          true},
+    SoundEffect{SoundId::kBackground, "assets/audio/background.wav",   true},
+    SoundEffect{SoundId::kExplosion,  "assets/audio/explosion.wav",    false},
+    SoundEffect{SoundId::kInvaderHit, "assets/audio/invader_hit.wav",  false},
+    SoundEffect{SoundId::kTorpedo,    "assets/audio/torpedo.wav",      false},
+    SoundEffect{SoundId::kUfoHit,     "assets/audio/ufo_hit.wav",      false},
+    SoundEffect{SoundId::kUfo,        "assets/audio/ufo.wav",          true},
       // clang-format on
   };
 

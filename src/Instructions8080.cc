@@ -30,9 +30,13 @@ void CPU8080::out(uint8_t port_no) {
     shift_register_->SetOffset(registers_.reg_a);
   } else if (port_no == 4) {
     shift_register_->LoadBuffer(registers_.reg_a);
+  } else if (port_no == 3) {
+    mixer_->SetOut3(registers_.reg_a);
+  } else if (port_no == 5) {
+    mixer_->SetOut5(registers_.reg_a);
   } else {
-    std::cerr << "<opcode 0xD3> invalid output port number: " << port_no
-              << std::endl;
+    std::cerr << "<opcode 0xD3> invalid output port number: "
+              << static_cast<int>(port_no) << std::endl;
   }
 }
 
@@ -115,8 +119,7 @@ void CPU8080::add(uint8_t data) {
 // Adds the specified byte + the carry flag to A and store in A.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::adc(uint8_t data) {
-  data += flags_.carry;
-  uint16_t result = registers_.reg_a + data;
+  uint16_t result = registers_.reg_a + data + flags_.carry;
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
@@ -209,7 +212,7 @@ void CPU8080::cmp(uint8_t data) {
 void CPU8080::rrc() {
   uint8_t lsb = registers_.reg_a & 0x01;
   flags_.carry = lsb;
-  registers_.reg_a = (registers_.reg_a >> 7) | (lsb << 7);
+  registers_.reg_a = (registers_.reg_a >> 1) | (lsb << 7);
 }
 
 // RAL: Rotate Accumulator Left Through Carry
@@ -403,10 +406,10 @@ void CPU8080::ret(JumpCondition jump_condition) {
     return;
   }
 
-  uint8_t* high_byte{nullptr};
-  uint8_t* low_byte{nullptr};
-  pop(low_byte, high_byte);
-  program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
+  uint8_t high_byte{0};
+  uint8_t low_byte{0};
+  pop(&low_byte, &high_byte);
+  program_counter_ = static_cast<uint16_t>((high_byte << 8) | low_byte);
 }
 
 void CPU8080::rst(uint8_t exp) {
