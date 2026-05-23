@@ -30,9 +30,13 @@ void CPU8080::out(uint8_t port_no) {
     shift_register_->SetOffset(registers_.reg_a);
   } else if (port_no == 4) {
     shift_register_->LoadBuffer(registers_.reg_a);
+  } else if (port_no == 3) {
+    mixer_->SetOut3(registers_.reg_a);
+  } else if (port_no == 5) {
+    mixer_->SetOut5(registers_.reg_a);
   } else {
-    std::cerr << "<opcode 0xD3> invalid output port number: " << port_no
-              << std::endl;
+    std::cerr << "<opcode 0xD3> invalid output port number: "
+              << static_cast<int>(port_no) << std::endl;
   }
 }
 
@@ -106,7 +110,7 @@ void CPU8080::cma() { registers_.reg_a = ~registers_.reg_a; }
 // complement arithmetic Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::add(uint8_t data) {
   uint16_t result = registers_.reg_a + data;
-  flags_.carry = (result > 0xFF) ? 1 : 0;
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -115,9 +119,8 @@ void CPU8080::add(uint8_t data) {
 // Adds the specified byte + the carry flag to A and store in A.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::adc(uint8_t data) {
-  data += flags_.carry;
   uint16_t result = registers_.reg_a + data + flags_.carry;
-  flags_.carry = (result > 0xFF) ? 1 : 0;
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -127,7 +130,7 @@ void CPU8080::adc(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sub(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result < 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -138,7 +141,7 @@ void CPU8080::sub(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sbb(uint8_t data) {
   uint16_t result = registers_.reg_a - (data + flags_.carry);
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result < 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -173,15 +176,15 @@ void CPU8080::ora(uint8_t data) {
   update_flags_szp(registers_.reg_a);
 }
 
-// CPI: Compare Immediate with Accumulator
-// Performs a comparison by subtracting a data byte from the accumulator without
-// updating the accumulator and checking the condition bits.
-// Zero flag is set if the are equal, reset otherwise. Carry bit is set if data
-// is larger than accumulator.
-// Flags affected: Carry, Zero, Sign, Parity
+// CPI: Compare Immediate with AccumulatorHow to separate the high byte and the
+// low byte from a 16bit value? Performs a comparison by subtracting a data byte
+// from the accumulator without updating the accumulator and checking the
+// condition bits. Zero flag is set if the are equal, reset otherwise. Carry bit
+// is set if data is larger than accumulator. Flags affected: Carry, Zero, Sign,
+// Parity
 void CPU8080::cpi(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result > 0xFF);
   update_flags_szp(static_cast<uint8_t>(result));
 }
 
@@ -191,8 +194,8 @@ void CPU8080::cpi(uint8_t data) {
 // are set based on the result, simlar to the SUB instruction.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::cmp(uint8_t data) {
+  flags_.carry = data > registers_.reg_a;
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
   update_flags_szp(result);
 }
 
@@ -200,11 +203,12 @@ void CPU8080::cmp(uint8_t data) {
 // The carry bit is set equal to the low order bit of the accumulator.
 // The contents of the A are rotated one bit to the right, with the low
 // order bit being transferred to the high order bit.
-// Flags affected: Carry
+// Flags affected: CarryHow to separate the high byte and the low byte from a
+// 16bit value?
 void CPU8080::rrc() {
   uint8_t lsb = registers_.reg_a & 0x01;
   flags_.carry = lsb;
-  registers_.reg_a = (registers_.reg_a >> 7) | (lsb << 7);
+  registers_.reg_a = (registers_.reg_a >> 1) | (lsb << 7);
 }
 
 // RAL: Rotate Accumulator Left Through Carry
@@ -268,12 +272,12 @@ void CPU8080::pop(uint8_t* reg_1, uint8_t* reg_2) {
 void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
   uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
   uint32_t result = reg_pair + registers_.hl();
-  flags_.carry = (result > 0xFFFF) ? 0 : 1;
-  registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
-  registers_.reg_l = static_cast<uint8_t>(result | 0xFF);
+  flags_.carry = (result > 0xFFFF);
+  registers_.reg_h = static_cast<uint8_t>((result >> 8) & 0xFF);
+  registers_.reg_l = static_cast<uint8_t>(result & 0xFF);
 }
 
-/*
+/*<<<<<<< dev_main_loop
  * INX: Increment register pair
  * The 16 bit number held in the specified register pair is
  * incremented by 1.
@@ -283,7 +287,7 @@ void CPU8080::inx(uint8_t* reg_1, uint8_t* reg_2) {
   auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
   reg_pair += 1;
   *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
-  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+  *reg_2 = static_cast<uint8_t>(reg_pair & 0xFF);
 }
 
 /*
@@ -295,7 +299,7 @@ void CPU8080::dcx(uint8_t* reg_1, uint8_t* reg_2) {
   auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
   reg_pair -= 1;
   *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
-  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+  *reg_2 = static_cast<uint8_t>(reg_pair & 0xFF);
 }
 
 void CPU8080::xchg() {
@@ -383,7 +387,7 @@ void CPU8080::call(JumpCondition jump_condition, uint8_t byte_2,
 
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
   uint8_t high_byte = program_counter_ >> 8;
-  uint8_t low_byte = program_counter_ | 0xFF;
+  uint8_t low_byte = program_counter_ & 0xFF;
 
   push(low_byte, high_byte);
   program_counter_ = mem_location;
@@ -398,10 +402,10 @@ void CPU8080::ret(JumpCondition jump_condition) {
     return;
   }
 
-  uint8_t* high_byte{nullptr};
-  uint8_t* low_byte{nullptr};
-  pop(low_byte, high_byte);
-  program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
+  uint8_t high_byte{0};
+  uint8_t low_byte{0};
+  pop(&low_byte, &high_byte);
+  program_counter_ = static_cast<uint16_t>((high_byte << 8) | low_byte);
 }
 
 // Restart instructions

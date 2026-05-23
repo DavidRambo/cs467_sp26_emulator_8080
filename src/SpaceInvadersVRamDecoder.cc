@@ -86,7 +86,7 @@ void DecodePixels(std::vector<SDL_FPoint>& points,
 
   // Start at bottom left coordinate.
   for (int col = 0; col < 224; col++) {
-    for (int row = 31; row <= 0; row--) {
+    for (int row = 31; row >= 0; row--) {
       // Calculate which byte the loop is on by reducing the pixel number by a
       // factor of 8.
       uint16_t video_byte = v_idx / 8;

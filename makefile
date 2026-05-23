@@ -1,5 +1,5 @@
 CXX = g++
-CXX_FLAGS = -std=c++20 -lSDL3
+CXX_FLAGS = -std=c++20 -lSDL3 -O1 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wnull-dereference
 DEBUG_FLAGS = -ggdb -DDEBUG=1
 
 SRCDIR = src

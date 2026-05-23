@@ -275,6 +275,7 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "MVI A, D8 (";
       print_hex_byte(b1);
       std::cout << "\n";
+      break;
     case 0x3F:
       std::cout << "CMC" << std::endl;
       break;
@@ -298,6 +299,7 @@ void CPU8080::print_instruction(uint8_t opcode) {
       break;
     case 0x46:
       std::cout << "MOV B, M\n";
+      break;
     case 0x47:
       std::cout << "MOV B, A\n";
       break;

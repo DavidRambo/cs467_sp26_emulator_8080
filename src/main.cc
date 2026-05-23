@@ -113,7 +113,6 @@ int main(int argc, char* argv[]) {
     cpu.rst(2);
 
     // Update display
-    std::vector<SDL_FPoint> points;
     space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
     game_window.UpdateDisplay(points);
   }

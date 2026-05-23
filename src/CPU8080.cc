@@ -35,7 +35,6 @@ CPU8080::Flags::Flags() {
 
 std::uint8_t CPU8080::Flags::to_byte() {
   std::uint8_t return_byte = 0x02;
-
   // Shift flags to proper location
   return_byte = return_byte | (sign << 7);
   return_byte = return_byte | (zero << 6);
@@ -54,7 +53,13 @@ void CPU8080::Flags::from_byte(uint8_t data) {
 }
 
 void CPU8080::step() {
-  uint8_t instruction = fetch_byte();
+  uint8_t instruction;
+  if (!interupt_queue_.empty() && INTE_) {
+    instruction = interupt_queue_.front();
+    interupt_queue_.pop();
+  } else {
+    instruction = fetch_byte();
+  }
   execute(instruction);
 };
 
@@ -264,7 +269,6 @@ void CPU8080::execute(uint8_t opcode) {
     } break;
     case 0x27:
       // DAA
-      break;
     case 0x28:
       break;
     case 0x29:
@@ -333,7 +337,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x39: {
       uint8_t sp_high = stack_pointer_ >> 8;
-      uint8_t sp_low = stack_pointer_ | 0xFF;
+      uint8_t sp_low = stack_pointer_ & 0xFF;
       dad(&sp_high, &sp_low);
       stack_pointer_ = static_cast<uint16_t>((sp_high << 8) | sp_low);
     } break;
@@ -344,7 +348,7 @@ void CPU8080::execute(uint8_t opcode) {
     } break;
     case 0x3B: {
       uint8_t sp_high = stack_pointer_ >> 8;
-      uint8_t sp_low = stack_pointer_ | 0xFF;
+      uint8_t sp_low = stack_pointer_ & 0xFF;
       dcx(&sp_high, &sp_low);
       stack_pointer_ = static_cast<uint16_t>((sp_high << 8) | sp_low);
     } break;
@@ -383,6 +387,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x46:
       mov(&registers_.reg_b, mem_access_->read(registers_.hl()));
+      break;
     case 0x47:
       mov(&registers_.reg_b, registers_.reg_a);
       break;
