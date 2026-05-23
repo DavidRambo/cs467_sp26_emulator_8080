@@ -68,6 +68,8 @@ class CPU8080 {
           std::shared_ptr<audio::Mixer> new_mixer,
           std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr);
 
+  void rst(uint8_t exp);
+
   void step();
 
   void reset();
@@ -143,7 +145,6 @@ class CPU8080 {
   void jmp(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
   void call(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
   void ret(JumpCondition jump_condition);
-  void rst(uint8_t exp);
   void ei();
   void di();
   void hlt();
