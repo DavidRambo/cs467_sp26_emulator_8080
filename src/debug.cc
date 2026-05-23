@@ -260,7 +260,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DAD SP" << std::endl;
       break;
     case 0x3A:
-      std::cout << "LDA \n";
+      std::cout << "LDA ";
+      print_hex_byte(b2);
+      print_hex_byte(b1);
+      std::cout << "\n";
       break;
     case 0x3B:
       std::cout << "DCX SP" << std::endl;
