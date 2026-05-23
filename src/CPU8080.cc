@@ -21,7 +21,7 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
   INTE_ = false;
   // Do not move shared pointer, as it is shared with the main loop for event
   // polling.
-  input_handler_ = input_handler_ptr;
+  input_handler_ = std::move(input_handler_ptr);
 };
 
 CPU8080::Flags::Flags() {
