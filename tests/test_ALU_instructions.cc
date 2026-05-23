@@ -32,12 +32,108 @@ TEST_CASE("Testing ALU Instructions") {
     CHECK_EQ(state.flags.parity, 1);
     CHECK_EQ(state.flags.sign, 1);
   }
-  SUBCASE("Testing ADC") {}
-  SUBCASE("Testing SUB") {}
-  SUBCASE("Testing SBB") {}
-  SUBCASE("Testing ANA") {}
-  SUBCASE("Testing XRA") {}
-  SUBCASE("Testing ORA") {}
-  SUBCASE("Testing CMP") {}
+  SUBCASE("Testing ADC") {
+    std::vector<uint8_t> data = {0x3E, 0x41, 0x0E, 0x3D, 0x37, 0x89};
+    mem->load_data(data);
+    emu.step();
+    emu.step();
+    emu.step();
+    emu.step();
+
+    auto state = emu.get_state();
+
+    CHECK_EQ(state.registers.reg_a, 0x7F);
+    CHECK_EQ(state.registers.reg_c, 0x3D);
+    CHECK_EQ(state.flags.zero, 0);
+    CHECK_EQ(state.flags.carry, 0);
+    CHECK_EQ(state.flags.parity, 0);
+    CHECK_EQ(state.flags.sign, 0);
+  }
+  SUBCASE("Testing SUB") {
+    std::vector<uint8_t> data = {0x3E, 0x3E, 0x97};
+    mem->load_data(data);
+
+    emu.step();
+    emu.step();
+
+    auto state = emu.get_state();
+
+    CHECK_EQ(state.registers.reg_a, 0x00);
+    CHECK_EQ(state.flags.zero, 1);
+    CHECK_EQ(state.flags.carry, 1);
+    CHECK_EQ(state.flags.parity, 1);
+    CHECK_EQ(state.flags.sign, 0);
+  }
+  SUBCASE("Testing SBB") {
+    std::vector<uint8_t> data = {0x3E, 0x04, 0x2E, 0x02, 0x37, 0x9D};
+    mem->load_data(data);
+
+    emu.step();
+    emu.step();
+    emu.step();
+    emu.step();
+
+    auto state = emu.get_state();
+
+    CHECK_EQ(state.registers.reg_a, 0x01);
+    CHECK_EQ(state.flags.zero, 0);
+    CHECK_EQ(state.flags.carry, 1);
+    CHECK_EQ(state.flags.parity, 0);
+    CHECK_EQ(state.flags.sign, 0);
+  }
+  SUBCASE("Testing ANA") {
+    std::vector<uint8_t> data = {0x3E, 0xFC, 0x0E, 0x0F, 0xA1};
+    mem->load_data(data);
+
+    emu.step();
+    emu.step();
+    emu.step();
+
+    auto state = emu.get_state();
+
+    CHECK_EQ(state.registers.reg_a, 0x0C);
+    CHECK_EQ(state.flags.zero, 0);
+    CHECK_EQ(state.flags.carry, 0);
+    CHECK_EQ(state.flags.parity, 1);
+    CHECK_EQ(state.flags.sign, 0);
+  }
+  SUBCASE("Testing XRA") {
+    std::vector<uint8_t> data = {0x3E, 0xFF, 0x0E, 0xFF, 0xA9};
+    mem->load_data(data);
+
+    emu.step();
+    emu.step();
+    emu.step();
+
+    auto state = emu.get_state();
+
+    CHECK_EQ(state.registers.reg_a, 0x00);
+    CHECK_EQ(state.flags.zero, 1);
+    CHECK_EQ(state.flags.carry, 0);
+    CHECK_EQ(state.flags.parity, 1);
+    CHECK_EQ(state.flags.sign, 0);
+  }
+  SUBCASE("Testing ORA") {
+    std::vector<uint8_t> data = {};
+    mem->load_data(data);
+    auto state = emu.get_state();
+
+    CHECK_EQ(state.registers.reg_a, 0x00);
+    CHECK_EQ(state.flags.zero, 1);
+    CHECK_EQ(state.flags.carry, 1);
+    CHECK_EQ(state.flags.parity, 1);
+    CHECK_EQ(state.flags.sign, 0);
+  }
+  SUBCASE("Testing CMP") {
+    std::vector<uint8_t> data = {};
+    mem->load_data(data);
+    auto state = emu.get_state();
+
+    CHECK_EQ(state.registers.reg_a, 0x00);
+    CHECK_EQ(state.flags.zero, 1);
+    CHECK_EQ(state.flags.carry, 1);
+    CHECK_EQ(state.flags.parity, 1);
+    CHECK_EQ(state.flags.sign, 0);
+  }
 }
 }  // namespace intel_8080

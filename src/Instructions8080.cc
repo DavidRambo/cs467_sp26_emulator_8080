@@ -116,7 +116,7 @@ void CPU8080::add(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::adc(uint8_t data) {
   data += flags_.carry;
-  uint16_t result = registers_.reg_a + data + flags_.carry;
+  uint16_t result = registers_.reg_a + data;
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
@@ -274,7 +274,7 @@ void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
   registers_.reg_l = static_cast<uint8_t>(result & 0xFF);
 }
 
-/*
+/*<<<<<<< dev_main_loop
  * INX: Increment register pair
  * The 16 bit number held in the specified register pair is
  * incremented by 1.
