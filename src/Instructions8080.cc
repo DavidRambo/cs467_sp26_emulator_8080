@@ -192,7 +192,11 @@ void CPU8080::cpi(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::cmp(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result < 0xFF);
+  if (registers_.reg_a > data) {
+    flags_.zero = 0;
+  } else {
+    flags_.zero = 1;
+  }
   update_flags_szp(result);
 }
 

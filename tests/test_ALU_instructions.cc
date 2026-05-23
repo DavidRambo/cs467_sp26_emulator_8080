@@ -114,24 +114,34 @@ TEST_CASE("Testing ALU Instructions") {
     CHECK_EQ(state.flags.sign, 0);
   }
   SUBCASE("Testing ORA") {
-    std::vector<uint8_t> data = {};
+    std::vector<uint8_t> data = {0x3E, 0x33, 0x0E, 0x0F, 0xB1};
     mem->load_data(data);
+
+    emu.step();
+    emu.step();
+    emu.step();
+
     auto state = emu.get_state();
 
-    CHECK_EQ(state.registers.reg_a, 0x00);
-    CHECK_EQ(state.flags.zero, 1);
-    CHECK_EQ(state.flags.carry, 1);
+    CHECK_EQ(state.registers.reg_a, 0x3F);
+    CHECK_EQ(state.flags.zero, 0);
+    CHECK_EQ(state.flags.carry, 0);
     CHECK_EQ(state.flags.parity, 1);
     CHECK_EQ(state.flags.sign, 0);
   }
   SUBCASE("Testing CMP") {
-    std::vector<uint8_t> data = {};
+    std::vector<uint8_t> data = {0x3E, 0x0A, 0x1E, 0x05, 0xBB};
     mem->load_data(data);
+
+    emu.step();
+    emu.step();
+    emu.step();
+
     auto state = emu.get_state();
 
-    CHECK_EQ(state.registers.reg_a, 0x00);
-    CHECK_EQ(state.flags.zero, 1);
-    CHECK_EQ(state.flags.carry, 1);
+    CHECK_EQ(state.registers.reg_a, 0x0A);
+    CHECK_EQ(state.flags.zero, 0);
+    CHECK_EQ(state.flags.carry, 0);
     CHECK_EQ(state.flags.parity, 1);
     CHECK_EQ(state.flags.sign, 0);
   }
