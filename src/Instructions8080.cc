@@ -194,12 +194,8 @@ void CPU8080::cpi(uint8_t data) {
 // are set based on the result, simlar to the SUB instruction.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::cmp(uint8_t data) {
+  flags_.carry = data > registers_.reg_a;
   uint16_t result = registers_.reg_a - data;
-  if (registers_.reg_a > data) {
-    flags_.zero = 0;
-  } else {
-    flags_.zero = 1;
-  }
   update_flags_szp(result);
 }
 
