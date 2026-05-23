@@ -334,7 +334,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x39: {
       uint8_t sp_high = stack_pointer_ >> 8;
-      uint8_t sp_low = stack_pointer_ | 0xFF;
+      uint8_t sp_low = stack_pointer_ & 0xFF;
       dad(&sp_high, &sp_low);
       stack_pointer_ = static_cast<uint16_t>((sp_high << 8) | sp_low);
     } break;
@@ -345,7 +345,7 @@ void CPU8080::execute(uint8_t opcode) {
     } break;
     case 0x3B: {
       uint8_t sp_high = stack_pointer_ >> 8;
-      uint8_t sp_low = stack_pointer_ | 0xFF;
+      uint8_t sp_low = stack_pointer_ & 0xFF;
       dcx(&sp_high, &sp_low);
       stack_pointer_ = static_cast<uint16_t>((sp_high << 8) | sp_low);
     } break;
@@ -384,6 +384,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x46:
       mov(&registers_.reg_b, mem_access_->read(registers_.hl()));
+      break;
     case 0x47:
       mov(&registers_.reg_b, registers_.reg_a);
       break;
