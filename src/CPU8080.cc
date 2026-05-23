@@ -132,12 +132,16 @@ void CPU8080::update_flags_szp(uint8_t byte) {
 }
 
 void CPU8080::execute(uint8_t opcode) {
-#ifdef DEBUG
+#ifdef DEBUG_STATE
   char ch{0};
   std::cout << "Next instruction (with above cpu state): ";
+#endif
+#ifdef DEBUG
   print_instruction(opcode);
-  // std::cout << "Execution paused, press Enter to continue...\n";
-  // std::cin.get(ch);
+#endif
+#ifdef DEBUG_STATE
+  std::cout << "Execution paused, press Enter to continue...\n";
+  std::cin.get(ch);
 #endif
 
   switch (opcode) {
@@ -1012,7 +1016,7 @@ void CPU8080::execute(uint8_t opcode) {
       std::cerr << "CPU8080:execute() : default case for opcode switch\n";
       break;
   }
-#ifdef DEBUG
+#ifdef DEBUG_STATE
   print_debug();
 #endif
 }
