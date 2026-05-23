@@ -93,10 +93,10 @@ int main(int argc, char* argv[]) {
       current_tick = SDL_GetTicks();
     }
 #ifdef DEBUG
-    std::cerr << "Made it to the first RST call\n";
+    std::cout << "RST 1\n";
 #endif
 
-    // Trigger first half of screen update with RST 8, which has exp = 1.
+    // Trigger first half of screen update with RST + 8, which has exp = 1.
     cpu.rst(1);
 
     // Run CPU for another 8 ms to approximate the "second half" of 60 fps.
@@ -106,10 +106,10 @@ int main(int argc, char* argv[]) {
     }
 
 #ifdef DEBUG
-    std::cerr << "Made it to the second RST call\n";
+    std::cout << "RST 2\n";
 #endif
 
-    // Trigger first half of screen update with RST 10, which has exp = 2.
+    // Trigger first half of screen update with RST + 10, which has exp = 2.
     cpu.rst(2);
 
     // Update display
