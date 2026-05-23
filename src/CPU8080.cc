@@ -12,6 +12,7 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
                  std::shared_ptr<audio::Mixer> new_mixer,
                  std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr)
     : mem_access_(std::move(new_mem)),
+      input_handler_(std::move(input_handler_ptr)),
       mixer_(std::move(new_mixer)),
       shift_register_(std::move(shift_reg_ptr)) {
   stack_pointer_ = 0x0000;
@@ -19,9 +20,6 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
   flags_ = Flags();
   registers_ = Registers();
   INTE_ = false;
-  // Do not move shared pointer, as it is shared with the main loop for event
-  // polling.
-  input_handler_ = input_handler_ptr;
   halted_ = false;
 };
 
