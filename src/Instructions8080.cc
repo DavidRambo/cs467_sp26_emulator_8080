@@ -9,7 +9,7 @@ namespace intel_8080 {
 // opcode to designate the port number. That data is written to the
 // accumulator.
 void CPU8080::in(uint8_t port_no) {
-  if (port_no >= 0 && port_no < 3) {
+  if (port_no < 3) {
     registers_.reg_a = input_handler_->ReadInput(port_no);
   } else if (port_no == 3) {
     registers_.reg_a = shift_register_->GetShiftedByte();
