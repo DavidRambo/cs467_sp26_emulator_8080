@@ -384,6 +384,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     case 0x46:
       mov(&registers_.reg_b, mem_access_->read(registers_.hl()));
+      break;
     case 0x47:
       mov(&registers_.reg_b, registers_.reg_a);
       break;
