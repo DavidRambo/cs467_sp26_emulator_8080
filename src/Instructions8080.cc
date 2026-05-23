@@ -34,6 +34,11 @@ void CPU8080::out(uint8_t port_no) {
     mixer_->SetOut3(registers_.reg_a);
   } else if (port_no == 5) {
     mixer_->SetOut5(registers_.reg_a);
+  } else if (port_no == 6) {
+    // "Watchdog" external device address checks for reset after a certain
+    // amount of cycles have occurred without read or write. This triggers a
+    // bunch because this emulator is not cycle-accurate.
+    return;
   } else {
     std::cerr << "<opcode 0xD3> invalid output port number: "
               << static_cast<int>(port_no) << std::endl;
