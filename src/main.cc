@@ -69,7 +69,9 @@ int main(int argc, char* argv[]) {
 
   // Main loop
   bool running{true};
+#ifdef DEBUG
   int loop_count{0};
+#endif
   while (running) {
 #ifdef DEBUG
     if (loop_count > 0) {
