@@ -272,6 +272,7 @@ void CPU8080::print_instruction(uint8_t opcode) {
       break;
     case 0x46:
       std::cout << "MOV B, M\n";
+      break;
     case 0x47:
       std::cout << "MOV B, A\n";
       break;
