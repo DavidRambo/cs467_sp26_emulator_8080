@@ -54,8 +54,10 @@ void CPU8080::mov(uint8_t* addr, uint8_t data) { *addr = data; }
 //
 // Condition bits affected: carry.
 void CPU8080::rlc() {
-  // Set or clear carry bit.
-  flags_.carry = registers_.reg_a >> 7;
+  How to separate the high byte and the low byte from a 16bit value
+      ?
+      // Set or clear carry bit.
+      flags_.carry = registers_.reg_a >> 7;
 
   registers_.reg_a = registers_.reg_a << 1;
 
@@ -106,7 +108,7 @@ void CPU8080::cma() { registers_.reg_a = ~registers_.reg_a; }
 // complement arithmetic Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::add(uint8_t data) {
   uint16_t result = registers_.reg_a + data;
-  flags_.carry = (result > 0xFF) ? 1 : 0;
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -117,7 +119,7 @@ void CPU8080::add(uint8_t data) {
 void CPU8080::adc(uint8_t data) {
   data += flags_.carry;
   uint16_t result = registers_.reg_a + data + flags_.carry;
-  flags_.carry = (result > 0xFF) ? 1 : 0;
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -127,7 +129,7 @@ void CPU8080::adc(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sub(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result < 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -138,7 +140,7 @@ void CPU8080::sub(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sbb(uint8_t data) {
   uint16_t result = registers_.reg_a - (data + flags_.carry);
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result < 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -173,15 +175,15 @@ void CPU8080::ora(uint8_t data) {
   update_flags_szp(registers_.reg_a);
 }
 
-// CPI: Compare Immediate with Accumulator
-// Performs a comparison by subtracting a data byte from the accumulator without
-// updating the accumulator and checking the condition bits.
-// Zero flag is set if the are equal, reset otherwise. Carry bit is set if data
-// is larger than accumulator.
-// Flags affected: Carry, Zero, Sign, Parity
+// CPI: Compare Immediate with AccumulatorHow to separate the high byte and the
+// low byte from a 16bit value? Performs a comparison by subtracting a data byte
+// from the accumulator without updating the accumulator and checking the
+// condition bits. Zero flag is set if the are equal, reset otherwise. Carry bit
+// is set if data is larger than accumulator. Flags affected: Carry, Zero, Sign,
+// Parity
 void CPU8080::cpi(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result > 0xFF);
   update_flags_szp(static_cast<uint8_t>(result));
 }
 
@@ -192,7 +194,7 @@ void CPU8080::cpi(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::cmp(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result < 0xFF);
   update_flags_szp(result);
 }
 
@@ -200,7 +202,8 @@ void CPU8080::cmp(uint8_t data) {
 // The carry bit is set equal to the low order bit of the accumulator.
 // The contents of the A are rotated one bit to the right, with the low
 // order bit being transferred to the high order bit.
-// Flags affected: Carry
+// Flags affected: CarryHow to separate the high byte and the low byte from a
+// 16bit value?
 void CPU8080::rrc() {
   uint8_t lsb = registers_.reg_a & 0x01;
   flags_.carry = lsb;
@@ -268,9 +271,9 @@ void CPU8080::pop(uint8_t* reg_1, uint8_t* reg_2) {
 void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
   uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
   uint32_t result = reg_pair + registers_.hl();
-  flags_.carry = (result > 0xFFFF) ? 0 : 1;
-  registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
-  registers_.reg_l = static_cast<uint8_t>(result | 0xFF);
+  flags_.carry = (result > 0xFFFF);
+  registers_.reg_h = static_cast<uint8_t>((result >> 8) & 0xFF);
+  registers_.reg_l = static_cast<uint8_t>(result & 0xFF);
 }
 
 /*
@@ -283,7 +286,7 @@ void CPU8080::inx(uint8_t* reg_1, uint8_t* reg_2) {
   auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
   reg_pair += 1;
   *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
-  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+  *reg_2 = static_cast<uint8_t>(reg_pair & 0xFF);
 }
 
 /*
@@ -295,7 +298,7 @@ void CPU8080::dcx(uint8_t* reg_1, uint8_t* reg_2) {
   auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
   reg_pair -= 1;
   *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
-  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+  *reg_2 = static_cast<uint8_t>(reg_pair & 0xFF);
 }
 
 void CPU8080::xchg() {
@@ -383,7 +386,7 @@ void CPU8080::call(JumpCondition jump_condition, uint8_t byte_2,
 
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
   uint8_t high_byte = program_counter_ >> 8;
-  uint8_t low_byte = program_counter_ | 0xFF;
+  uint8_t low_byte = program_counter_ & 0xFF;
 
   push(low_byte, high_byte);
   program_counter_ = mem_location;
@@ -413,7 +416,8 @@ void CPU8080::ei() { INTE_ = true; }
 void CPU8080::di() { INTE_ = false; }
 
 void CPU8080::hlt() {
-  // Can't implement until we know how the interupt process works.
+  // Can't implement until we know how the interupt process works.Also not
+  // necessary for SpaceInvaders
 }
 
 // Returns true if the specified condition is true, otherwise false.
