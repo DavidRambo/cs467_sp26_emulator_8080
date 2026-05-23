@@ -54,10 +54,8 @@ void CPU8080::mov(uint8_t* addr, uint8_t data) { *addr = data; }
 //
 // Condition bits affected: carry.
 void CPU8080::rlc() {
-  How to separate the high byte and the low byte from a 16bit value
-      ?
-      // Set or clear carry bit.
-      flags_.carry = registers_.reg_a >> 7;
+  // Set or clear carry bit.
+  flags_.carry = registers_.reg_a >> 7;
 
   registers_.reg_a = registers_.reg_a << 1;
 
