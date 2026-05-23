@@ -40,10 +40,6 @@ int main(int argc, char* argv[]) {
   // Load ROM
   mem->load_rom(argv[1]);  // invaders ROM as one file
 
-#ifdef DEBUG
-  mem->fill_vram();
-#endif
-
   // Create GameWindow
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
       kWindowWidth, kWindowHeight, "Space Invaders");

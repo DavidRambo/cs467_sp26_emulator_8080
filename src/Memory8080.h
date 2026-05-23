@@ -28,8 +28,6 @@ class Memory8080 {
 
   void load_data(std::vector<uint8_t> const& data, uint16_t start = 0);
 
-  void fill_vram();
-
  private:
   std::array<uint8_t, kSIZE> mem_buffer_;
   uint16_t end_of_ROM_;
