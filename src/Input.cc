@@ -76,7 +76,7 @@ SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
         devices_[2].bit4 = 1;
       }
       break;
-    case SDL_SCANCODE_KP_ENTER:
+    case SDL_SCANCODE_RETURN:
       // Set Port 1 bit 2 (Player 1 Start)
       devices_[1].bit2 = 1;
       break;
@@ -128,7 +128,7 @@ SDL_AppResult InputHandler::HandleKeyRelease(SDL_Scancode keycode) {
         devices_[2].bit4 = 0;
       }
       break;
-    case SDL_SCANCODE_KP_ENTER:
+    case SDL_SCANCODE_RETURN:
       // Set Port 1 bit 2 (Player 1 Start)
       devices_[1].bit2 = 0;
       break;
