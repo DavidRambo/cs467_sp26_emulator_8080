@@ -168,15 +168,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "DCR E\n";
       break;
     case 0x1E:
-<<<<<<< HEAD
-      std::cout << "MOV E, D8 (";
-      print_hex_byte(b1);
-      std::cout << ")\n";
-=======
       std::cout << "MOV E, d8 (";
       print_hex_byte(b1);
       std::cout << ")";
->>>>>>> 8435f2d41dd6f702c96f8d6689d347c105edd68d
       break;
     case 0x1F:
       std::cout << "RAR\n";
@@ -185,17 +179,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x21:
-<<<<<<< HEAD
-      std::cout << "LXI H, d16 (";
-      print_hex_byte(b2);
-      print_hex_byte(b1);
-      std::cout << ")\n";
-=======
       std::cout << "LXI H ";
       print_hex_byte(b2);
       print_hex_byte(b1);
       std::cout << "\n";
->>>>>>> 8435f2d41dd6f702c96f8d6689d347c105edd68d
       break;
     case 0x22:
       std::cout << "SHLD ";
@@ -251,17 +238,10 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "*NOP" << std::endl;
       break;
     case 0x31:
-<<<<<<< HEAD
-      std::cout << "LXI SP, d16 (";
-      print_hex_byte(b2);
-      print_hex_byte(b1);
-      std::cout << ")\n";
-=======
       std::cout << "LXI SP ";
       print_hex_byte(b2);
       print_hex_byte(b1);
       std::cout << "\n";
->>>>>>> 8435f2d41dd6f702c96f8d6689d347c105edd68d
       break;
     case 0x32:
       std::cout << "STA ";
@@ -328,11 +308,7 @@ void CPU8080::print_instruction(uint8_t opcode) {
     case 0x3E:  // MVI A, D8
       std::cout << "MVI A, D8 (";
       print_hex_byte(b1);
-<<<<<<< HEAD
-      std::cout << "\n";
-=======
       std::cout << ")\n";
->>>>>>> 8435f2d41dd6f702c96f8d6689d347c105edd68d
       break;
     case 0x3F:
       std::cout << "CMC" << std::endl;
@@ -815,11 +791,7 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "\n";
       break;
     case 0xCD:
-<<<<<<< HEAD
-      std::cout << "CALL 0x";
-=======
       std::cout << "CALL to";
->>>>>>> 8435f2d41dd6f702c96f8d6689d347c105edd68d
       print_hex_byte(b2);
       print_hex_byte(b1);
       std::cout << "\n";
@@ -883,15 +855,9 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "\n";
       break;
     case 0xDB:  // IN instruction + D8 (input port number)
-<<<<<<< HEAD
-      std::cout << "IN d8 (";
-      print_hex_byte(b1);
-      std::cout << ")\n";
-=======
       std::cout << "IN ";
       print_hex_byte(b1);
       std::cout << "\n";
->>>>>>> 8435f2d41dd6f702c96f8d6689d347c105edd68d
       break;
     case 0xDC:
       std::cout << "CC (carry = ";
