@@ -82,7 +82,7 @@ void DecodeBottomPixels(std::vector<SDL_FPoint>& points, const char* data) {
 void DecodePixels(std::vector<SDL_FPoint>& points,
                   std::span<unsigned char, 7168> video_data) {
   // v_idx will increment for each bit, from 0 to (256*224 - 1).
-  uint8_t v_idx{0};
+  int v_idx{0};
 
   // Start at bottom left coordinate.
   for (int col = 0; col < 224; col++) {
