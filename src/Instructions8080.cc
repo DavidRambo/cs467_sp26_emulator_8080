@@ -201,7 +201,7 @@ void CPU8080::cpi(uint8_t data) {
 void CPU8080::cmp(uint8_t data) {
   flags_.carry = data > registers_.reg_a;
   uint16_t result = registers_.reg_a - data;
-  update_flags_szp(result);
+  update_flags_szp(static_cast<uint8_t>(result));
 }
 
 // RRC: Rotate Accumulator Right
