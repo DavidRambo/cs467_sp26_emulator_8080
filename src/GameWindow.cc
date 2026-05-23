@@ -34,10 +34,16 @@ void GameWindow::UpdateDisplayTop(const std::vector<SDL_FPoint>& points) {
 }
 
 void GameWindow::UpdateDisplayBottom(const std::vector<SDL_FPoint>& points) {
+  SDL_SetRenderDrawColor(renderer_, 0, 255, 255, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, points.data(), points.size());
+  SDL_RenderPresent(renderer_);
+}
+
+void GameWindow::UpdateDisplay(const std::vector<SDL_FPoint>& points) {
   SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer_);
 
-  SDL_SetRenderDrawColor(renderer_, 0, 255, 255, SDL_ALPHA_OPAQUE);
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderPoints(renderer_, points.data(), points.size());
   SDL_RenderPresent(renderer_);
 }

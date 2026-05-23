@@ -1,5 +1,6 @@
 CXX = g++
-CXX_FLAGS = -std=c++20 -lSDL3 -ggdb 
+CXX_FLAGS = -std=c++20 -lSDL3
+DEBUG_FLAGS = -ggdb -DDEBUG=1
 
 SRCDIR = src
 BUILDDIR = build
@@ -20,6 +21,9 @@ TESTFLAGS =
 
 emu8080: $(OBJS) $(SRCDIR)/main.cc
 	$(CXX) -o emu8080 $^ -L$(LIBRARY) $(CXX_FLAGS)
+
+debug: $(SRCDIR)/main.cc $(SRCDIR)/debug.cc $(SRCDIR)/CPU8080.cc $(SRCDIR)/CPU8080.h $(BUILDDIR)/Memory8080.o $(BUILDDIR)/Instructions8080.o $(BUILDDIR)/Input.o $(BUILDDIR)/AudioMixer.o $(BUILDDIR)/GameWindow.o $(BUILDDIR)/SpaceInvadersVRamDecoder.o $(BUILDDIR)/ShiftRegister.o
+	$(CXX) -o emu8080 $^ -L$(LIBRARY) $(CXX_FLAGS) $(DEBUG_FLAGS)
 
 test: all_tests
 	./all_tests $(TESTFLAGS)

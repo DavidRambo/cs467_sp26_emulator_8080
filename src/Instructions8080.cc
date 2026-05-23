@@ -13,9 +13,25 @@ void CPU8080::in(uint8_t port_no) {
     registers_.reg_a = input_handler_->ReadInput(port_no);
   } else if (port_no == 3) {
     registers_.reg_a = shift_register_->GetShiftedByte();
-    std::cerr << "ERROR: missing shift register code for READ 3\n";
   } else {
     std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
+              << std::endl;
+  }
+}
+
+// OUT Output
+//
+// The 8080 would write data from the accumulator to the data bus and indicate
+// which peripheral device should fetch that data by setting bits in the address
+// bus. Here, the port_no is an immediate byte following the OUT opcode, which
+// is used to call the respective device's emulation.
+void CPU8080::out(uint8_t port_no) {
+  if (port_no == 2) {
+    shift_register_->SetOffset(registers_.reg_a);
+  } else if (port_no == 4) {
+    shift_register_->LoadBuffer(registers_.reg_a);
+  } else {
+    std::cerr << "<opcode 0xD3> invalid output port number: " << port_no
               << std::endl;
   }
 }
@@ -382,10 +398,10 @@ void CPU8080::ret(JumpCondition jump_condition) {
     return;
   }
 
-  uint8_t high_byte;
-  uint8_t low_byte;
-  pop(&low_byte, &high_byte);
-  program_counter_ = static_cast<uint16_t>((high_byte << 8) | low_byte);
+  uint8_t* high_byte{nullptr};
+  uint8_t* low_byte{nullptr};
+  pop(low_byte, high_byte);
+  program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
 }
 
 void CPU8080::rst(uint8_t exp) {

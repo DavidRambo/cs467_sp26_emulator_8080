@@ -12,7 +12,10 @@ TEST_CASE("Test IN input instruction with InputHandler") {
       std::make_shared<input::InputHandler>();
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
-  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem, input_handler, mixer);
+  std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr =
+      std::make_shared<hardware::ShiftRegister>(hardware::ShiftRegister());
+  intel_8080::CPU8080 emu =
+      intel_8080::CPU8080(mem, input_handler, mixer, shift_reg_ptr);
 
   std::vector<uint8_t> data = {0xdb, 1};  // opcode, port number
   mem->load_data(data);

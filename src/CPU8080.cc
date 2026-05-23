@@ -1,18 +1,9 @@
 #include "CPU8080.h"
 
+#include <iostream>
 #include <memory>
 
 #include "Memory8080.h"
-
-// For printing hex bytes to stdout
-#include <iomanip>
-#include <iostream>
-
-// For printing hex bytes to stdout
-void print_hex_byte(uint8_t value) {
-  std::cout << std::hex << std::uppercase << std::setfill('0') << std::setw(2)
-            << static_cast<int>(value) << std::dec;
-}
 
 namespace intel_8080 {
 
@@ -33,6 +24,14 @@ CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
   input_handler_ = input_handler_ptr;
 };
 
+CPU8080::Flags::Flags() {
+  sign = 0;
+  zero = 0;
+  aux_carry = 0;
+  parity = 0;
+  carry = 0;
+}
+
 std::uint8_t CPU8080::Flags::to_byte() {
   std::uint8_t return_byte = 0x02;
   // Shift flags to proper location
@@ -45,11 +44,11 @@ std::uint8_t CPU8080::Flags::to_byte() {
 };
 
 void CPU8080::Flags::from_byte(uint8_t data) {
-  carry = data & 0x1;
-  parity = data & (1 << 2);
-  aux_carry = data & (1 << 4);
-  zero = data & (1 << 6);
-  sign = data & (1 << 7);
+  carry = data & 1;
+  parity = (data >> 2) & 1;
+  aux_carry = (data >> 4) & 1;
+  zero = (data >> 6) & 1;
+  sign = (data >> 7) & 1;
 }
 
 void CPU8080::step() {
@@ -130,12 +129,22 @@ void CPU8080::update_flags_szp(uint8_t byte) {
 }
 
 void CPU8080::execute(uint8_t opcode) {
+#ifdef DEBUG
+  char ch{0};
+  std::cout << "Next instruction: ";
+  print_instruction(opcode);
+  std::cout << "Execution paused, press Enter to continue... ";
+  std::cin.get(ch);
+#endif
+
   switch (opcode) {
     case 0x00:
       break;
-    case 0x01:
-      lxi(&registers_.reg_b, &registers_.reg_c, fetch_byte(), fetch_byte());
-      break;
+    case 0x01: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      lxi(&registers_.reg_b, &registers_.reg_c, b1, b2);
+    } break;
     case 0x02:
       stax(registers_.bc());
       break;
@@ -148,9 +157,11 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x05:
       dcr(&registers_.reg_b);
       break;
-    case 0x06:
-      mov(&registers_.reg_b, fetch_byte());
+    case 0x06: {
+      uint8_t b1 = fetch_byte();
+      mov(&registers_.reg_b, b1);
       break;
+    }
     case 0x07:  // RLC
       rlc();
       break;
@@ -171,22 +182,23 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x0D:
       dcr(&registers_.reg_c);
       break;
-    case 0x0E:
-      mov(&registers_.reg_c, fetch_byte());
-      break;
+    case 0x0E: {
+      uint8_t b1 = fetch_byte();
+      mov(&registers_.reg_c, b1);
+    } break;
     case 0x0F:
       rrc();
       break;
     case 0x10:
       break;
-    case 0x11:
-      lxi(&registers_.reg_d, &registers_.reg_e, fetch_byte(), fetch_byte());
-      break;
-    case 0x12: {
-      auto reg_pair =
-          static_cast<uint16_t>((registers_.reg_d << 8) | registers_.reg_e);
-      stax(reg_pair);
+    case 0x11: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      lxi(&registers_.reg_d, &registers_.reg_e, b1, b2);
     } break;
+    case 0x12:
+      stax(registers_.de());
+      break;
     case 0x13:
       inx(&registers_.reg_d, &registers_.reg_e);
       break;
@@ -196,9 +208,10 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x15:
       dcr(&registers_.reg_d);
       break;
-    case 0x16:
-      mov(&registers_.reg_d, fetch_byte());
-      break;
+    case 0x16: {
+      uint8_t b1 = fetch_byte();
+      mov(&registers_.reg_d, b1);
+    } break;
     case 0x17:
       ral();
       break;
@@ -219,20 +232,25 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x1D:
       dcr(&registers_.reg_e);
       break;
-    case 0x1E:
-      mov(&registers_.reg_e, fetch_byte());
-      break;
+    case 0x1E: {
+      uint8_t b1 = fetch_byte();
+      mov(&registers_.reg_e, b1);
+    } break;
     case 0x1F:
       rar();
       break;
     case 0x20:
       break;
-    case 0x21:
-      lxi(&registers_.reg_h, &registers_.reg_l, fetch_byte(), fetch_byte());
-      break;
-    case 0x22:
-      shld(fetch_byte(), fetch_byte());
-      break;
+    case 0x21: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      lxi(&registers_.reg_h, &registers_.reg_l, b1, b2);
+    } break;
+    case 0x22: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      shld(b1, b2);
+    } break;
     case 0x23:
       inx(&registers_.reg_h, &registers_.reg_l);
       break;
@@ -242,20 +260,22 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x25:
       dcr(&registers_.reg_h);
       break;
-    case 0x26:
-      mov(&registers_.reg_h, fetch_byte());
-      break;
+    case 0x26: {
+      uint8_t b1 = fetch_byte();
+      mov(&registers_.reg_h, b1);
+    } break;
     case 0x27:
-      std::cout << "DAA" << std::endl;
-      break;
+      // DAA
     case 0x28:
       break;
     case 0x29:
       dad(&registers_.reg_h, &registers_.reg_l);
       break;
-    case 0x2A:
-      lhld(fetch_byte(), fetch_byte());
-      break;
+    case 0x2A: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      lhld(b1, b2);
+    } break;
     case 0x2B:
       dcx(&registers_.reg_h, &registers_.reg_l);
       break;
@@ -265,20 +285,26 @@ void CPU8080::execute(uint8_t opcode) {
     case 0x2D:
       dcr(&registers_.reg_l);
       break;
-    case 0x2E:
-      mov(&registers_.reg_l, fetch_byte());
-      break;
+    case 0x2E: {
+      uint8_t b1 = fetch_byte();
+      mov(&registers_.reg_l, b1);
+    } break;
     case 0x2F:
       cma();
       break;
     case 0x30:
       break;
-    case 0x31:
-      lxi_sp(fetch_byte(), fetch_byte());
+    case 0x31: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      lxi_sp(b1, b2);
       break;
-    case 0x32:
-      sta(fetch_byte(), fetch_byte());
-      break;
+    }
+    case 0x32: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      sta(b1, b2);
+    } break;
     case 0x33:
       stack_pointer_ += 1;  // inx sp
       break;
@@ -296,9 +322,11 @@ void CPU8080::execute(uint8_t opcode) {
       dcr(&data);
       mem_access_->write(mem_location, data);
     } break;
-    case 0x36:
-      mem_access_->write(registers_.hl(), fetch_byte());
+    case 0x36: {
+      uint8_t b1 = fetch_byte();
+      mem_access_->write(registers_.hl(), b1);
       break;
+    }
     case 0x37:
       stc();
       break;
@@ -310,9 +338,11 @@ void CPU8080::execute(uint8_t opcode) {
       dad(&sp_high, &sp_low);
       stack_pointer_ = static_cast<uint16_t>((sp_high << 8) | sp_low);
     } break;
-    case 0x3A:
-      lda(fetch_byte(), fetch_byte());
-      break;
+    case 0x3A: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      lda(b1, b2);
+    } break;
     case 0x3B: {
       uint8_t sp_high = stack_pointer_ >> 8;
       uint8_t sp_low = stack_pointer_ | 0xFF;
@@ -326,8 +356,11 @@ void CPU8080::execute(uint8_t opcode) {
       dcr(&registers_.reg_a);
       break;
     case 0x3E:  // MVI A, D8
-      mov(&registers_.reg_a, fetch_byte());
+    {
+      uint8_t b1 = fetch_byte();
+      mov(&registers_.reg_a, b1);
       break;
+    }
     case 0x3F:
       cmc();
       break;
@@ -635,10 +668,9 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xA5:
       ana(registers_.reg_l);
       break;
-    case 0xA6: {
+    case 0xA6:
       ana(mem_access_->read(registers_.hl()));
       break;
-    }
     case 0xA7:
       ana(registers_.reg_a);
       break;
@@ -660,10 +692,9 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xAD:
       xra(registers_.reg_l);
       break;
-    case 0xAE: {
+    case 0xAE:
       xra(mem_access_->read(registers_.hl()));
       break;
-    }
     case 0xAF:
       xra(registers_.reg_a);
       break;
@@ -725,21 +756,30 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xC1:
       pop(&registers_.reg_b, &registers_.reg_c);
       break;
-    case 0xC2:
-      jmp(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
+    case 0xC2: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kNotZero, b1, b2);
+    } break;
+    case 0xC3: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kTrue, b1, b2);
       break;
-    case 0xC3:
-      jmp(JumpCondition::kTrue, fetch_byte(), fetch_byte());
-      break;
-    case 0xC4:
-      call(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
-      break;
+    }
+    case 0xC4: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kNotZero, b1, b2);
+    } break;
     case 0xC5:
       push(registers_.reg_b, registers_.reg_c);
       break;
-    case 0xC6:
-      add(fetch_byte());
+    case 0xC6: {
+      uint8_t b1 = fetch_byte();
+      add(b1);
       break;
+    }
     case 0xC7:
       rst((opcode >> 3) & 0b0000'0111);
       break;
@@ -749,18 +789,29 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xC9:
       ret(JumpCondition::kTrue);
       break;
-    case 0xCA:
-      jmp(JumpCondition::kZero, fetch_byte(), fetch_byte());
+    case 0xCA: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kZero, b1, b2);
       break;
-    case 0xCB:
-      jmp(JumpCondition::kTrue, fetch_byte(), fetch_byte());
+    }
+    case 0xCB: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kTrue, b1, b2);
       break;
-    case 0xCC:
-      call(JumpCondition::kZero, fetch_byte(), fetch_byte());
+    }
+    case 0xCC: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kZero, b1, b2);
+    } break;
+    case 0xCD: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kTrue, b1, b2);
       break;
-    case 0xCD:
-      call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
-      break;
+    }
     case 0xCE:
       ana(fetch_byte());
       break;
@@ -773,15 +824,20 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xD1:
       pop(&registers_.reg_d, &registers_.reg_e);
       break;
-    case 0xD2:
-      jmp(JumpCondition::kNotZero, fetch_byte(), fetch_byte());
+    case 0xD2: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kNotCarry, b1, b2);
       break;
+    }
     case 0xD3:
-      print_hex_byte(fetch_byte());
       break;
-    case 0xD4:
-      call(JumpCondition::kNotCarry, fetch_byte(), fetch_byte());
+    case 0xD4: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kNotCarry, b1, b2);
       break;
+    }
     case 0xD5:
       push(registers_.reg_d, registers_.reg_e);
       break;
@@ -797,18 +853,26 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xD9:
       ret(JumpCondition::kTrue);
       break;
-    case 0xDA:
-      jmp(JumpCondition::kCarry, fetch_byte(), fetch_byte());
+    case 0xDA: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kCarry, b1, b2);
       break;
+    }
     case 0xDB:  // IN instruction + D8 (input port number)
       in(fetch_byte());
       break;
-    case 0xDC:
-      call(JumpCondition::kCarry, fetch_byte(), fetch_byte());
+    case 0xDC: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kCarry, b1, b2);
+    } break;
+    case 0xDD: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kTrue, b1, b2);
       break;
-    case 0xDD:
-      call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
-      break;
+    }
     case 0xDE:
       sbb(fetch_byte());
       break;
@@ -821,15 +885,20 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xE1:
       pop(&registers_.reg_h, &registers_.reg_l);
       break;
-    case 0xE2:
-      jmp(JumpCondition::kParityOdd, fetch_byte(), fetch_byte());
+    case 0xE2: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kParityOdd, b1, b2);
       break;
+    }
     case 0xE3:
       xthl();
       break;
-    case 0xE4:
-      call(JumpCondition::kParityOdd, fetch_byte(), fetch_byte());
-      break;
+    case 0xE4: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kParityOdd, b1, b2);
+    } break;
     case 0xE5:
       push(registers_.reg_h, registers_.reg_l);
       break;
@@ -845,21 +914,31 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xE9:
       pchl();
       break;
-    case 0xEA:
-      jmp(JumpCondition::kParityEven, fetch_byte(), fetch_byte());
-      break;
+    case 0xEA: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kParityEven, b1, b2);
+    } break;
     case 0xEB:
       xchg();
       break;
-    case 0xEC:
-      call(JumpCondition::kParityEven, fetch_byte(), fetch_byte());
+    case 0xEC: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kParityEven, b1, b2);
       break;
-    case 0xED:
-      call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
+    }
+    case 0xED: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kTrue, b1, b2);
       break;
-    case 0xEE:
-      xra(fetch_byte());
+    }
+    case 0xEE: {
+      uint8_t b1 = fetch_byte();
+      xra(b1);
       break;
+    }
     case 0xEF:
       rst((opcode >> 3) & 0b0000'0111);
       break;
@@ -872,15 +951,19 @@ void CPU8080::execute(uint8_t opcode) {
       flags_.from_byte(temp_flags);
       break;
     }
-    case 0xF2:
-      jmp(JumpCondition::kPositive, fetch_byte(), fetch_byte());
-      break;
+    case 0xF2: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kPositive, b1, b2);
+    } break;
     case 0xF3:
       di();
       break;
-    case 0xF4:
-      call(JumpCondition::kPositive, fetch_byte(), fetch_byte());
-      break;
+    case 0xF4: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kPositive, b1, b2);
+    } break;
     case 0xF5:
       push(registers_.reg_a, flags_.to_byte());
       break;
@@ -896,18 +979,24 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xF9:
       sphl();
       break;
-    case 0xFA:
-      jmp(JumpCondition::kMinus, fetch_byte(), fetch_byte());
-      break;
+    case 0xFA: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      jmp(JumpCondition::kMinus, b1, b2);
+    } break;
     case 0xFB:
       ei();
       break;
-    case 0xFC:
-      call(JumpCondition::kMinus, fetch_byte(), fetch_byte());
-      break;
-    case 0xFD:
-      call(JumpCondition::kTrue, fetch_byte(), fetch_byte());
-      break;
+    case 0xFC: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kMinus, b1, b2);
+    } break;
+    case 0xFD: {
+      uint8_t b1 = fetch_byte();
+      uint8_t b2 = fetch_byte();
+      call(JumpCondition::kTrue, b1, b2);
+    } break;
     case 0xFE:
       cpi(fetch_byte());
       break;
@@ -918,5 +1007,8 @@ void CPU8080::execute(uint8_t opcode) {
       std::cerr << "CPU8080:execute() : default case for opcode switch\n";
       break;
   }
+#ifdef DEBUG
+  print_debug();
+#endif
 }
 }  // namespace intel_8080

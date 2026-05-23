@@ -11,7 +11,10 @@ TEST_CASE("Testing INR B: B += 1") {
       std::make_shared<input::InputHandler>();
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
-  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem, input_handler, mixer);
+  std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr =
+      std::make_shared<hardware::ShiftRegister>(hardware::ShiftRegister());
+  intel_8080::CPU8080 emu =
+      intel_8080::CPU8080(mem, input_handler, mixer, shift_reg_ptr);
 
   SUBCASE("Incrementing B from 0 to 1") {
     std::vector<uint8_t> data = {0x04};
@@ -54,5 +57,7 @@ TEST_CASE("Testing INR B: B += 1") {
     CHECK_EQ(state.flags.zero, 1);
     CHECK_EQ(state.flags.parity, 1);
     CHECK_EQ(state.flags.carry, 0);
+    CHECK_EQ(state.flags.aux_carry, 0);
+    CHECK_EQ(state.flags.to_byte(), 0b0100'0110);
   }
 }

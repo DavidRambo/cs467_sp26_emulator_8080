@@ -20,6 +20,8 @@ class GameWindow {
   ~GameWindow();
   void UpdateDisplayTop(const std::vector<SDL_FPoint>& points);
   void UpdateDisplayBottom(const std::vector<SDL_FPoint>& points);
+
+  void UpdateDisplay(const std::vector<SDL_FPoint>& points);
 };
 }  // namespace graphics_display
 #endif

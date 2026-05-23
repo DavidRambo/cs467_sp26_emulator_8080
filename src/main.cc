@@ -11,9 +11,17 @@
 #include "SpaceInvadersVRamDecoder.h"
 
 int main(int argc, char* argv[]) {
-  if (argc != 5) {
-    std::cout << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g "
-              << "invaders.f invaders.e\n";
+  // if (argc > 5) {
+  //   std::cerr << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g
+  //   "
+  //                "invaders.f invaders.e\n";
+  //                }
+  if (argc > 2) {
+#ifdef DEBUG
+    std::cerr << "Too many arguments. Use: ./emu8080 invaders 1>outpt.txt "
+                 "2>err.txt\n";
+#endif
+    std::cerr << "Too many arguments. Use: ./emu8080 invaders\n";
     return 1;
   }
 
@@ -30,15 +38,19 @@ int main(int argc, char* argv[]) {
       std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
 
   // Load ROM
-  // mem->load_rom(argv[1]); // invaders ROM as one file
-  mem->load_rom_at_addr(argv[1], 0);       // invaders.h
-  mem->load_rom_at_addr(argv[2], 0x800);   // invaders.g
-  mem->load_rom_at_addr(argv[3], 0x1000);  // invaders.f
-  mem->load_rom_at_addr(argv[4], 0x1800);  // invaders.e
+  mem->load_rom(argv[1]);  // invaders ROM as one file
+
+  mem->fill_vram();
 
   // Create GameWindow
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
       kWindowWidth, kWindowHeight, "Space Invaders");
+
+  std::vector<SDL_FPoint> points;
+  space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
+  game_window.UpdateDisplay(points);
+
+  SDL_Delay(3000);
 
   std::shared_ptr<audio::Mixer> mixer =
       std::make_shared<audio::Mixer>(audio::Mixer());
@@ -56,28 +68,25 @@ int main(int argc, char* argv[]) {
   // Main loop
   bool running{true};
   Uint64 last_time{0};
-  std::vector<SDL_FPoint> points;
   while (running) {
     Uint64 start_tick = SDL_GetTicks();
-
-    if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
-      running = false;
-      continue;
-    }
 
     // Run CPU for 16 ms to approximate 60 fps.
     Uint64 current_tick = SDL_GetTicks();
     while (current_tick < start_tick + 16) {
+      if (input_handler->PollForEvents() != SDL_APP_CONTINUE) {
+        running = false;
+        break;
+      }
       cpu.step();
+
       current_tick = SDL_GetTicks();
     }
 
     // Update display
-    game_window.UpdateDisplayTop(space_invaders_vram_decoder::DecodeTopPixels(
-        points, mem->get_vram_span()));
-    game_window.UpdateDisplayBottom(
-        space_invaders_vram_decoder::DecodeTopPixels(points,
-                                                     mem->get_vram_span()));
+    std::vector<SDL_FPoint> points;
+    space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
+    game_window.UpdateDisplay(points);
   }
 
   // Shut down application.
