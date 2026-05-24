@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 
   // Initialize and fill memory first, so it can be passed to the GameWindow.
   std::shared_ptr<intel_8080::Memory8080> mem =
-      std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
+      std::make_shared<intel_8080::Memory8080>();
 
   // Load ROM
   mem->load_rom(argv[1]);  // invaders ROM as one file
@@ -49,10 +49,10 @@ int main(int argc, char* argv[]) {
   game_window.UpdateDisplay(points);
 
   std::shared_ptr<audio::Mixer> mixer =
-      std::make_shared<audio::Mixer>(audio::Mixer());
+      std::make_shared<audio::Mixer>();
 
   std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr =
-      std::make_shared<hardware::ShiftRegister>(hardware::ShiftRegister());
+      std::make_shared<hardware::ShiftRegister>();
 
   // Shared with cpu and main loop for event polling.
   std::shared_ptr<input::InputHandler> input_handler =
