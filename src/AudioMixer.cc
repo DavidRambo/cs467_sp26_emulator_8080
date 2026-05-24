@@ -25,12 +25,12 @@ void Mixer::Load() {
   constexpr std::array kSounds{
       // clang-format off
     //          Sound ID              File                Looping
-    SoundEffect{.id_=SoundId::kBackground, .file_="../assets/background.wav",   .looping_=true},
-    SoundEffect{.id_=SoundId::kExplosion,  .file_="../assets/explosion.wav",    .looping_=false},
-    SoundEffect{.id_=SoundId::kInvaderHit, .file_="../assets/invader_hit.wav",  .looping_=false},
-    SoundEffect{.id_=SoundId::kTorpedo,    .file_="../assets/torpedo.wav",      .looping_=false},
-    SoundEffect{.id_=SoundId::kUfoHit,     .file_="../assets/ufo_hit.wav",      .looping_=false},
-    SoundEffect{.id_=SoundId::kUfo,        .file_="../assets/ufo.wav",          .looping_=true},
+    SoundEffect{.id_=SoundId::kBackground, .file_="assets/audio/background.wav",   .looping_=true},
+    SoundEffect{.id_=SoundId::kExplosion,  .file_="assets/audio/explosion.wav",    .looping_=false},
+    SoundEffect{.id_=SoundId::kInvaderHit, .file_="assets/audio/invader_hit.wav",  .looping_=false},
+    SoundEffect{.id_=SoundId::kTorpedo,    .file_="assets/audio/torpedo.wav",      .looping_=false},
+    SoundEffect{.id_=SoundId::kUfoHit,     .file_="assets/audio/ufo_hit.wav",      .looping_=false},
+    SoundEffect{.id_=SoundId::kUfo,        .file_="assets/audio/ufo.wav",          .looping_=true},
       // clang-format on
   };
 
