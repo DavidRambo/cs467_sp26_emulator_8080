@@ -143,17 +143,17 @@ void CPU8080::execute(uint8_t opcode) {
 #endif
 
   switch (opcode) {
-    case 0x00:
+    case 0x00:  // NOP
       break;
-    case 0x01: {  // NOP
+    case 0x01: {  // LXI B,d16
       uint8_t b1 = fetch_byte();
       uint8_t b2 = fetch_byte();
       lxi(&registers_.reg_b, &registers_.reg_c, b1, b2);
     } break;
-    case 0x02:  // LXI B,d16
+    case 0x02:  // STAX B
       stax(registers_.bc());
       break;
-    case 0x03:  // STAX B
+    case 0x03:  // INX B
       inx(&registers_.reg_b, &registers_.reg_c);
       break;
     case 0x04:  // INR B: B += 1 flags
@@ -269,8 +269,9 @@ void CPU8080::execute(uint8_t opcode) {
       uint8_t b1 = fetch_byte();
       mov(&registers_.reg_h, b1);
     } break;
-    case 0x27:
-      // DAA: Not implementing
+    case 0x27:  // DAA
+      daa();
+      break;
     case 0x28:  // *NOP
       break;
     case 0x29:  // DAD H
@@ -314,15 +315,13 @@ void CPU8080::execute(uint8_t opcode) {
       stack_pointer_ += 1;  // inx sp
       break;
     case 0x34: {  // INR M
-      auto mem_location =
-          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      auto mem_location = static_cast<uint16_t>(registers_.hl());
       uint8_t data = mem_access_->read(mem_location);
       inr(&data);
       mem_access_->write(mem_location, data);
     } break;
     case 0x35: {  // DCR M
-      auto mem_location =
-          static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+      auto mem_location = static_cast<uint16_t>(registers_.hl());
       uint8_t data = mem_access_->read(registers_.hl());
       dcr(&data);
       mem_access_->write(mem_location, data);
@@ -683,7 +682,7 @@ void CPU8080::execute(uint8_t opcode) {
     case 0xA8:  // XRA B
       xra(registers_.reg_b);
       break;
-    case 0xA9:  // =XRA C
+    case 0xA9:  // XRA C
       xra(registers_.reg_c);
       break;
     case 0xAA:  // XRA D
@@ -819,7 +818,7 @@ void CPU8080::execute(uint8_t opcode) {
       break;
     }
     case 0xCE:  // ACI d8
-      ana(fetch_byte());
+      adc(fetch_byte());
       break;
     case 0xCF:                           // RST 1
       rst((opcode >> 3) & 0b0000'0111);  // RST 1

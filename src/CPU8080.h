@@ -150,6 +150,7 @@ class CPU8080 {
   void di();
   void hlt();
   bool check_jump_condition(JumpCondition jump_condition) const;
+  void daa();
 
   // State
   Flags flags_;
