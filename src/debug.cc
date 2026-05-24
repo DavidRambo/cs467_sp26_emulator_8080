@@ -791,7 +791,7 @@ void CPU8080::print_instruction(uint8_t opcode) {
       std::cout << "\n";
       break;
     case 0xCD:
-      std::cout << "CALL to";
+      std::cout << "CALL to ";
       print_hex_byte(b2);
       print_hex_byte(b1);
       std::cout << "\n";
