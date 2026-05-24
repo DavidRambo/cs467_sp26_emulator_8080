@@ -53,6 +53,7 @@ void CPU8080::Flags::from_byte(uint8_t data) {
 void CPU8080::step() {
   uint8_t instruction;
   if (!interrupt_queue_.empty() && INTE_) {
+    di();  // Disable interrupts. The subroutine will re-enable.
     instruction = interrupt_queue_.front();
     interrupt_queue_.pop();
   } else {
@@ -128,6 +129,8 @@ void CPU8080::update_flags_szp(uint8_t byte) {
   flags_.sign = ((byte & 0b1000'0000) == 0b1000'0000);
   update_parity(byte);
 }
+
+void CPU8080::queue_interrupt(uint8_t opcode) { interrupt_queue_.push(opcode); }
 
 void CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG_STATE

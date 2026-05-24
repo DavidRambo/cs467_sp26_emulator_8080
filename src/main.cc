@@ -92,8 +92,9 @@ int main(int argc, char* argv[]) {
     std::cout << "RST 1\n";
 #endif
 
-    // Trigger first half of screen update with RST + 8, which has exp = 1.
-    cpu.rst(1);
+    // Trigger interrupt for first half of screen update with RST + 8, which has
+    // exp = 1.
+    cpu.queue_interrupt(0xCF);
 
     // Run CPU for another 8 ms to approximate the "second half" of 60 fps.
     while (cpu.is_not_stopped() && current_tick < start_tick + 8) {
@@ -105,8 +106,9 @@ int main(int argc, char* argv[]) {
     std::cout << "RST 2\n";
 #endif
 
-    // Trigger first half of screen update with RST + 10, which has exp = 2.
-    cpu.rst(2);
+    // Trigger interrupt for second half of screen update with RST + 10, which
+    // has exp = 2.
+    cpu.queue_interrupt(0xD7);
 
     // Update display
     space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
