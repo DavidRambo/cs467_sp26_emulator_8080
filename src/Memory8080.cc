@@ -44,13 +44,9 @@ void intel_8080::Memory8080::write(uint16_t mem_location, uint8_t data) {
   }
 #ifdef DEBUG
   std::cout << "WRITING MEM addr: ";
-#endif
   print_hex_word(mem_location);
-#ifdef DEBUG
   std::cout << "; data: ";
-#endif
   print_hex_word(static_cast<uint16_t>(data));
-#ifdef DEBUG
   std::cout << "\n";
 #endif
   mem_buffer_[mem_location] = data;
