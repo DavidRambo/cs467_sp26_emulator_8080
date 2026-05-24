@@ -161,7 +161,7 @@ class CPU8080 {
   bool halted_;
 
   // Address Spaces
-  std::queue<uint8_t> interupt_queue_;
+  std::queue<uint8_t> interrupt_queue_;
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
   std::shared_ptr<input::InputHandler> input_handler_;
   std::shared_ptr<audio::Mixer> mixer_;

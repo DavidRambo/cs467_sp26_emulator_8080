@@ -52,9 +52,9 @@ void CPU8080::Flags::from_byte(uint8_t data) {
 
 void CPU8080::step() {
   uint8_t instruction;
-  if (!interupt_queue_.empty() && INTE_) {
-    instruction = interupt_queue_.front();
-    interupt_queue_.pop();
+  if (!interrupt_queue_.empty() && INTE_) {
+    instruction = interrupt_queue_.front();
+    interrupt_queue_.pop();
   } else {
     instruction = fetch_byte();
   }
