@@ -27,8 +27,8 @@ void CPU8080::print_debug() {
   print_hex_word(state.stack_pointer);
   std::cout << "\n";
   std::cout << "Addr at SP = ";
-  uint8_t low_byte = mem_access_->read(state.stack_pointer);
-  uint8_t high_byte = mem_access_->read(state.stack_pointer + 1);
+  uint8_t high_byte = mem_access_->read(state.stack_pointer);
+  uint8_t low_byte = mem_access_->read(state.stack_pointer + 1);
   auto addr = static_cast<uint16_t>((high_byte << 8) | low_byte);
   print_hex_word(addr);
   std::cout << "\n";
