@@ -1016,6 +1016,9 @@ void CPU8080::execute(uint8_t opcode) {
       std::cerr << "CPU8080:execute() : default case for opcode switch\n";
       break;
   }
+#ifdef DEBUG
+  print_debug();
+#endif
 #ifdef DEBUG_STATE
   print_debug();
 #endif
