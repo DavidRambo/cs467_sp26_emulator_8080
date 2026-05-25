@@ -53,8 +53,8 @@ void DecodeBottomPixels(std::vector<SDL_FPoint>& points, const char* data) {
 // (0,0). Rotated, this would be perceived as the bottom-left pixel by the
 // player. Since we're using SDL3 to create a window that matches the rotated
 // dimensions, this function maps the video data to the rotated pixels.
-// Accordingly, the memory can be represented accordingly, where the bracketed
-// numbers are the bits:
+// The memory can be represented accordingly, where the bracketed numbers are
+// the bits:
 //
 // 0x241F[7] ...           0x3FFF[7]
 // ...
