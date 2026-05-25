@@ -65,6 +65,11 @@ TEST_CASE("Testing ALU Instructions") {
     CHECK_EQ(state.flags.sign, 0);
   }
   SUBCASE("Testing SBB") {
+    // Manual's example:
+    // MVI A, 0x4
+    // MVI L, 0x2
+    // STC (sets carry to 1)
+    // SBB L (A - (L with borrow, i.e. + carry bit))
     std::vector<uint8_t> data = {0x3E, 0x04, 0x2E, 0x02, 0x37, 0x9D};
     mem->load_data(data);
 
@@ -77,7 +82,7 @@ TEST_CASE("Testing ALU Instructions") {
 
     CHECK_EQ(state.registers.reg_a, 0x01);
     CHECK_EQ(state.flags.zero, 0);
-    CHECK_EQ(state.flags.carry, 1);
+    CHECK_EQ(state.flags.carry, 0);
     CHECK_EQ(state.flags.parity, 0);
     CHECK_EQ(state.flags.sign, 0);
   }
