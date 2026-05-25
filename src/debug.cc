@@ -57,7 +57,7 @@ void CPU8080::print_debug() {
   std::cout << "Zero: " << +state.flags.zero << "\n";
   std::cout << "Parity: " << +state.flags.parity << "\n";
   std::cout << "Carry: " << +state.flags.carry << "\n";
-  std::cout << "Aux Carry: " << +state.flags.aux_carry << "\n";
+  std::cout << "Aux Carry: " << +state.flags.aux_carry << "\n\n";
 }
 
 void CPU8080::print_instruction(uint8_t opcode) {
