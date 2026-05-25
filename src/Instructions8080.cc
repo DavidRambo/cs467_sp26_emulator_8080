@@ -190,12 +190,11 @@ void CPU8080::ora(uint8_t data) {
   update_flags_szp(registers_.reg_a);
 }
 
-// CPI: Compare Immediate with AccumulatorHow to separate the high byte and the
-// low byte from a 16bit value? Performs a comparison by subtracting a data byte
-// from the accumulator without updating the accumulator and checking the
-// condition bits. Zero flag is set if the are equal, reset otherwise. Carry bit
-// is set if data is larger than accumulator. Flags affected: Carry, Zero, Sign,
-// Parity
+// CPI: Compare Immediate with Accumulator
+// Performs a comparison by subtracting a data byte from the accumulator without
+// updating the accumulator and checking the condition bits. Zero flag is set if
+// they are equal, reset otherwise. Carry bit is set if data is larger than
+// accumulator. Flags affected: Carry, Zero, Sign, Parity, Aux Carry
 void CPU8080::cpi(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
   flags_.aux_carry = (registers_.reg_a & 0x0F) < (data & 0x0F);
@@ -323,13 +322,22 @@ void CPU8080::xchg() {
   std::swap(registers_.reg_l, registers_.reg_e);
 }
 
+// XTHL Exchange Stack
+// "The contents of the L register are exchanged with the contents of the memory
+// byte whose address is held in the stack pointer SP. The contents of the H
+// register are exchanged with the contents of the memory byte whose address is
+// one greater than that held in the stack pointer" (Programmer's Manual 25).
 void CPU8080::xthl() {
-  uint8_t byte_2 = mem_access_->read(stack_pointer_);
-  uint8_t byte_1 = mem_access_->read(stack_pointer_ + 1);
-  mem_access_->write(stack_pointer_ + 1, registers_.reg_l);
-  mem_access_->write(stack_pointer_, registers_.reg_h);
-  registers_.reg_h = byte_1;
-  registers_.reg_l = byte_2;
+  uint8_t byte_for_l = mem_access_->read(stack_pointer_);      // -> L
+  uint8_t byte_for_h = mem_access_->read(stack_pointer_ + 1);  // -> H
+
+  // Note that these are switched from the Manual's description, which is shown
+  // in comments.
+  mem_access_->write(stack_pointer_, registers_.reg_h);      // L -> M[SP]
+  mem_access_->write(stack_pointer_ + 1, registers_.reg_l);  // H -> M[SP+1]
+
+  registers_.reg_h = byte_for_h;
+  registers_.reg_l = byte_for_l;
 }
 
 void CPU8080::sphl() {
