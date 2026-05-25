@@ -326,8 +326,8 @@ void CPU8080::xchg() {
 void CPU8080::xthl() {
   uint8_t byte_2 = mem_access_->read(stack_pointer_);
   uint8_t byte_1 = mem_access_->read(stack_pointer_ + 1);
-  mem_access_->write(stack_pointer_, registers_.reg_l);
-  mem_access_->write(stack_pointer_ + 1, registers_.reg_h);
+  mem_access_->write(stack_pointer_ + 1, registers_.reg_l);
+  mem_access_->write(stack_pointer_, registers_.reg_h);
   registers_.reg_h = byte_1;
   registers_.reg_l = byte_2;
 }
@@ -376,8 +376,11 @@ void CPU8080::pchl() {
 }
 
 void CPU8080::daa() {
-  uint8_t low_nibble = registers_.reg_a & 0x0F;
-  uint8_t high_nibble = (registers_.reg_a >> 4) & 0x0F;
+  uint8_t first_digit = registers_.reg_a % 10;
+  uint8_t second_digit = (registers_.reg_a / 10) % 10;
+
+  uint8_t low_nibble = first_digit & 0x0F;
+  uint8_t high_nibble = (second_digit) & 0x0F;
   if (low_nibble > 9 || flags_.aux_carry == 1) {
     low_nibble += 6;
     flags_.aux_carry =
