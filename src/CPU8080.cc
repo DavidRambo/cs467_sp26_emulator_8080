@@ -139,6 +139,18 @@ void CPU8080::update_aux_carry_add(uint8_t x, uint8_t y) {
   flags_.aux_carry = result > 0xF;
 }
 
+// Updates the auxiliary carry bit based on the subtraction of two four-bit
+// numbers. If a carry out from bit 3 occurs when subtracting the least
+// significant four bits of y from those of x, then the aux carry flag should be
+// set. This can be checked using two's complement arithemetic.
+void CPU8080::update_aux_carry_sub(uint8_t x, uint8_t y) {
+  x &= 0xF;
+  y &= 0xF;
+  y = ~y;
+  uint16_t res = x + y;
+  flags_.aux_carry = res > 0xFF;
+}
+
 void CPU8080::queue_interrupt(uint8_t opcode) { interrupt_queue_.push(opcode); }
 
 void CPU8080::execute(uint8_t opcode) {

@@ -98,6 +98,8 @@ class CPU8080 {
 
   void update_aux_carry_add(uint8_t x, uint8_t y);
 
+  void update_aux_carry_sub(uint8_t x, uint8_t y);
+
   void update_flags_szp(uint8_t byte);
 
   void update_parity(uint8_t byte);
