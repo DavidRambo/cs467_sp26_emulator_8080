@@ -1,6 +1,7 @@
 #include "GameWindow.h"
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
 
 #include <cstdlib>
 
@@ -18,6 +19,9 @@ GameWindow::GameWindow(int windowWidth, int windowHeight,
     std::exit(1);
     // return SDL_APP_FAILURE;
   }
+
+  SDL_SetRenderLogicalPresentation(renderer_, windowWidth, windowHeight,
+                                   SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
   SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer_);

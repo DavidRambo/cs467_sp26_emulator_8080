@@ -1,5 +1,4 @@
 #include "Memory8080.h"
-#include "CPU8080.h"
 
 #include <algorithm>
 #include <array>
@@ -11,6 +10,8 @@
 #include <ostream>
 #include <string>
 #include <vector>
+
+#include "CPU8080.h"
 
 intel_8080::Memory8080::Memory8080() : mem_buffer_{} {
   mem_buffer_.fill(0x00);
@@ -41,11 +42,13 @@ void intel_8080::Memory8080::write(uint16_t mem_location, uint8_t data) {
   if (mem_location <= end_of_ROM_) {
     return;
   }
+#ifdef DEBUG
   std::cout << "WRITING MEM addr: ";
   print_hex_word(mem_location);
   std::cout << "; data: ";
   print_hex_word(static_cast<uint16_t>(data));
   std::cout << "\n";
+#endif
   mem_buffer_[mem_location] = data;
 }
 

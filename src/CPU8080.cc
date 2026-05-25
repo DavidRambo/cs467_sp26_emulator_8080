@@ -1019,8 +1019,5 @@ void CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG
   print_debug();
 #endif
-#ifdef DEBUG_STATE
-  print_debug();
-#endif
 }
 }  // namespace intel_8080
