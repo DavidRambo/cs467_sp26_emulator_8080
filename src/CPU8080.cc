@@ -149,7 +149,13 @@ void CPU8080::update_aux_carry_sub(uint8_t x, uint8_t y) {
   flags_.aux_carry = res > 0xFF;
 }
 
-void CPU8080::queue_interrupt(uint8_t opcode) { interrupt_queue_.push(opcode); }
+void CPU8080::queue_interrupt(uint8_t opcode) {
+  interrupt_queue_.push(opcode);
+
+  // CPU enters a STOPPED state to await an interrupt.
+  // Main loop checks for halted_ while the CPU is stepping.
+  halted_ = false;
+}
 
 void CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG_STATE

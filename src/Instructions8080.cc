@@ -486,10 +486,6 @@ void CPU8080::rst(uint8_t exp) {
   uint8_t high_byte = (mem_address >> 8) & 0xFF;
 
   call(JumpCondition::kTrue, low_byte, high_byte);
-
-  // CPU enters a STOPPED state to await an interrupt.
-  // Main loop checks for halted_ while the CPU is stepping.
-  halted_ = false;
 }
 
 void CPU8080::ei() { INTE_ = true; }
