@@ -375,20 +375,30 @@ void CPU8080::pchl() {
   program_counter_ = mem_location;
 }
 
+// DAA Decimal Adjust Accumulator
+// "The eight-bit hexadecimal number in the accumulator is adjusted to form two
+// four-bit binary-coded decimal digits" over two steps:
+// 1. If the lower four bits are > 9 or the aux carry bit is 1, then add 6 to
+// the accumulator (not the lower bits). Aux carry bit is set if there is a
+// carry out from those four bits.
+// 2. Then, if the four higher bits (taken now) are > 9 or the normal carry bit
+// is 1, then add 6 to the higher bits of the accumulator. Carry bit is set if
+// there is a carry out from those four bits.
 void CPU8080::daa() {
   uint8_t low_nibble = registers_.reg_a & 0x0F;
-  uint8_t high_nibble = (registers_.reg_a >> 4) & 0x0F;
   if (low_nibble > 9 || flags_.aux_carry == 1) {
+    registers_.reg_a += 6;
     low_nibble += 6;
     flags_.aux_carry =
         low_nibble > 0x0F;  // Sets aux carry if low_nibble carries out
   }
+
+  uint8_t high_nibble = (registers_.reg_a >> 4) & 0x0F;
   if (high_nibble > 9 || flags_.carry == 1) {
+    registers_.reg_a += 0x60;
     high_nibble += 6;
     flags_.carry = high_nibble > 0x0F;
   }
-
-  registers_.reg_a = ((high_nibble & 0x0F) << 4) | (low_nibble & 0x0F);
 }
 
 // JUMP Instructions
