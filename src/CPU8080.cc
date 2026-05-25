@@ -132,11 +132,9 @@ void CPU8080::update_flags_szp(uint8_t byte) {
 
 // Updates the auxiliary carry bit based on the addition of two four-bit
 // numbers.
-void CPU8080::update_aux_carry_add(uint8_t x, uint8_t y) {
-  x &= 0xF;
-  y &= 0xF;
-  uint8_t result = x + y;
-  flags_.aux_carry = result > 0xF;
+void CPU8080::update_aux_carry_add(uint8_t x, uint8_t y, bool with_carry) {
+  uint8_t carry = with_carry ? flags_.carry : 0;
+  flags_.aux_carry = ((x & 0xF) + (y & 0xF)) > 0xF;
 }
 
 // Updates the auxiliary carry bit based on the subtraction of two four-bit

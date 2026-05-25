@@ -119,10 +119,10 @@ void CPU8080::cma() { registers_.reg_a = ~registers_.reg_a; }
 // complement arithmetic Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::add(uint8_t data) {
   uint16_t result = registers_.reg_a + data;
+  update_aux_carry_sub(registers_.reg_a, data, false);
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
-  update_aux_carry_add(registers_.reg_a, data);
 }
 
 // ADC: Add Register or Memory To Accumulator w/ Carry
