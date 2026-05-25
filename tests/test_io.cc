@@ -22,7 +22,7 @@ TEST_CASE("Test IN input instruction with InputHandler") {
 
   SUBCASE("Player 1 Start") {
     // Player 1 start = Port 1 bit 2
-    input_handler->HandleKeyPress(SDL_SCANCODE_KP_ENTER);
+    input_handler->HandleKeyPress(SDL_SCANCODE_RETURN);
 
     emu.step();
     intel_8080::CPU8080::State state = emu.get_state();
