@@ -50,7 +50,7 @@ void CPU8080::out(uint8_t port_no) {
 // Condition bits affected: Zero, Sign, Parity, Aux Carry
 void CPU8080::inr(uint8_t* reg) {
   uint8_t result = *reg + 1;
-  flags_.aux_carry = (*reg & 0x0F) == 0x0F;
+  update_aux_carry_add(*reg, 1, false);
   *reg = result;
   update_flags_szp(*reg);
 }
@@ -104,7 +104,7 @@ void CPU8080::stc() { flags_.carry = 1; }
 // Flags affected: Zero, Sign, Parity, Aux Carry.
 void CPU8080::dcr(uint8_t* reg) {
   uint8_t result = *reg - 1;
-  flags_.aux_carry = ((*reg & 0x0F) == 0x00);
+  update_aux_carry_sub(*reg, 1, false);
   *reg = result;
   update_flags_szp(*reg);
 }
@@ -119,7 +119,7 @@ void CPU8080::cma() { registers_.reg_a = ~registers_.reg_a; }
 // complement arithmetic Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::add(uint8_t data) {
   uint16_t result = registers_.reg_a + data;
-  update_aux_carry_sub(registers_.reg_a, data, false);
+  update_aux_carry_add(registers_.reg_a, data, false);
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
@@ -130,8 +130,7 @@ void CPU8080::add(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::adc(uint8_t data) {
   uint16_t result = registers_.reg_a + data + flags_.carry;
-  flags_.aux_carry =
-      ((registers_.reg_a & 0x0F) + (data & 0x0F) + flags_.carry) > 0x0F;
+  update_aux_carry_add(registers_.reg_a, data, true);
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
@@ -142,7 +141,7 @@ void CPU8080::adc(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sub(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.aux_carry = (registers_.reg_a & 0x0F) < (data & 0x0F);
+  update_aux_carry_sub(registers_.reg_a, data, false);
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
@@ -154,7 +153,7 @@ void CPU8080::sub(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sbb(uint8_t data) {
   uint16_t result = registers_.reg_a - (data + flags_.carry);
-  flags_.aux_carry = (registers_.reg_a & 0x0F) < ((data & 0x0F) + flags_.carry);
+  update_aux_carry_sub(registers_.reg_a, data, true);
   flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
@@ -197,9 +196,9 @@ void CPU8080::ora(uint8_t data) {
 // accumulator. Flags affected: Carry, Zero, Sign, Parity, Aux Carry
 void CPU8080::cpi(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.aux_carry = (registers_.reg_a & 0x0F) < (data & 0x0F);
   flags_.carry = (result > 0xFF);
   update_flags_szp(static_cast<uint8_t>(result));
+  update_aux_carry_sub(registers_.reg_a, data, false);
 }
 
 // CMP: Compare Register or Memory w/ Accumulator
@@ -209,7 +208,7 @@ void CPU8080::cpi(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::cmp(uint8_t data) {
   flags_.carry = data > registers_.reg_a;
-  flags_.aux_carry = (registers_.reg_a & 0x0F) < (data & 0x0F);
+  update_aux_carry_sub(registers_.reg_a, data, false);
   uint16_t result = registers_.reg_a - data;
   update_flags_szp(static_cast<uint8_t>(result));
 }
