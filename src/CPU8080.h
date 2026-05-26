@@ -96,6 +96,10 @@ class CPU8080 {
 
   void execute(std::uint8_t opcode);
 
+  void update_aux_carry_add(uint8_t x, uint8_t y, bool with_carry);
+
+  void update_aux_carry_sub(uint8_t x, uint8_t y, bool with_carry);
+
   void update_flags_szp(uint8_t byte);
 
   void update_parity(uint8_t byte);

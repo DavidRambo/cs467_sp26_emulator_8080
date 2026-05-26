@@ -122,15 +122,35 @@ void CPU8080::update_parity(uint16_t word) {
 // 1. Not all instructions that affect these flags also affect the carry bit
 // and vice versa.
 // 2. How to update the carry bit depends on the data type of the instruction.
-// NOTE: Does not update auxiliary carry bit because we are not implementing the
-// DAA instruction. This flag's sole purpose is to enable that instruction.
 void CPU8080::update_flags_szp(uint8_t byte) {
   flags_.zero = byte == 0;
   flags_.sign = ((byte & 0b1000'0000) == 0b1000'0000);
   update_parity(byte);
 }
 
-void CPU8080::queue_interrupt(uint8_t opcode) { interrupt_queue_.push(opcode); }
+// Updates the auxiliary carry bit based on the addition of two four-bit
+// numbers.
+void CPU8080::update_aux_carry_add(uint8_t x, uint8_t y, bool with_carry) {
+  uint8_t carry = with_carry ? flags_.carry : 0;
+  flags_.aux_carry = ((x & 0xF) + (y & 0xF) + carry) > 0xF;
+}
+
+// Updates the auxiliary carry bit based on the subtraction of two four-bit
+// numbers. If a carry out from bit 3 occurs when subtracting the least
+// significant four bits of y from those of x, then the aux carry flag should be
+// set.
+void CPU8080::update_aux_carry_sub(uint8_t x, uint8_t y, bool with_carry) {
+  uint8_t carry = with_carry ? flags_.carry : 0;
+  flags_.aux_carry = (x & 0x0F) < ((y & 0x0F) + carry);
+}
+
+void CPU8080::queue_interrupt(uint8_t opcode) {
+  interrupt_queue_.push(opcode);
+
+  // CPU enters a STOPPED state to await an interrupt.
+  // Main loop checks for halted_ while the CPU is stepping.
+  halted_ = false;
+}
 
 void CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG_STATE
