@@ -349,10 +349,10 @@ void CPU8080::lxi_sp(uint8_t byte_2, uint8_t byte_3) {
   stack_pointer_ = static_cast<uint16_t>(byte_3 << 8) | byte_2;
 }
 
-void CPU8080::lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2,
-                  uint8_t byte_3) {
-  *reg_1 = byte_3;
-  *reg_2 = byte_2;
+void CPU8080::lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t data_1,
+                  uint8_t data_2) {
+  *reg_1 = data_2;
+  *reg_2 = data_1;
 }
 
 void CPU8080::sta(uint8_t byte_2, uint8_t byte_3) {
