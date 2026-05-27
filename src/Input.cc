@@ -42,10 +42,10 @@ uint8_t InputHandler::ReadInput(uint8_t port_no) {
 
 // Sets the appropriate device data bits for the given key press.
 //
-// Player 1 controls their ship with the arrow keys. Player 2 controls theirs
-// with the W, A, and D keys. Player 1 may also use Space to shoot.
+// Press 1 for one player, 2 for two players.
 //
-// Press 1 for Player 1 start, 2 for Player 2 start.
+// Both players can use either A or Left to move left, D or Right to move right,
+// and W, Up, or Space to shoot,
 //
 // Q and Escape quit.
 SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
