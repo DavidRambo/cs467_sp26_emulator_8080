@@ -7,12 +7,6 @@
 #include <iostream>
 #endif
 
-// Anonymous namespace for global variable
-namespace {
-// true = player 1, false = player 2
-bool first_player{true};
-}  // namespace
-
 namespace input {
 
 // Constructor initializes the three input device ports.
@@ -47,49 +41,54 @@ uint8_t InputHandler::ReadInput(uint8_t port_no) {
 }
 
 // Sets the appropriate device data bits for the given key press.
+//
+// Player 1 controls their ship with the arrow keys. Player 2 controls theirs
+// with the W, A, and D keys. Player 1 may also use Space to shoot.
+//
+// Press 1 for Player 1 start, 2 for Player 2 start.
+//
+// Q and Escape quit.
 SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
   switch (keycode) {
     case SDL_SCANCODE_ESCAPE:
     case SDL_SCANCODE_Q:
       return SDL_APP_SUCCESS;
     case SDL_SCANCODE_LEFT:
+      // Player 1 left: set Port 1 bit 5.
+      devices_[1].bit5 = 1;
+      break;
     case SDL_SCANCODE_A:
-      if (first_player) {
-        // Player 1 left: set Port 1 bit 5.
-        devices_[1].bit5 = 1;
-      } else {
-        // Player 2 left: set Port 2 bit 5.
-        devices_[2].bit5 = 1;
-      }
+      // Player 2 left: set Port 2 bit 5.
+      devices_[2].bit5 = 1;
       break;
     case SDL_SCANCODE_RIGHT:
+      // Player 1 right: set Port 1 bit 6.
+      devices_[1].bit6 = 1;
+      break;
     case SDL_SCANCODE_D:
-      if (first_player) {
-        // Player 1 right: set Port 1 bit 6.
-        devices_[1].bit6 = 1;
-      } else {
-        // Player 2 right: set Port 2 bit 6.
-        devices_[2].bit6 = 1;
-      }
+      // Player 2 right: set Port 2 bit 6.
+      devices_[2].bit6 = 1;
       break;
     case SDL_SCANCODE_C:
       // Set Port 1 bit 0 (Deposit Credit)
       devices_[1].bit0 = 1;
       break;
     case SDL_SCANCODE_W:
+      // Player 2 shoot: set Port 2 bit 4.
+      devices_[2].bit4 = 1;
+      break;
     case SDL_SCANCODE_UP:
     case SDL_SCANCODE_SPACE:
-      if (first_player) {
-        // Player 1 shoot: set Port 1 bit 4.
-        devices_[1].bit4 = 1;
-      } else {
-        // Player 2 shoot: set Port 2 bit 4.
-        devices_[2].bit4 = 1;
-      }
+      // Player 1 shoot: set Port 1 bit 4.
+      devices_[1].bit4 = 1;
       break;
-    case SDL_SCANCODE_RETURN:
+    case SDL_SCANCODE_1:
       // Set Port 1 bit 2 (Player 1 Start)
       devices_[1].bit2 = 1;
+      break;
+    case SDL_SCANCODE_2:
+      // Set Port 1 bit 1 (Player 2 Start)
+      devices_[1].bit1 = 1;
       break;
     default:
       break;
@@ -105,43 +104,41 @@ SDL_AppResult InputHandler::HandleKeyRelease(SDL_Scancode keycode) {
     case SDL_SCANCODE_Q:
       return SDL_APP_SUCCESS;
     case SDL_SCANCODE_LEFT:
+      // Player 1 left: set Port 1 bit 5.
+      devices_[1].bit5 = 0;
+      break;
     case SDL_SCANCODE_A:
-      if (first_player) {
-        // Player 1 left: set Port 1 bit 5.
-        devices_[1].bit5 = 0;
-      } else {
-        // Player 2 left: set Port 2 bit 5.
-        devices_[2].bit5 = 0;
-      }
+      // Player 2 left: set Port 2 bit 5.
+      devices_[2].bit5 = 0;
       break;
     case SDL_SCANCODE_RIGHT:
+      // Player 1 right: set Port 1 bit 6.
+      devices_[1].bit6 = 0;
+      break;
     case SDL_SCANCODE_D:
-      if (first_player) {
-        // Player 1 right: set Port 1 bit 6.
-        devices_[1].bit6 = 0;
-      } else {
-        // Player 2 right: set Port 2 bit 6.
-        devices_[2].bit6 = 0;
-      }
+      // Player 2 right: set Port 2 bit 6.
+      devices_[2].bit6 = 0;
       break;
     case SDL_SCANCODE_C:
       // Set Port 1 bit 0 (Deposit Credit)
       devices_[1].bit0 = 0;
       break;
     case SDL_SCANCODE_W:
+      // Player 2 shoot: set Port 2 bit 4.
+      devices_[2].bit4 = 0;
+      break;
     case SDL_SCANCODE_UP:
     case SDL_SCANCODE_SPACE:
-      if (first_player) {
-        // Player 1 shoot: set Port 1 bit 4.
-        devices_[1].bit4 = 0;
-      } else {
-        // Player 2 shoot: set Port 2 bit 4.
-        devices_[2].bit4 = 0;
-      }
+      // Player 1 shoot: set Port 1 bit 4.
+      devices_[1].bit4 = 0;
       break;
-    case SDL_SCANCODE_RETURN:
+    case SDL_SCANCODE_1:
       // Set Port 1 bit 2 (Player 1 Start)
       devices_[1].bit2 = 0;
+      break;
+    case SDL_SCANCODE_2:
+      // Set Port 1 bit 1 (Player 2 Start)
+      devices_[1].bit1 = 0;
       break;
     default:
       break;
