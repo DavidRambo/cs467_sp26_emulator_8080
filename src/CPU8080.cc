@@ -7,6 +7,23 @@
 
 namespace intel_8080 {
 
+// Intel 8080 cycle counts indexed by opcode.
+static const uint8_t kCycles[256] = {
+    4,  10, 7,  5,  5,  5,  7,  4,  0,  10, 7,  5,  5,  5,  7,  4,  0,  10, 7,
+    5,  5,  5,  7,  4,  0,  10, 7,  5,  5,  5,  7,  4,  0,  10, 16, 5,  5,  5,
+    7,  4,  0,  10, 16, 5,  5,  5,  7,  4,  0,  10, 13, 5,  10, 10, 10, 4,  0,
+    10, 13, 5,  5,  5,  7,  4,  5,  5,  5,  5,  5,  5,  7,  5,  5,  5,  5,  5,
+    5,  5,  7,  5,  5,  5,  5,  5,  5,  5,  7,  5,  5,  5,  5,  5,  5,  5,  7,
+    5,  5,  5,  5,  5,  5,  5,  7,  5,  5,  5,  5,  5,  5,  5,  7,  5,  7,  7,
+    7,  7,  7,  7,  7,  7,  5,  5,  5,  5,  5,  5,  7,  5,  4,  4,  4,  4,  4,
+    4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,
+    4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,
+    4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,  7,  4,  4,  4,  4,  4,  4,  4,
+    7,  4,  11, 10, 10, 10, 17, 11, 7,  11, 11, 10, 10, 0,  17, 17, 7,  11, 11,
+    10, 10, 10, 17, 11, 7,  11, 11, 0,  10, 10, 17, 0,  7,  11, 11, 10, 10, 18,
+    17, 11, 7,  11, 11, 5,  10, 4,  17, 0,  7,  11, 11, 10, 10, 4,  17, 11, 7,
+    11, 11, 5,  10, 4,  17, 0,  7,  11};
+
 CPU8080::CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
                  std::shared_ptr<input::InputHandler> input_handler_ptr,
                  std::shared_ptr<audio::Mixer> new_mixer,
@@ -50,7 +67,7 @@ void CPU8080::Flags::from_byte(uint8_t data) {
   sign = (data >> 7) & 1;
 }
 
-void CPU8080::step() {
+uint8_t CPU8080::step() {
   uint8_t instruction;
   if (!interrupt_queue_.empty() && INTE_) {
     di();  // Disable interrupts. The subroutine will re-enable.
@@ -59,7 +76,7 @@ void CPU8080::step() {
   } else {
     instruction = fetch_byte();
   }
-  execute(instruction);
+  return execute(instruction);
 };
 
 uint8_t CPU8080::fetch_byte() {
@@ -152,7 +169,7 @@ void CPU8080::queue_interrupt(uint8_t opcode) {
   halted_ = false;
 }
 
-void CPU8080::execute(uint8_t opcode) {
+uint8_t CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG_STATE
   char ch{0};
   std::cout << "Next instruction (with above cpu state): ";
@@ -1039,5 +1056,6 @@ void CPU8080::execute(uint8_t opcode) {
 #ifdef DEBUG
   print_debug();
 #endif
+  return kCycles[opcode];
 }
 }  // namespace intel_8080
