@@ -55,5 +55,6 @@ void GameWindow::UpdateDisplay(const std::vector<SDL_FPoint>& points) {
 GameWindow::~GameWindow() {
   SDL_DestroyRenderer(renderer_);
   SDL_DestroyWindow(window_);
+  SDL_Quit();
 }
 }  // namespace graphics_display

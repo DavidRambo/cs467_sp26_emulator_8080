@@ -48,8 +48,7 @@ int main(int argc, char* argv[]) {
   space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
   game_window.UpdateDisplay(points);
 
-  std::shared_ptr<audio::Mixer> mixer =
-      std::make_shared<audio::Mixer>();
+  std::shared_ptr<audio::Mixer> mixer = std::make_shared<audio::Mixer>();
 
   std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr =
       std::make_shared<hardware::ShiftRegister>();
@@ -114,9 +113,6 @@ int main(int argc, char* argv[]) {
     space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
     game_window.UpdateDisplay(points);
   }
-
-  // Shut down application.
-  SDL_Quit();
 
   return 0;
 }
