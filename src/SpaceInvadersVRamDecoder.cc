@@ -9,6 +9,9 @@ constexpr int kMmCols = 32;
 constexpr int kMmRows = 224;
 constexpr int kMmPixPerByte = 8;
 
+void Pixels::clear() {
+  white_points.clear();
+  green_points.clear();
 }
 
 // Traverses the span video_data, which provides a view into the video ram
@@ -49,11 +52,10 @@ constexpr int kMmPixPerByte = 8;
 // at the bottom of the screen. The outer loop goes left to right, the inner
 // from bottom to top. A variable, `v_idx`, counts the current bit, which is
 // used to get the current address in video_data.
-void DecodePixels(std::vector<SDL_FPoint>& points,
-                  std::span<unsigned char, 7168> video_data) {
+void DecodePixels(Pixels& pixels, std::span<unsigned char, 7168> video_data) {
   // v_idx will increment for each bit, from 0 to (256*224 - 1).
   uint16_t v_idx{0};
-  points.clear();
+  pixels.clear();
 
   // Start at bottom left coordinate.
   for (int col = 0; col < 224; col++) {
@@ -65,8 +67,13 @@ void DecodePixels(std::vector<SDL_FPoint>& points,
 
         if (video_data[video_byte] & (0x01 << bit)) {
           int y = (row * 8) - 1 - bit;
-          points.push_back(SDL_FPoint{.x = static_cast<float>(col),
-                                      .y = static_cast<float>(y)});
+          if (y > 190) {
+            pixels.green_points.push_back(SDL_FPoint{
+                .x = static_cast<float>(col), .y = static_cast<float>(y)});
+          } else {
+            pixels.white_points.push_back(SDL_FPoint{
+                .x = static_cast<float>(col), .y = static_cast<float>(y)});
+          }
         }
 
         v_idx++;

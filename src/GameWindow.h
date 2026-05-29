@@ -5,6 +5,8 @@
 #include <span>
 #include <vector>
 
+#include "SpaceInvadersVRamDecoder.h"
+
 namespace graphics_display {
 class GameWindow {
  private:
@@ -19,7 +21,7 @@ class GameWindow {
   GameWindow(int windowWidth, int windowHeight, const char* windowName);
   ~GameWindow();
 
-  void UpdateDisplay(const std::vector<SDL_FPoint>& points);
+  void UpdateDisplay(const space_invaders_vram_decoder::Pixels& pixels);
 };
 }  // namespace graphics_display
 #endif
