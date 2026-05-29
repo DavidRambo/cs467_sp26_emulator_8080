@@ -9,36 +9,6 @@ constexpr int kMmCols = 32;
 constexpr int kMmRows = 224;
 constexpr int kMmPixPerByte = 8;
 
-void DecodeTopPixels(std::vector<SDL_FPoint>& points, const char* data) {
-  for (int row = 112; row < kMmRows; row++) {
-    for (int col = 0; col < kMmCols; col++) {
-      for (int bit = 0; bit < kMmPixPerByte; bit++) {
-        bool pixel_set =
-            static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
-        if (pixel_set) {
-          SDL_FPoint pixel{.x = static_cast<float>((col * kMmPixPerByte) + bit),
-                           .y = static_cast<float>(row)};
-          points.push_back(pixel);
-        }
-      }
-    }
-  }
-}
-
-void DecodeBottomPixels(std::vector<SDL_FPoint>& points, const char* data) {
-  for (int row = 0; row < kMmRows / 2; row++) {
-    for (int col = 0; col < kMmCols; col++) {
-      for (int bit = 0; bit < kMmPixPerByte; bit++) {
-        bool pixel_set =
-            static_cast<bool>(data[(row * kMmCols) + col] & (0x01 << bit));
-        if (pixel_set) {
-          SDL_FPoint pixel{.x = static_cast<float>((col * kMmPixPerByte) + bit),
-                           .y = static_cast<float>(row)};
-          points.push_back(pixel);
-        }
-      }
-    }
-  }
 }
 
 // Traverses the span video_data, which provides a view into the video ram

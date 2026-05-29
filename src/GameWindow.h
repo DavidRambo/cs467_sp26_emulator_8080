@@ -18,8 +18,6 @@ class GameWindow {
  public:
   GameWindow(int windowWidth, int windowHeight, const char* windowName);
   ~GameWindow();
-  void UpdateDisplayTop(const std::vector<SDL_FPoint>& points);
-  void UpdateDisplayBottom(const std::vector<SDL_FPoint>& points);
 
   void UpdateDisplay(const std::vector<SDL_FPoint>& points);
 };
