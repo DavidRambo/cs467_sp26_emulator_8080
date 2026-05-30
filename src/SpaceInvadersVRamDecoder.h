@@ -1,12 +1,14 @@
 #ifndef SPACEINVADERSVRAMDECODER
 #define SPACEINVADERSVRAMDECODER
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_rect.h>
 
 #include <span>
 #include <vector>
 
 namespace space_invaders_vram_decoder {
 struct Pixels {
+  std::vector<SDL_FPoint> purple_points;
   std::vector<SDL_FPoint> white_points;
   std::vector<SDL_FPoint> green_points;
 

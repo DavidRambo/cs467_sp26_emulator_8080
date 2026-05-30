@@ -10,6 +10,7 @@ constexpr int kMmRows = 224;
 constexpr int kMmPixPerByte = 8;
 
 void Pixels::clear() {
+  purple_points.clear();
   white_points.clear();
   green_points.clear();
 }
@@ -69,6 +70,9 @@ void DecodePixels(Pixels& pixels, std::span<unsigned char, 7168> video_data) {
           int y = (row * 8) - 1 - bit;
           if (y > 190) {
             pixels.green_points.push_back(SDL_FPoint{
+                .x = static_cast<float>(col), .y = static_cast<float>(y)});
+          } else if (y > 40 && y < 48) {
+            pixels.purple_points.push_back(SDL_FPoint{
                 .x = static_cast<float>(col), .y = static_cast<float>(y)});
           } else {
             pixels.white_points.push_back(SDL_FPoint{

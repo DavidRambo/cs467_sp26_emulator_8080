@@ -43,6 +43,11 @@ void GameWindow::UpdateDisplay(
   SDL_SetRenderDrawColor(renderer_, 255, 255, 255, SDL_ALPHA_OPAQUE);
   SDL_RenderPoints(renderer_, pixels.white_points.data(),
                    pixels.white_points.size());
+
+  // Purple for the UFO portion.
+  SDL_SetRenderDrawColor(renderer_, 242, 55, 245, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, pixels.purple_points.data(),
+                   pixels.purple_points.size());
   SDL_RenderPresent(renderer_);
 }
 
