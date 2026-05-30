@@ -1,7 +1,6 @@
 #ifndef SPACEINVADERSVRAMDECODER
 #define SPACEINVADERSVRAMDECODER
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_rect.h>
 
 #include <span>
 #include <vector>
