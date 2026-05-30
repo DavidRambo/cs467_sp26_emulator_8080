@@ -48,9 +48,9 @@ int main(int argc, char* argv[]) {
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
       kWindowWidth, kWindowHeight, "Space Invaders");
 
-  std::vector<SDL_FPoint> points;
-  space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
-  game_window.UpdateDisplay(points);
+  space_invaders_vram_decoder::Pixels pixels;
+  space_invaders_vram_decoder::DecodePixels(pixels, mem->get_vram_span());
+  game_window.UpdateDisplay(pixels);
 
   std::shared_ptr<audio::Mixer> mixer = std::make_shared<audio::Mixer>();
 
@@ -116,8 +116,8 @@ int main(int argc, char* argv[]) {
     }
 
     // Update display
-    space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
-    game_window.UpdateDisplay(points);
+    space_invaders_vram_decoder::DecodePixels(pixels, mem->get_vram_span());
+    game_window.UpdateDisplay(pixels);
   }
 
   return 0;
