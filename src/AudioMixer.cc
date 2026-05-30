@@ -143,12 +143,21 @@ std::array<Mixer::AudioAction, 8> Mixer::ApplyPort(
 }
 
 std::array<Mixer::AudioAction, 8> Mixer::SetOut3(uint8_t accumulator_bits) {
+  static constexpr std::array<SoundId, 8> kSoundMap{
+    SoundId::kUfo, SoundId::kTorpedo, SoundId::kExplosion,
+    SoundId::kInvaderHit, SoundId::kTorpedo, SoundId::kTorpedo,
+    SoundId::kTorpedo, SoundId::kTorpedo,
+  };
   auto actions = ApplyPort(accumulator_bits, prev_port3_, kSoundMap);
   prev_port3_ = accumulator_bits;
   return actions;
 }
 
 std::array<Mixer::AudioAction, 8> Mixer::SetOut5(uint8_t accumulator_bits) {
+  static constexpr std::array<SoundId, 8> kSoundMap{
+    SoundId::kBackground, SoundId::kBackground, SoundId::kBackground,     SoundId::kBackground,
+    SoundId::kUfoHit,  SoundId::kTorpedo,    SoundId::kTorpedo, SoundId::kTorpedo,
+  };
   auto actions = ApplyPort(accumulator_bits, prev_port5_, kSoundMap);
   prev_port5_ = accumulator_bits;
   return actions;

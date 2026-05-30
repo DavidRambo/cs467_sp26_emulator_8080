@@ -47,12 +47,6 @@ class Mixer {
   std::array<AudioAction, 8> SetOut5(uint8_t accumulator_bits);
 
  private:
-  static constexpr std::array<SoundId, 8> kSoundMap{
-      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
-      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
-      SoundId::kBackground, SoundId::kExplosion,
-  };
-
   // Holds all SDL resources and playback state for a single WAV sound effect.
   struct Channel {
     SDL_AudioStream* stream_ = nullptr;
