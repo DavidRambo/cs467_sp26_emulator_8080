@@ -68,7 +68,7 @@ void DecodePixels(Pixels& pixels, std::span<unsigned char, 7168> video_data) {
 
         if (video_data[video_byte] & (0x01 << bit)) {
           int y = (row * 8) - 1 - bit;
-          if (y > 190) {
+          if (y > 191) {
             pixels.green_points.push_back(SDL_FPoint{
                 .x = static_cast<float>(col), .y = static_cast<float>(y)});
           } else if (y > 40 && y < 48) {
