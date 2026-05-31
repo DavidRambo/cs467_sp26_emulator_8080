@@ -10,14 +10,19 @@ TEST_CASE("Test IN input instruction with InputHandler") {
       std::make_shared<intel_8080::Memory8080>(intel_8080::Memory8080());
   std::shared_ptr<input::InputHandler> input_handler =
       std::make_shared<input::InputHandler>();
-  intel_8080::CPU8080 emu = intel_8080::CPU8080(mem, input_handler);
+  std::shared_ptr<audio::Mixer> mixer =
+      std::make_shared<audio::Mixer>(audio::Mixer());
+  std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr =
+      std::make_shared<hardware::ShiftRegister>(hardware::ShiftRegister());
+  intel_8080::CPU8080 emu =
+      intel_8080::CPU8080(mem, input_handler, mixer, shift_reg_ptr);
 
   std::vector<uint8_t> data = {0xdb, 1};  // opcode, port number
   mem->load_data(data);
 
   SUBCASE("Player 1 Start") {
     // Player 1 start = Port 1 bit 2
-    input_handler->HandleKeyPress(SDL_SCANCODE_KP_ENTER);
+    input_handler->HandleKeyPress(SDL_SCANCODE_RETURN);
 
     emu.step();
     intel_8080::CPU8080::State state = emu.get_state();

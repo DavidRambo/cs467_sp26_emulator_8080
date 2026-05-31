@@ -9,22 +9,49 @@ namespace intel_8080 {
 // opcode to designate the port number. That data is written to the
 // accumulator.
 void CPU8080::in(uint8_t port_no) {
-  if (port_no >= 0 && port_no < 3) {
+  if (port_no < 3) {
     registers_.reg_a = input_handler_->ReadInput(port_no);
   } else if (port_no == 3) {
-    // TODO: Call shift register code.
-    std::cerr << "ERROR: missing shift register code for READ 3\n";
+    registers_.reg_a = shift_register_->GetShiftedByte();
   } else {
     std::cerr << "<opcode 0xDB> Invalid input port number: " << port_no
               << std::endl;
   }
 }
 
+// OUT Output
+//
+// The 8080 would write data from the accumulator to the data bus and indicate
+// which peripheral device should fetch that data by setting bits in the address
+// bus. Here, the port_no is an immediate byte following the OUT opcode, which
+// is used to call the respective device's emulation.
+void CPU8080::out(uint8_t port_no) {
+  if (port_no == 2) {
+    shift_register_->SetOffset(registers_.reg_a);
+  } else if (port_no == 4) {
+    shift_register_->LoadBuffer(registers_.reg_a);
+  } else if (port_no == 3) {
+    mixer_->SetOut3(registers_.reg_a);
+  } else if (port_no == 5) {
+    mixer_->SetOut5(registers_.reg_a);
+  } else if (port_no == 6) {
+    // "Watchdog" external device address checks for reset after a certain
+    // amount of cycles have occurred without read or write. This triggers a
+    // bunch because this emulator is not cycle-accurate.
+    return;
+  } else {
+    std::cerr << "<opcode 0xD3> invalid output port number: "
+              << static_cast<int>(port_no) << std::endl;
+  }
+}
+
 // INR Increment Register or Memory value
 //
-// Condition bits affected: Zero, Sign, Parity
+// Condition bits affected: Zero, Sign, Parity, Aux Carry
 void CPU8080::inr(uint8_t* reg) {
-  *reg += 1;
+  uint8_t result = *reg + 1;
+  update_aux_carry_add(*reg, 1, false);
+  *reg = result;
   update_flags_szp(*reg);
 }
 
@@ -76,7 +103,9 @@ void CPU8080::stc() { flags_.carry = 1; }
 // Reduces the value of the register or memory by 1.
 // Flags affected: Zero, Sign, Parity, Aux Carry.
 void CPU8080::dcr(uint8_t* reg) {
-  *reg -= 1;
+  uint8_t result = *reg - 1;
+  update_aux_carry_sub(*reg, 1, false);
+  *reg = result;
   update_flags_szp(*reg);
 }
 
@@ -90,7 +119,8 @@ void CPU8080::cma() { registers_.reg_a = ~registers_.reg_a; }
 // complement arithmetic Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::add(uint8_t data) {
   uint16_t result = registers_.reg_a + data;
-  flags_.carry = (result > 0xFF) ? 1 : 0;
+  update_aux_carry_add(registers_.reg_a, data, false);
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -99,9 +129,9 @@ void CPU8080::add(uint8_t data) {
 // Adds the specified byte + the carry flag to A and store in A.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::adc(uint8_t data) {
-  data += flags_.carry;
   uint16_t result = registers_.reg_a + data + flags_.carry;
-  flags_.carry = (result > 0xFF) ? 1 : 0;
+  update_aux_carry_add(registers_.reg_a, data, true);
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -111,7 +141,8 @@ void CPU8080::adc(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sub(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  update_aux_carry_sub(registers_.reg_a, data, false);
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
@@ -122,14 +153,15 @@ void CPU8080::sub(uint8_t data) {
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::sbb(uint8_t data) {
   uint16_t result = registers_.reg_a - (data + flags_.carry);
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  update_aux_carry_sub(registers_.reg_a, data, true);
+  flags_.carry = (result > 0xFF);
   registers_.reg_a = static_cast<uint8_t>(result);
   update_flags_szp(registers_.reg_a);
 }
 
 // ANA: Logical And Register or Memory w/ Accumulator
 // The specified byte is logically and'd with A. The carry bit is reset.
-// Logical AND is 1 if and only if both bits are different
+// Logical AND is 1 if and only if both bits are set.
 // Flags affected: Carry, Zero, Sign, Parity
 void CPU8080::ana(uint8_t data) {
   registers_.reg_a = registers_.reg_a & data;
@@ -159,14 +191,14 @@ void CPU8080::ora(uint8_t data) {
 
 // CPI: Compare Immediate with Accumulator
 // Performs a comparison by subtracting a data byte from the accumulator without
-// updating the accumulator and checking the condition bits.
-// Zero flag is set if the are equal, reset otherwise. Carry bit is set if data
-// is larger than accumulator.
-// Flags affected: Carry, Zero, Sign, Parity
+// updating the accumulator and checking the condition bits. Zero flag is set if
+// they are equal, reset otherwise. Carry bit is set if data is larger than
+// accumulator. Flags affected: Carry, Zero, Sign, Parity, Aux Carry
 void CPU8080::cpi(uint8_t data) {
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
+  flags_.carry = (result > 0xFF);
   update_flags_szp(static_cast<uint8_t>(result));
+  update_aux_carry_sub(registers_.reg_a, data, false);
 }
 
 // CMP: Compare Register or Memory w/ Accumulator
@@ -175,20 +207,22 @@ void CPU8080::cpi(uint8_t data) {
 // are set based on the result, simlar to the SUB instruction.
 // Flags affected: Carry, Sign, Zero, Parity, Aux Carry
 void CPU8080::cmp(uint8_t data) {
+  flags_.carry = data > registers_.reg_a;
+  update_aux_carry_sub(registers_.reg_a, data, false);
   uint16_t result = registers_.reg_a - data;
-  flags_.carry = (result > 0xFF) ? 0 : 1;
-  update_flags_szp(result);
+  update_flags_szp(static_cast<uint8_t>(result));
 }
 
 // RRC: Rotate Accumulator Right
 // The carry bit is set equal to the low order bit of the accumulator.
 // The contents of the A are rotated one bit to the right, with the low
 // order bit being transferred to the high order bit.
-// Flags affected: Carry
+// Flags affected: CarryHow to separate the high byte and the low byte from a
+// 16bit value?
 void CPU8080::rrc() {
   uint8_t lsb = registers_.reg_a & 0x01;
   flags_.carry = lsb;
-  registers_.reg_a = (registers_.reg_a >> 7) | (lsb << 7);
+  registers_.reg_a = (registers_.reg_a >> 1) | (lsb << 7);
 }
 
 // RAL: Rotate Accumulator Left Through Carry
@@ -250,15 +284,14 @@ void CPU8080::pop(uint8_t* reg_1, uint8_t* reg_2) {
  * Flags affected: N/A
  */
 void CPU8080::dad(const uint8_t* reg_1, const uint8_t* reg_2) {
-  uint16_t reg_pair = (*reg_1 << 8) | *reg_2;
-  uint16_t hl_pair = (registers_.reg_h << 8) | registers_.reg_l;
-  uint32_t result = reg_pair + hl_pair;
-  flags_.carry = flags_.carry = (result > 0xFFFF) ? 0 : 1;
-  registers_.reg_h = static_cast<uint8_t>((result >> 8) | 0xFF);
-  registers_.reg_l = static_cast<uint8_t>(result | 0xFF);
+  auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
+  uint32_t result = reg_pair + registers_.hl();
+  flags_.carry = (result > 0xFFFF);
+  registers_.reg_h = static_cast<uint8_t>((result >> 8) & 0xFF);
+  registers_.reg_l = static_cast<uint8_t>(result & 0xFF);
 }
 
-/*
+/*<<<<<<< dev_main_loop
  * INX: Increment register pair
  * The 16 bit number held in the specified register pair is
  * incremented by 1.
@@ -268,7 +301,7 @@ void CPU8080::inx(uint8_t* reg_1, uint8_t* reg_2) {
   auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
   reg_pair += 1;
   *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
-  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+  *reg_2 = static_cast<uint8_t>(reg_pair & 0xFF);
 }
 
 /*
@@ -280,7 +313,7 @@ void CPU8080::dcx(uint8_t* reg_1, uint8_t* reg_2) {
   auto reg_pair = static_cast<uint16_t>((*reg_1 << 8) | *reg_2);
   reg_pair -= 1;
   *reg_1 = static_cast<uint8_t>(reg_pair >> 8);
-  *reg_2 = static_cast<uint8_t>(reg_pair | 0xFF);
+  *reg_2 = static_cast<uint8_t>(reg_pair & 0xFF);
 }
 
 void CPU8080::xchg() {
@@ -288,13 +321,22 @@ void CPU8080::xchg() {
   std::swap(registers_.reg_l, registers_.reg_e);
 }
 
+// XTHL Exchange Stack
+// "The contents of the L register are exchanged with the contents of the memory
+// byte whose address is held in the stack pointer SP. The contents of the H
+// register are exchanged with the contents of the memory byte whose address is
+// one greater than that held in the stack pointer" (Programmer's Manual 25).
 void CPU8080::xthl() {
-  uint8_t byte_2 = mem_access_->read(stack_pointer_);
-  uint8_t byte_1 = mem_access_->read(stack_pointer_ + 1);
-  mem_access_->write(stack_pointer_, registers_.reg_l);
-  mem_access_->write(stack_pointer_ + 1, registers_.reg_h);
-  registers_.reg_h = byte_1;
-  registers_.reg_l = byte_2;
+  uint8_t byte_for_l = mem_access_->read(stack_pointer_);      // -> L
+  uint8_t byte_for_h = mem_access_->read(stack_pointer_ + 1);  // -> H
+
+  // Note that these are switched from the Manual's description, which is shown
+  // in comments.
+  mem_access_->write(stack_pointer_, registers_.reg_h);      // L -> M[SP]
+  mem_access_->write(stack_pointer_ + 1, registers_.reg_l);  // H -> M[SP+1]
+
+  registers_.reg_h = byte_for_h;
+  registers_.reg_l = byte_for_l;
 }
 
 void CPU8080::sphl() {
@@ -306,10 +348,10 @@ void CPU8080::lxi_sp(uint8_t byte_2, uint8_t byte_3) {
   stack_pointer_ = static_cast<uint16_t>(byte_3 << 8) | byte_2;
 }
 
-void CPU8080::lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2,
-                  uint8_t byte_3) {
-  *reg_1 = byte_3;
-  *reg_2 = byte_2;
+void CPU8080::lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t data_1,
+                  uint8_t data_2) {
+  *reg_1 = data_2;
+  *reg_2 = data_1;
 }
 
 void CPU8080::sta(uint8_t byte_2, uint8_t byte_3) {
@@ -340,6 +382,32 @@ void CPU8080::pchl() {
   program_counter_ = mem_location;
 }
 
+// DAA Decimal Adjust Accumulator
+// "The eight-bit hexadecimal number in the accumulator is adjusted to form two
+// four-bit binary-coded decimal digits" over two steps:
+// 1. If the lower four bits are > 9 or the aux carry bit is 1, then add 6 to
+// the accumulator (not the lower bits). Aux carry bit is set if there is a
+// carry out from those four bits.
+// 2. Then, if the four higher bits (taken now) are > 9 or the normal carry bit
+// is 1, then add 6 to the higher bits of the accumulator. Carry bit is set if
+// there is a carry out from those four bits.
+void CPU8080::daa() {
+  uint8_t low_nibble = registers_.reg_a & 0x0F;
+  if (low_nibble > 9 || flags_.aux_carry == 1) {
+    registers_.reg_a += 6;
+    low_nibble += 6;
+    flags_.aux_carry =
+        low_nibble > 0x0F;  // Sets aux carry if low_nibble carries out
+  }
+
+  uint8_t high_nibble = (registers_.reg_a >> 4) & 0x0F;
+  if (high_nibble > 9 || flags_.carry == 1) {
+    registers_.reg_a += 0x60;
+    high_nibble += 6;
+    flags_.carry = high_nibble > 0x0F;
+  }
+}
+
 // JUMP Instructions
 // JMP always transfers program control, while the others do so under a
 // condition. For example, JM, "Jump if Minus", jumps if the sign bit is set.
@@ -368,7 +436,7 @@ void CPU8080::call(JumpCondition jump_condition, uint8_t byte_2,
 
   auto mem_location = static_cast<uint16_t>((byte_3 << 8) | byte_2);
   uint8_t high_byte = program_counter_ >> 8;
-  uint8_t low_byte = program_counter_ | 0xFF;
+  uint8_t low_byte = program_counter_ & 0xFF;
 
   push(low_byte, high_byte);
   program_counter_ = mem_location;
@@ -383,23 +451,54 @@ void CPU8080::ret(JumpCondition jump_condition) {
     return;
   }
 
-  uint8_t* high_byte;
-  uint8_t* low_byte;
-  pop(low_byte, high_byte);
-  program_counter_ = static_cast<uint16_t>((*high_byte << 8) | *low_byte);
+  uint8_t high_byte{0};
+  uint8_t low_byte{0};
+  pop(&low_byte, &high_byte);
+  program_counter_ = static_cast<uint16_t>((high_byte << 8) | low_byte);
 }
 
+// Restart instructions
+// A particular RST instruction is called by an interrupting device to transfer
+// control to a subroutine that handles the situation. A RET (return)
+// instruction causes the previously running program to resume control.
+//
+// For example, according to computer archaeology, the two display update
+// interrupts are RST 8 and RST 10. The 3-bit `exp` value is bits 3–5, so
+// for the first interrupt, it would need to call rst(1), and for the second,
+// rst(2).
+//
+// WARN: The CPU's state must be preserved before and restored following an
+// interrupt subroutine, and a subroutine must conclude with a RET (return)
+// instruction. Since it is the programmer's responsibility to do this, I
+// suspect it is accounted for by the hardware interrupt subroutines in the
+// Space Invaders ROM.
 void CPU8080::rst(uint8_t exp) {
-  call(JumpCondition::kTrue, static_cast<uint8_t>(exp << 3), 0x00);
+#ifdef DEBUG
+  if (exp == 1) {
+    print_instruction(0xCF);
+  } else if (exp == 2) {
+    print_instruction(0xD7);
+  }
+#endif
+  uint16_t mem_address = (exp << 3) & 0xFFFF;
+  uint8_t low_byte = mem_address & 0xFF;
+  uint8_t high_byte = (mem_address >> 8) & 0xFF;
+
+  call(JumpCondition::kTrue, low_byte, high_byte);
 }
 
 void CPU8080::ei() { INTE_ = true; }
 
 void CPU8080::di() { INTE_ = false; }
 
-void CPU8080::hlt() {
-  // Can't implement until we know how the interupt process works.
-}
+// HLT Halt instruction
+// Increments the program counter by one, then tells the CPU to await an
+// interrupt.
+//
+// Could be emulated by checking the CPU8080::halted_ member variable, and
+// reseting when an interrupt occurs. However, that may not be necessary based
+// on interrupts are implemented.
+void CPU8080::hlt() { halted_ = true; }
 
 // Returns true if the specified condition is true, otherwise false.
 // Called by JMP, RET, and CALL instructions that depend on a condition check.

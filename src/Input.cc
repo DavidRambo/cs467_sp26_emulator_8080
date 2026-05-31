@@ -2,11 +2,10 @@
 
 #include <SDL3/SDL.h>
 
-// Anonymous namespace for global variable
-namespace {
-// true = player 1, false = player 2
-bool first_player{true};
-}  // namespace
+#ifdef DEBUG
+#include <iomanip>
+#include <iostream>
+#endif
 
 namespace input {
 
@@ -32,31 +31,23 @@ uint8_t InputDevice::to_byte() const {
 
 // Returns the data corresponding to the specified input device.
 uint8_t InputHandler::ReadInput(uint8_t port_no) {
+#ifdef DEBUG
+  std::cerr << "Reading input from port " << static_cast<int>(port_no) << ": ";
+  std::cerr << std::hex << std::setfill('0') << std::setw(2)
+            << static_cast<int>(devices_[port_no].to_byte()) << std::dec;
+  std::cerr << "\n";
+#endif
   return devices_[port_no].to_byte();
 }
 
-// Returns the device ports to their base state.
-void InputHandler::ResetDevices() {
-  devices_[1].bit0 = 0;
-  devices_[1].bit1 = 0;
-  devices_[1].bit2 = 0;
-  devices_[1].bit3 = 1;
-  devices_[1].bit4 = 0;
-  devices_[1].bit5 = 0;
-  devices_[1].bit6 = 0;
-  devices_[1].bit7 = 0;
-
-  devices_[2].bit0 = 0;
-  devices_[2].bit1 = 0;
-  devices_[2].bit2 = 0;
-  devices_[2].bit3 = 0;
-  devices_[2].bit4 = 0;
-  devices_[2].bit5 = 0;
-  devices_[2].bit6 = 0;
-  devices_[2].bit7 = 0;
-}
-
 // Sets the appropriate device data bits for the given key press.
+//
+// Press 1 for one player, 2 for two players.
+//
+// Both players can use either A or Left to move left, D or Right to move right,
+// and W, Up, or Space to shoot,
+//
+// Q and Escape quit.
 SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
   switch (keycode) {
     case SDL_SCANCODE_ESCAPE:
@@ -64,23 +55,17 @@ SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
       return SDL_APP_SUCCESS;
     case SDL_SCANCODE_LEFT:
     case SDL_SCANCODE_A:
-      if (first_player) {
-        // Player 1 left: set Port 1 bit 5.
-        devices_[1].bit5 = 1;
-      } else {
-        // Player 2 left: set Port 2 bit 5.
-        devices_[2].bit5 = 1;
-      }
+      // Player 1 left: set Port 1 bit 5.
+      devices_[1].bit5 = 1;
+      // Player 2 left: set Port 2 bit 5.
+      devices_[2].bit5 = 1;
       break;
     case SDL_SCANCODE_RIGHT:
     case SDL_SCANCODE_D:
-      if (first_player) {
-        // Player 1 right: set Port 1 bit 6.
-        devices_[1].bit6 = 1;
-      } else {
-        // Player 2 right: set Port 2 bit 6.
-        devices_[2].bit6 = 1;
-      }
+      // Player 1 right: set Port 1 bit 6.
+      devices_[1].bit6 = 1;
+      // Player 2 right: set Port 2 bit 6.
+      devices_[2].bit6 = 1;
       break;
     case SDL_SCANCODE_C:
       // Set Port 1 bit 0 (Deposit Credit)
@@ -89,17 +74,18 @@ SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
     case SDL_SCANCODE_W:
     case SDL_SCANCODE_UP:
     case SDL_SCANCODE_SPACE:
-      if (first_player) {
-        // Player 1 shoot: set Port 1 bit 4.
-        devices_[1].bit4 = 1;
-      } else {
-        // Player 2 shoot: set Port 2 bit 4.
-        devices_[2].bit4 = 1;
-      }
+      // Player 1 shoot: set Port 1 bit 4.
+      devices_[1].bit4 = 1;
+      // Player 2 shoot: set Port 2 bit 4.
+      devices_[2].bit4 = 1;
       break;
-    case SDL_SCANCODE_KP_ENTER:
+    case SDL_SCANCODE_1:
       // Set Port 1 bit 2 (Player 1 Start)
       devices_[1].bit2 = 1;
+      break;
+    case SDL_SCANCODE_2:
+      // Set Port 1 bit 1 (Player 2 Start)
+      devices_[1].bit1 = 1;
       break;
     default:
       break;
@@ -108,6 +94,52 @@ SDL_AppResult InputHandler::HandleKeyPress(SDL_Scancode keycode) {
   return SDL_APP_CONTINUE;
 }
 
+// Clears the device bits for the given key release.
+SDL_AppResult InputHandler::HandleKeyRelease(SDL_Scancode keycode) {
+  switch (keycode) {
+    case SDL_SCANCODE_ESCAPE:
+    case SDL_SCANCODE_Q:
+      return SDL_APP_SUCCESS;
+    case SDL_SCANCODE_LEFT:
+    case SDL_SCANCODE_A:
+      // Player 1 left: set Port 1 bit 5.
+      devices_[1].bit5 = 0;
+      // Player 2 left: set Port 2 bit 5.
+      devices_[2].bit5 = 0;
+      break;
+    case SDL_SCANCODE_RIGHT:
+    case SDL_SCANCODE_D:
+      // Player 1 right: set Port 1 bit 6.
+      devices_[1].bit6 = 0;
+      // Player 2 right: set Port 2 bit 6.
+      devices_[2].bit6 = 0;
+      break;
+    case SDL_SCANCODE_C:
+      // Set Port 1 bit 0 (Deposit Credit)
+      devices_[1].bit0 = 0;
+      break;
+    case SDL_SCANCODE_W:
+    case SDL_SCANCODE_UP:
+    case SDL_SCANCODE_SPACE:
+      // Player 1 shoot: set Port 1 bit 4.
+      devices_[1].bit4 = 0;
+      // Player 2 shoot: set Port 2 bit 4.
+      devices_[2].bit4 = 0;
+      break;
+    case SDL_SCANCODE_1:
+      // Set Port 1 bit 2 (Player 1 Start)
+      devices_[1].bit2 = 0;
+      break;
+    case SDL_SCANCODE_2:
+      // Set Port 1 bit 1 (Player 2 Start)
+      devices_[1].bit1 = 0;
+      break;
+    default:
+      break;
+  }
+
+  return SDL_APP_CONTINUE;
+}
 // Polls for an SDL_Event and handles it.
 //
 // Note that this must be called in sync with the rest of the game code.
@@ -123,8 +155,11 @@ SDL_AppResult InputHandler::PollForEvents() {
       // NOTE: This is here in case we have another SDL event to quit.
       break;
     case SDL_EVENT_KEY_DOWN:
-      ResetDevices();
       return HandleKeyPress(event.key.scancode);
+      break;
+    case SDL_EVENT_KEY_UP:
+      return HandleKeyRelease(event.key.scancode);
+      break;
     default:
       break;
   }

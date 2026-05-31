@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -11,6 +12,8 @@ class Memory8080 {
 
   Memory8080();
 
+  std::span<unsigned char, 0x1C00> get_vram_span();
+
   uint8_t read(uint16_t mem_location);
 
   void write(uint16_t mem_location, uint8_t data);
@@ -20,6 +23,8 @@ class Memory8080 {
   void clear_rom();
 
   void load_rom(std::string const& file_path);
+
+  void load_rom_at_addr(std::string const& file_path, uint16_t addr);
 
   void load_data(std::vector<uint8_t> const& data, uint16_t start = 0);
 

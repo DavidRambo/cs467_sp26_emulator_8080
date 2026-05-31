@@ -11,10 +11,29 @@
 #include <string>
 #include <vector>
 
+#include "CPU8080.h"
+
 intel_8080::Memory8080::Memory8080() : mem_buffer_{} {
   mem_buffer_.fill(0x00);
   end_of_ROM_ = 0x0000;
 }
+
+std::span<unsigned char, 0x1C00> intel_8080::Memory8080::get_vram_span() {
+  // First create a span to view the entire buffer.
+  std::span<unsigned char, 0x10000> full_span{mem_buffer_};
+
+  // Then create a subspan of the video ram section, which starts at 0x2400 and
+  // is 0x1C00 bytes.
+  std::span<unsigned char, 0x1C00> vram_span{full_span.subspan(0x2400, 0x1C00)};
+
+  return vram_span;
+}
+
+static void print_hex_word(uint16_t value) {
+  std::cout << std::hex << std::uppercase << std::setfill('0') << std::setw(4)
+            << static_cast<int>(value) << std::dec;
+}
+
 std::uint8_t intel_8080::Memory8080::read(std::uint16_t mem_location) {
   return mem_buffer_[mem_location];
 }
@@ -23,6 +42,13 @@ void intel_8080::Memory8080::write(uint16_t mem_location, uint8_t data) {
   if (mem_location <= end_of_ROM_) {
     return;
   }
+#ifdef DEBUG
+  std::cout << "WRITING MEM addr: ";
+  print_hex_word(mem_location);
+  std::cout << "; data: ";
+  print_hex_word(static_cast<uint16_t>(data));
+  std::cout << "\n";
+#endif
   mem_buffer_[mem_location] = data;
 }
 
@@ -58,6 +84,35 @@ void intel_8080::Memory8080::load_rom(std::string const& file_path) {
     std::exit(1);
   }
   end_of_ROM_ = file_size - 1;
+
+  file.close();
+};
+
+void intel_8080::Memory8080::load_rom_at_addr(std::string const& file_path,
+                                              uint16_t addr) {
+  if (addr == 0x0000) {
+    clear_rom();
+  }
+
+  std::ifstream file(file_path, std::ios::in | std::ios::binary);
+
+  if (!file.is_open()) {
+    std::cerr << "Error opening file." << std::endl;
+    std::exit(1);
+  }
+  std::uintmax_t file_size = std::filesystem::file_size(file_path);
+
+  if (file_size + addr > kSIZE) {
+    std::cerr << "Error: loading the file at that address would overflow memory"
+              << std::endl;
+    std::exit(1);
+  }
+
+  for (uintmax_t data_count{0}; data_count < file_size; data_count++) {
+    mem_buffer_[addr++] = file.get();
+  }
+
+  end_of_ROM_ = addr - 1;
 
   file.close();
 };

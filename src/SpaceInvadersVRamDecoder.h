@@ -1,11 +1,16 @@
 #ifndef SPACEINVADERSVRAMDECODER
 #define SPACEINVADERSVRAMDECODER
 #include <SDL3/SDL.h>
+
+#include <span>
 #include <vector>
 
-namespace space_invaders_vram_decoder
-{
-    std::vector<SDL_FPoint> DecodeTopPixels(const char* data);
-    std::vector<SDL_FPoint> DecodeBottomPixels(const char* data);
-}
+namespace space_invaders_vram_decoder {
+void DecodeTopPixels(std::vector<SDL_FPoint>& points, const char* data);
+
+void DecodeBottomPixels(std::vector<SDL_FPoint>& points, const char* data);
+
+void DecodePixels(std::vector<SDL_FPoint>& points,
+                  std::span<unsigned char, 0x1C00> video_data);
+}  // namespace space_invaders_vram_decoder
 #endif

@@ -2,9 +2,12 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <queue>
 
+#include "AudioMixer.h"
 #include "Input.h"
 #include "Memory8080.h"
+#include "ShiftRegister.h"
 
 namespace intel_8080 {
 enum class JumpCondition {
@@ -28,6 +31,8 @@ class CPU8080 {
     std::uint8_t aux_carry : 1;
     std::uint8_t parity : 1;
     std::uint8_t carry : 1;
+
+    Flags();
 
     // Converts the struct of condition bits to a byte representation. Combined
     // with the accumulator register, it composes the Program Status Word.
@@ -60,13 +65,25 @@ class CPU8080 {
   };
 
   CPU8080(std::shared_ptr<intel_8080::Memory8080> new_mem,
-          std::shared_ptr<input::InputHandler> new_input_handler);
+          std::shared_ptr<input::InputHandler> input_handler_ptr,
+          std::shared_ptr<audio::Mixer> new_mixer,
+          std::shared_ptr<hardware::ShiftRegister> shift_reg_ptr);
+
+  void rst(uint8_t exp);
 
   void step();
 
   void reset();
 
+  bool is_not_stopped() const;
+
   State get_state();
+
+  void queue_interrupt(uint8_t opcode);
+
+  // Defined in debug.cc
+  void print_debug();
+  void print_instruction(uint8_t opcode);
 
  private:
   std::uint8_t fetch_byte();
@@ -79,6 +96,10 @@ class CPU8080 {
 
   void execute(std::uint8_t opcode);
 
+  void update_aux_carry_add(uint8_t x, uint8_t y, bool with_carry);
+
+  void update_aux_carry_sub(uint8_t x, uint8_t y, bool with_carry);
+
   void update_flags_szp(uint8_t byte);
 
   void update_parity(uint8_t byte);
@@ -89,6 +110,7 @@ class CPU8080 {
   // counterpart except for lxi
   // Instructions
   void in(uint8_t port_no);
+  void out(uint8_t port_no);
   void inr(uint8_t* reg);
   static void mov(uint8_t* addr, uint8_t data);
   void stax(uint16_t mem_location);
@@ -115,8 +137,8 @@ class CPU8080 {
   void pop(uint8_t* reg_1, uint8_t* reg_2);
   void dad(const uint8_t* reg_1, const uint8_t* reg_2);
   void lxi_sp(uint8_t byte_2, uint8_t byte_3);
-  static void lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t byte_2,
-                  uint8_t byte_3);
+  static void lxi(uint8_t* reg_1, uint8_t* reg_2, uint8_t data_1,
+                  uint8_t data_2);
   static void inx(uint8_t* reg_1, uint8_t* reg_2);
   static void dcx(uint8_t* reg_1, uint8_t* reg_2);
   void xthl();
@@ -130,11 +152,11 @@ class CPU8080 {
   void jmp(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
   void call(JumpCondition jump_condition, uint8_t byte_2, uint8_t byte_3);
   void ret(JumpCondition jump_condition);
-  void rst(uint8_t exp);
   void ei();
   void di();
   void hlt();
   bool check_jump_condition(JumpCondition jump_condition) const;
+  void daa();
 
   // State
   Flags flags_;
@@ -143,9 +165,13 @@ class CPU8080 {
   std::uint16_t program_counter_;
   // false = 0 and true = 1
   bool INTE_;
+  bool halted_;
 
   // Address Spaces
+  std::queue<uint8_t> interrupt_queue_;
   std::shared_ptr<intel_8080::Memory8080> mem_access_;
   std::shared_ptr<input::InputHandler> input_handler_;
+  std::shared_ptr<audio::Mixer> mixer_;
+  std::shared_ptr<hardware::ShiftRegister> shift_register_;
 };
 }  // namespace intel_8080

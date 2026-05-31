@@ -1,45 +1,60 @@
 #include "GameWindow.h"
-#include <iostream>
+
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
 
-namespace graphics_display
-{
-    GameWindow::GameWindow(const char* videoData, int windowWidth,
-        int windowHeight, const char* windowName)
-    {
-        this->video_data_ = videoData;
-        this->window_name_ = windowName;
-        this->window_width_ = windowWidth;
-        this->window_height_ = windowHeight;
+#include <cstdlib>
 
-        window_ = SDL_CreateWindow(windowName, windowWidth, windowHeight,
-            SDL_WINDOW_RESIZABLE);
-        renderer_ = SDL_CreateRenderer(window_, nullptr);
-    }
+namespace graphics_display {
+GameWindow::GameWindow(int windowWidth, int windowHeight,
+                       const char* windowName) {
+  window_name_ = windowName;
+  window_width_ = windowWidth;
+  window_height_ = windowHeight;
 
-    void GameWindow::UpdateDisplayTop(const std::vector<SDL_FPoint>& points)
-    {
-        SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(renderer_);
+  if (!SDL_CreateWindowAndRenderer("Test SDL3", windowWidth, windowHeight,
+                                   SDL_WINDOW_RESIZABLE, &window_,
+                                   &renderer_)) {
+    SDL_Log("Failed to create window and renderer.");
+    std::exit(1);
+    // return SDL_APP_FAILURE;
+  }
 
-        SDL_SetRenderDrawColor(renderer_, 255, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderPoints(renderer_, points.data(), points.size());
-        SDL_RenderPresent(renderer_);
-    }
+  SDL_SetRenderLogicalPresentation(renderer_, windowWidth, windowHeight,
+                                   SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-    void GameWindow::UpdateDisplayBottom(const std::vector<SDL_FPoint>& points)
-    {
-        SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(renderer_);
-
-        SDL_SetRenderDrawColor(renderer_, 0, 255, 255, SDL_ALPHA_OPAQUE);
-        SDL_RenderPoints(renderer_, points.data(), points.size());
-        SDL_RenderPresent(renderer_);
-    }
-
-    GameWindow::~GameWindow()
-    {
-        SDL_DestroyRenderer(renderer_);
-        SDL_DestroyWindow(window_);
-    }
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderClear(renderer_);
+  SDL_RenderPresent(renderer_);
 }
+
+void GameWindow::UpdateDisplayTop(const std::vector<SDL_FPoint>& points) {
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderClear(renderer_);
+
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, points.data(), points.size());
+  SDL_RenderPresent(renderer_);
+}
+
+void GameWindow::UpdateDisplayBottom(const std::vector<SDL_FPoint>& points) {
+  SDL_SetRenderDrawColor(renderer_, 0, 255, 255, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, points.data(), points.size());
+  SDL_RenderPresent(renderer_);
+}
+
+void GameWindow::UpdateDisplay(const std::vector<SDL_FPoint>& points) {
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderClear(renderer_);
+
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, points.data(), points.size());
+  SDL_RenderPresent(renderer_);
+}
+
+GameWindow::~GameWindow() {
+  SDL_DestroyRenderer(renderer_);
+  SDL_DestroyWindow(window_);
+  SDL_Quit();
+}
+}  // namespace graphics_display

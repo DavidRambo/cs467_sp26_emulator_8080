@@ -25,12 +25,12 @@ void Mixer::Load() {
   constexpr std::array kSounds{
       // clang-format off
     //          Sound ID              File                Looping
-    SoundEffect{SoundId::kBackground, "background.wav",   true},
-    SoundEffect{SoundId::kExplosion,  "explosion.wav",    false},
-    SoundEffect{SoundId::kInvaderHit, "invader_hit.wav",  false},
-    SoundEffect{SoundId::kTorpedo,    "torpedo.wav",      false},
-    SoundEffect{SoundId::kUfoHit,     "ufo_hit.wav",      false},
-    SoundEffect{SoundId::kUfo,        "ufo.wav",          true},
+    SoundEffect{.id_=SoundId::kBackground, .file_="assets/audio/background.wav",   .looping_=true},
+    SoundEffect{.id_=SoundId::kExplosion,  .file_="assets/audio/explosion.wav",    .looping_=false},
+    SoundEffect{.id_=SoundId::kInvaderHit, .file_="assets/audio/invader_hit.wav",  .looping_=false},
+    SoundEffect{.id_=SoundId::kTorpedo,    .file_="assets/audio/torpedo.wav",      .looping_=false},
+    SoundEffect{.id_=SoundId::kUfoHit,     .file_="assets/audio/ufo_hit.wav",      .looping_=false},
+    SoundEffect{.id_=SoundId::kUfo,        .file_="assets/audio/ufo.wav",          .looping_=true},
       // clang-format on
   };
 
@@ -38,7 +38,7 @@ void Mixer::Load() {
     Channel& chan = channels_[static_cast<std::size_t>(sound.id_)];
     SDL_LoadWAV(sound.file_, &chan.spec_, &chan.wav_buf_, &chan.wav_len_);
     chan.looping_ = sound.looping_;
-        chan.stream_ = SDL_CreateAudioStream(&chan.spec_, &device_spec_);
+    chan.stream_ = SDL_CreateAudioStream(&chan.spec_, &device_spec_);
     SDL_BindAudioStream(device_, chan.stream_);
   }
 }
@@ -106,13 +106,17 @@ std::array<Mixer::AudioAction, 8> Mixer::DecodePort(
 
   for (int i = 0; i < 8; ++i) {
     uint8_t bit = 1 << i;
-    // Use bit as mask to determine which action to select for each accumulator bit.
+    // Use bit as mask to determine which action to select for each accumulator
+    // bit.
     if (changed & bit) {
       (accumulator_bits & bit)
-          ? actions[i] = {AudioAction::Action::kPlay, soundMap[i]}
-          : actions[i] = {AudioAction::Action::kStop, soundMap[i]};
+          ? actions[i] = {.action_ = AudioAction::Action::kPlay,
+                          .id_ = soundMap[i]}
+          : actions[i] = {.action_ = AudioAction::Action::kStop,
+                          .id_ = soundMap[i]};
     } else {
-      actions[i] = {AudioAction::Action::kContinue, soundMap[i]};
+      actions[i] = {.action_ = AudioAction::Action::kContinue,
+                    .id_ = soundMap[i]};
     }
   }
   return actions;
@@ -131,7 +135,6 @@ std::array<Mixer::AudioAction, 8> Mixer::ApplyPort(
         Stop(action.id_);
         break;
       case AudioAction::Action::kContinue:
-        break;
       default:
         break;
     }
@@ -141,9 +144,9 @@ std::array<Mixer::AudioAction, 8> Mixer::ApplyPort(
 
 std::array<Mixer::AudioAction, 8> Mixer::SetOut3(uint8_t accumulator_bits) {
   static constexpr std::array<SoundId, 8> kSoundMap{
-      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
-      SoundId::kBackground, SoundId::kExplosion, SoundId::kInvaderHit,
-      SoundId::kBackground, SoundId::kExplosion,
+    SoundId::kUfo, SoundId::kTorpedo, SoundId::kExplosion,
+    SoundId::kInvaderHit, SoundId::kTorpedo, SoundId::kTorpedo,
+    SoundId::kTorpedo, SoundId::kTorpedo,
   };
   auto actions = ApplyPort(accumulator_bits, prev_port3_, kSoundMap);
   prev_port3_ = accumulator_bits;
@@ -152,8 +155,8 @@ std::array<Mixer::AudioAction, 8> Mixer::SetOut3(uint8_t accumulator_bits) {
 
 std::array<Mixer::AudioAction, 8> Mixer::SetOut5(uint8_t accumulator_bits) {
   static constexpr std::array<SoundId, 8> kSoundMap{
-      SoundId::kTorpedo, SoundId::kUfoHit, SoundId::kUfo,     SoundId::kTorpedo,
-      SoundId::kUfoHit,  SoundId::kUfo,    SoundId::kTorpedo, SoundId::kUfoHit,
+    SoundId::kBackground, SoundId::kBackground, SoundId::kBackground,     SoundId::kBackground,
+    SoundId::kUfoHit,  SoundId::kTorpedo,    SoundId::kTorpedo, SoundId::kTorpedo,
   };
   auto actions = ApplyPort(accumulator_bits, prev_port5_, kSoundMap);
   prev_port5_ = accumulator_bits;
