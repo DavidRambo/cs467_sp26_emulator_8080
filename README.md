@@ -25,7 +25,7 @@ The ROM can be found online among emulator enthusiasts as four files.
 Concatenate them as follows:
 
 ```sh
-cat invaders.h invaders.g invaders.f invaders.e > invaders_rom_file
+cat invaders.h invaders.g invaders.f invaders.e >> invaders_rom_file
 ```
 
 For example, on Fedora, the following will install the SDL3 dependency, build the default emulator target, and then run the emulator:
@@ -49,3 +49,5 @@ Press either `1` or `2` for one-player or two-player mode, respectively.
 To move left and right, press the `left` and `right` arrow keys or `A` and `D`.
 
 To fire a projectile, press the `up` arrow key, `W`, or `space`.
+
+These controls are the same for both players, as they alternate turns.
