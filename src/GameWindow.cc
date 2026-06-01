@@ -28,27 +28,26 @@ GameWindow::GameWindow(int windowWidth, int windowHeight,
   SDL_RenderPresent(renderer_);
 }
 
-void GameWindow::UpdateDisplayTop(const std::vector<SDL_FPoint>& points) {
+void GameWindow::UpdateDisplay(
+    const space_invaders_vram_decoder::Pixels& pixels) {
+  // Clear screen to black.
   SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer_);
 
-  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderPoints(renderer_, points.data(), points.size());
-  SDL_RenderPresent(renderer_);
-}
+  // CRT green for lower portion of the screen.
+  SDL_SetRenderDrawColor(renderer_, 65, 255, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, pixels.green_points.data(),
+                   pixels.green_points.size());
 
-void GameWindow::UpdateDisplayBottom(const std::vector<SDL_FPoint>& points) {
-  SDL_SetRenderDrawColor(renderer_, 0, 255, 255, SDL_ALPHA_OPAQUE);
-  SDL_RenderPoints(renderer_, points.data(), points.size());
-  SDL_RenderPresent(renderer_);
-}
+  // White for the upper portion.
+  SDL_SetRenderDrawColor(renderer_, 255, 255, 255, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, pixels.white_points.data(),
+                   pixels.white_points.size());
 
-void GameWindow::UpdateDisplay(const std::vector<SDL_FPoint>& points) {
-  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderClear(renderer_);
-
-  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderPoints(renderer_, points.data(), points.size());
+  // Purple for the UFO portion.
+  SDL_SetRenderDrawColor(renderer_, 242, 55, 245, SDL_ALPHA_OPAQUE);
+  SDL_RenderPoints(renderer_, pixels.purple_points.data(),
+                   pixels.purple_points.size());
   SDL_RenderPresent(renderer_);
 }
 

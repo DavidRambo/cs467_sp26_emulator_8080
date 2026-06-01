@@ -10,6 +10,10 @@
 #include "ShiftRegister.h"
 #include "SpaceInvadersVRamDecoder.h"
 
+// Intel 8080: 2MHz; Refresh Rate: 60Hz
+// Cycles Per Frame: 2MHz / 60Hz = 33.333K
+constexpr int kCyclesHalfFrame = 16667;
+
 int main(int argc, char* argv[]) {
   // if (argc > 5) {
   //   std::cerr << "Too many arguments. Usage: ./emu8008 invaders.h invaders.g
@@ -44,9 +48,9 @@ int main(int argc, char* argv[]) {
   graphics_display::GameWindow game_window = graphics_display::GameWindow(
       kWindowWidth, kWindowHeight, "Space Invaders");
 
-  std::vector<SDL_FPoint> points;
-  space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
-  game_window.UpdateDisplay(points);
+  space_invaders_vram_decoder::Pixels pixels;
+  space_invaders_vram_decoder::DecodePixels(pixels, mem->get_vram_span());
+  game_window.UpdateDisplay(pixels);
 
   std::shared_ptr<audio::Mixer> mixer = std::make_shared<audio::Mixer>();
 
@@ -76,16 +80,12 @@ int main(int argc, char* argv[]) {
       break;
     }
 
-    // Run CPU for 8 ms to approximate the "first half" of 60 fps.
-    // NOTE: the emulated cpu will perform a much greater number of cycles in
-    // this time than it would as physical hardware running at 2Mhz. The way to
-    // account for this would be to count cycles and to limit it to however many
-    // cycles could occur at 2Mhz within 8ms (i.e. 30hz) = 2Mhz/30hz.
+    // Run the CPU for one half-frame's worth of cycles (~16,667),
+    // emulating what the hardware would do between interrupts.
     Uint64 start_tick = SDL_GetTicks();
-    Uint64 current_tick = SDL_GetTicks();
-    while (cpu.is_not_stopped() && current_tick < start_tick + 8) {
-      cpu.step();
-      current_tick = SDL_GetTicks();
+    uint16_t cycles = 0;
+    while (cpu.is_not_stopped() && cycles < kCyclesHalfFrame) {
+      cycles += cpu.step();
     }
 #ifdef DEBUG
     std::cout << "RST 1\n";
@@ -95,10 +95,10 @@ int main(int argc, char* argv[]) {
     // exp = 1.
     cpu.queue_interrupt(0xCF);
 
-    // Run CPU for another 8 ms to approximate the "second half" of 60 fps.
-    while (cpu.is_not_stopped() && current_tick < start_tick + 8) {
-      cpu.step();
-      current_tick = SDL_GetTicks();
+    // Run the second half-frame's worth of cycles before next interrupt.
+    cycles = 0;
+    while (cpu.is_not_stopped() && cycles < kCyclesHalfFrame) {
+      cycles += cpu.step();
     }
 
 #ifdef DEBUG
@@ -109,9 +109,15 @@ int main(int argc, char* argv[]) {
     // has exp = 2.
     cpu.queue_interrupt(0xD7);
 
+    // Frame pacing: target ~60 fps (16 ms per frame).
+    uint64_t elapsed = SDL_GetTicks() - start_tick;
+    if (elapsed < 16) {
+      SDL_Delay(static_cast<uint32_t>(16 - elapsed));
+    }
+
     // Update display
-    space_invaders_vram_decoder::DecodePixels(points, mem->get_vram_span());
-    game_window.UpdateDisplay(points);
+    space_invaders_vram_decoder::DecodePixels(pixels, mem->get_vram_span());
+    game_window.UpdateDisplay(pixels);
   }
 
   return 0;
