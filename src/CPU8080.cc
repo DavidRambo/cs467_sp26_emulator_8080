@@ -111,15 +111,6 @@ void CPU8080::update_parity(uint8_t byte) {
   }
 }
 
-// Sets parity flag if word has even parity, otherwise resets it.
-void CPU8080::update_parity(uint16_t word) {
-  if (__builtin_parity(word)) {
-    flags_.parity = 0;
-  } else {
-    flags_.parity = 1;
-  }
-}
-
 // Updates condition codes for sign, zero, auxiliary carry, and parity.
 // Carry is handled separately for two reasons:
 // 1. Not all instructions that affect these flags also affect the carry bit

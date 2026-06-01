@@ -100,8 +100,6 @@ class CPU8080 {
 
   void update_parity(uint8_t byte);
 
-  void update_parity(uint16_t word);
-
   // Immediate instructions will utilize their register/mem
   // counterpart except for lxi
   // Instructions
