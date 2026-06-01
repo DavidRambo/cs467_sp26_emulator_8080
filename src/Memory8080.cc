@@ -11,8 +11,6 @@
 #include <string>
 #include <vector>
 
-#include "CPU8080.h"
-
 intel_8080::Memory8080::Memory8080() : mem_buffer_{} {
   mem_buffer_.fill(0x00);
   end_of_ROM_ = 0x0000;
@@ -29,11 +27,6 @@ std::span<unsigned char, 0x1C00> intel_8080::Memory8080::get_vram_span() {
   return vram_span;
 }
 
-static void print_hex_word(uint16_t value) {
-  std::cout << std::hex << std::uppercase << std::setfill('0') << std::setw(4)
-            << static_cast<int>(value) << std::dec;
-}
-
 std::uint8_t intel_8080::Memory8080::read(std::uint16_t mem_location) {
   return mem_buffer_[mem_location];
 }
@@ -43,6 +36,11 @@ void intel_8080::Memory8080::write(uint16_t mem_location, uint8_t data) {
     return;
   }
 #ifdef DEBUG
+  static void print_hex_word(uint16_t value) {
+    std::cout << std::hex << std::uppercase << std::setfill('0') << std::setw(4)
+              << static_cast<int>(value) << std::dec;
+  }
+
   std::cout << "WRITING MEM addr: ";
   print_hex_word(mem_location);
   std::cout << "; data: ";
