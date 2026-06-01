@@ -36,7 +36,7 @@ class CPU8080 {
 
     // Converts the struct of condition bits to a byte representation. Combined
     // with the accumulator register, it composes the Program Status Word.
-    std::uint8_t to_byte();
+    std::uint8_t to_byte() const;
 
     // Sets and resets flags according to the byte of data.
     void from_byte(uint8_t data);
@@ -51,9 +51,9 @@ class CPU8080 {
     std::uint8_t reg_h = 0x00;
     std::uint8_t reg_l = 0x00;
 
-    std::uint16_t hl() { return (std::uint16_t)reg_h << 8 | reg_l; };
-    std::uint16_t bc() { return (std::uint16_t)reg_b << 8 | reg_c; };
-    std::uint16_t de() { return (std::uint16_t)reg_d << 8 | reg_e; };
+    std::uint16_t hl() const { return (std::uint16_t)reg_h << 8 | reg_l; };
+    std::uint16_t bc() const { return (std::uint16_t)reg_b << 8 | reg_c; };
+    std::uint16_t de() const { return (std::uint16_t)reg_d << 8 | reg_e; };
   };
 
  public:

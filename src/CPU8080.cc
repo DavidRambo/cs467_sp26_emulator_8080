@@ -48,7 +48,7 @@ CPU8080::Flags::Flags() {
   carry = 0;
 }
 
-std::uint8_t CPU8080::Flags::to_byte() {
+std::uint8_t CPU8080::Flags::to_byte() const {
   std::uint8_t return_byte = 0x02;
   // Shift flags to proper location
   return_byte = return_byte | (sign << 7);
