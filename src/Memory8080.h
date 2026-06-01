@@ -8,7 +8,7 @@
 namespace intel_8080 {
 class Memory8080 {
  public:
-  static constexpr int kSIZE = 0x10000;  // 0xFFFF + 1 for inclusive indices
+  static constexpr int kSize = 0x10000;  // 0xFFFF + 1 for inclusive indices
 
   Memory8080();
 
@@ -29,7 +29,7 @@ class Memory8080 {
   void load_data(std::vector<uint8_t> const& data, uint16_t start = 0);
 
  private:
-  std::array<uint8_t, kSIZE> mem_buffer_;
+  std::array<uint8_t, kSize> mem_buffer_;
   uint16_t end_of_ROM_;
 };
 }  // namespace intel_8080

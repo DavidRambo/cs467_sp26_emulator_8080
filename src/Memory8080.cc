@@ -72,7 +72,7 @@ void intel_8080::Memory8080::load_rom(std::string const& file_path) {
   }
   std::uintmax_t file_size = std::filesystem::file_size(file_path);
 
-  if (file_size > kSIZE) {
+  if (file_size > kSize) {
     std::cerr << "Error: File is bigger than 64KB" << std::endl;
     std::exit(1);
   }
@@ -102,7 +102,7 @@ void intel_8080::Memory8080::load_rom_at_addr(std::string const& file_path,
   }
   std::uintmax_t file_size = std::filesystem::file_size(file_path);
 
-  if (file_size + addr > kSIZE) {
+  if (file_size + addr > kSize) {
     std::cerr << "Error: loading the file at that address would overflow memory"
               << std::endl;
     std::exit(1);
@@ -119,7 +119,7 @@ void intel_8080::Memory8080::load_rom_at_addr(std::string const& file_path,
 
 void intel_8080::Memory8080::load_data(std::vector<uint8_t> const& data,
                                        uint16_t start) {
-  if (data.size() + start > kSIZE) {
+  if (data.size() + start > kSize) {
     std::cerr << "Data is too large for memory" << std::endl;
     std::exit(1);
   }
