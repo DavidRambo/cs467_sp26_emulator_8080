@@ -90,20 +90,6 @@ uint8_t CPU8080::fetch_byte(std::uint16_t mem_location) {
   return byte;
 };
 
-uint16_t CPU8080::fetch_word() {
-  uint8_t low_byte = fetch_byte();
-  uint8_t high_byte = fetch_byte();
-  auto word = static_cast<uint16_t>((high_byte << 8) | low_byte);
-  return word;
-}
-
-uint16_t CPU8080::fetch_word(std::uint16_t mem_location) {
-  uint8_t low_byte = mem_access_->read(mem_location);
-  uint8_t high_byte = mem_access_->read(mem_location + 1);
-  auto word = static_cast<uint16_t>((high_byte << 8) | low_byte);
-  return word;
-};
-
 bool CPU8080::is_not_stopped() const { return !halted_; }
 
 // Copies the state of the CPU and returns in a State struct.

@@ -90,10 +90,6 @@ class CPU8080 {
 
   std::uint8_t fetch_byte(std::uint16_t mem_location);
 
-  std::uint16_t fetch_word();
-
-  std::uint16_t fetch_word(std::uint16_t mem_location);
-
   uint8_t execute(std::uint8_t opcode);
 
   void update_aux_carry_add(uint8_t x, uint8_t y, bool with_carry);
