@@ -339,10 +339,7 @@ void CPU8080::xthl() {
   registers_.reg_l = byte_for_l;
 }
 
-void CPU8080::sphl() {
-  stack_pointer_ =
-      static_cast<uint16_t>(registers_.reg_h << 8) | registers_.reg_l;
-}
+void CPU8080::sphl() { stack_pointer_ = registers_.hl(); }
 
 void CPU8080::lxi_sp(uint8_t byte_2, uint8_t byte_3) {
   stack_pointer_ = static_cast<uint16_t>(byte_3 << 8) | byte_2;
@@ -377,8 +374,7 @@ void CPU8080::lhld(uint8_t byte_2, uint8_t byte_3) {
 }
 
 void CPU8080::pchl() {
-  auto mem_location =
-      static_cast<uint16_t>((registers_.reg_h << 8) | registers_.reg_l);
+  auto mem_location = registers_.hl();
   program_counter_ = mem_location;
 }
 
